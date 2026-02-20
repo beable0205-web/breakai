@@ -1,29 +1,119 @@
 "use client";
 
-import { useState } from "react";
-import { Search, Upload, AlertTriangle, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, Upload, AlertTriangle, Loader2, Trash2, Database, ShieldAlert, Folder, FolderOpen, ChevronRight, FileText, TrendingUp, Calendar } from "lucide-react";
 import Link from "next/link";
-import { analyzeTicker } from "../actions"; // 방금 만든 뇌 파일 가져오기
+import { useRouter } from "next/navigation";
+import { analyzeTicker } from "../actions";
 import TerminalLoader from "../components/TerminalLoader";
+import { supabase } from "../lib/supabase";
 
 export default function AdminPage() {
+    const router = useRouter();
+    const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+
     const [ticker, setTicker] = useState("");
+    const [reportType, setReportType] = useState<"research" | "earnings">("research");
+    const [quarter, setQuarter] = useState("Q4 2025");
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState("");
 
+    // For reports list
+    const [reports, setReports] = useState<any[]>([]);
+    const [fetchingReports, setFetchingReports] = useState(true);
+    const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
+
+    const toggleFolder = (t: string) => {
+        setOpenFolders(prev => ({ ...prev, [t]: !prev[t] }));
+    };
+
+    const fetchReports = async () => {
+        setFetchingReports(true);
+        const { data, error } = await supabase
+            .from('reports')
+            .select('id, ticker, risk_score, created_at')
+            .order('created_at', { ascending: false });
+
+        if (!error && data) {
+            setReports(data);
+        }
+        setFetchingReports(false);
+    };
+
+    useEffect(() => {
+        // Enforce Admin Security
+        const checkAuth = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            const email = session?.user?.email;
+
+            if (email === "beable9489@gmail.com") {
+                setIsAuthorized(true);
+                fetchReports();
+            } else {
+                setIsAuthorized(false);
+                setTimeout(() => {
+                    router.push("/");
+                }, 1500); // Small delay to let them read the "Access Denied" message
+            }
+        };
+
+        checkAuth();
+    }, [router]);
+
+    // Don't render the dashboard until auth is resolved completely
+    if (isAuthorized === null) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-black text-emerald-500">
+                <Loader2 className="w-10 h-10 animate-spin" />
+            </div>
+        );
+    }
+
+    if (isAuthorized === false) {
+        return (
+            <div className="min-h-[70vh] flex flex-col items-center justify-center bg-black text-rose-500 space-y-4">
+                <ShieldAlert className="w-20 h-20" />
+                <h1 className="text-4xl font-black uppercase tracking-widest">Access Denied</h1>
+                <p className="text-zinc-400">Your email address is not authorized for server-level access.</p>
+                <p className="text-zinc-600 text-sm animate-pulse">Redirecting to public zone...</p>
+            </div>
+        );
+    }
+
+    const handleDelete = async (id: number) => {
+        if (!confirm("Are you sure you want to delete this report?")) return;
+
+        const { error } = await supabase
+            .from('reports')
+            .delete()
+            .eq('id', id);
+
+        if (!error) {
+            fetchReports(); // Refresh the list
+        } else {
+            console.error("Failed to delete report", error);
+            alert("삭제 실패 (Delete failed): \nSupabase Row Level Security (RLS) 정책 때문일 가능성이 높습니다. Supabase 대시보드에서 'reports' 테이블의 Delete 권한 정책을 허용하거나 RLS를 활성화/수정해주세요.");
+        }
+    };
+
     const handleAnalyze = async () => {
         if (!ticker) return;
+        if (reportType === "earnings" && !quarter) {
+            alert("Please enter a specific quarter (e.g. Q4 2025) for earnings reports.");
+            return;
+        }
+
         setLoading(true);
-        setResult(""); // 결과 초기화
+        setResult(""); // Reset result
 
         try {
-            // 진짜 AI에게 일을 시킴 (서버로 요청)
-            const aiResponse = await analyzeTicker(ticker);
+            const aiResponse = await analyzeTicker(ticker, reportType, quarter);
 
             if (aiResponse.startsWith("Error:")) {
                 setResult(aiResponse);
             } else {
                 setResult(aiResponse + "\n\n[System] Saved to DB ✅");
+                fetchReports(); // Refresh the list after successful creation
             }
         } catch (e) {
             setResult("Error occurred.");
@@ -33,76 +123,113 @@ export default function AdminPage() {
     };
 
     return (
-        <div className="max-w-4xl mx-auto mt-10 space-y-8 p-4">
-            {/* 헤더 */}
+        <div className="max-w-4xl mx-auto mt-10 space-y-8 p-4 font-sans text-gray-100 mb-20">
+            {/* Header */}
             <div className="flex items-center space-x-4 mb-8">
                 <h1 className="text-3xl font-bold text-[#00FF41]">ADMIN_DASHBOARD</h1>
                 <span className="bg-gray-800 text-xs px-2 py-1 rounded border border-gray-600">INTERNAL ONLY</span>
             </div>
 
-            {/* 입력창 섹션 */}
-            <div className="bg-[#111] p-6 border border-[#333] rounded-lg space-y-6">
-                <h2 className="text-xl font-semibold flex items-center">
+            {/* Main Action Section: Generator */}
+            <div className="bg-[#111] p-6 border border-[#333] rounded-xl space-y-6 shadow-2xl">
+                <h2 className="text-xl font-bold flex items-center text-white">
                     <Upload className="w-5 h-5 mr-2 text-[#00FF41]" />
-                    Target Asset
+                    Initialize New Analysis
                 </h2>
 
-                <div className="flex gap-4">
+                {/* Report Type Toggle */}
+                <div className="flex bg-black rounded-lg p-1 border border-[#333] w-fit">
+                    <button
+                        onClick={() => setReportType("research")}
+                        className={`px-6 py-2 rounded-md text-sm font-bold uppercase tracking-widest transition-all ${reportType === "research" ? "bg-[#00FF41] text-black" : "text-zinc-500 hover:text-white"}`}
+                    >
+                        Deep Research
+                    </button>
+                    <button
+                        onClick={() => setReportType("earnings")}
+                        className={`px-6 py-2 rounded-md text-sm font-bold uppercase tracking-widest transition-all ${reportType === "earnings" ? "bg-amber-400 text-black" : "text-zinc-500 hover:text-white"}`}
+                    >
+                        Earnings & Guidance
+                    </button>
+                </div>
+
+                <div className="flex gap-4 flex-wrap md:flex-nowrap">
                     <input
                         type="text"
-                        placeholder="Enter Ticker (e.g. TSLA, NVDA, AAPL)"
-                        className="flex-1 bg-black border border-[#333] p-3 rounded text-white focus:border-[#00FF41] outline-none font-mono uppercase"
+                        placeholder="Enter Ticker (e.g. TSLA, NVDA)"
+                        className="flex-1 min-w-[200px] w-full bg-black border border-[#333] p-4 rounded-lg text-white focus:border-emerald-500 outline-none font-mono uppercase transition-all"
                         value={ticker}
                         onChange={(e) => setTicker(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleAnalyze()}
                     />
+
+                    {/* Conditional Quarter Dropdown */}
+                    {reportType === "earnings" && (
+                        <select
+                            className="w-full md:w-64 bg-black border border-[#333] p-4 rounded-lg text-amber-400 focus:border-amber-400 outline-none font-mono uppercase transition-all animate-in slide-in-from-left-2 duration-300 appearance-none cursor-pointer"
+                            value={quarter}
+                            onChange={(e) => setQuarter(e.target.value)}
+                        >
+                            {[
+                                "Q4 2025",
+                                "Q1 2026", "Q2 2026", "Q3 2026", "Q4 2026",
+                                "Q1 2027", "Q2 2027", "Q3 2027", "Q4 2027"
+                            ].map(q => (
+                                <option key={q} value={q}>{q}</option>
+                            ))}
+                        </select>
+                    )}
+
                     <button
                         onClick={handleAnalyze}
                         disabled={loading}
-                        className="bg-[#00FF41] text-black font-bold px-6 py-3 rounded hover:bg-green-400 disabled:opacity-50 flex items-center min-w-[140px] justify-center"
+                        className={`w-full md:w-auto text-black font-bold px-8 py-4 rounded-lg disabled:opacity-50 flex items-center justify-center transition-all hover:scale-[1.02] active:scale-95 whitespace-nowrap ${reportType === "research" ? "bg-[#00FF41] hover:bg-green-400" : "bg-amber-400 hover:bg-amber-300"}`}
                     >
-                        {loading ? <Loader2 className="animate-spin mr-2" /> : <Search className="w-4 h-4 mr-2" />}
-                        {loading ? "ANALYZING..." : "ANALYZE"}
+                        {loading ? <Loader2 className="animate-spin mr-2 w-5 h-5" /> : <Search className="w-5 h-5 mr-2" />}
+                        {loading ? "PROCESSING..." : "GENERATE"}
                     </button>
                 </div>
             </div>
 
-            {/* 결과 출력창 (터미널 스타일) */}
-            <div className="bg-black border border-[#333] rounded-lg p-6 min-h-[300px] font-mono text-sm shadow-inner shadow-gray-900 relative">
-                <div className="text-gray-500 border-b border-[#333] pb-2 mb-4 flex justify-between">
+            {/* AI Output Terminal */}
+            <div className={`bg-black border border-[#333] rounded-xl p-6 transition-all duration-500 font-mono text-sm shadow-inner shadow-gray-900 ${loading || result ? 'block opacity-100 min-h-[300px]' : 'hidden opacity-0 h-0 pointer-events-none'}`}>
+                <div className="text-gray-500 border-b border-[#333] pb-3 mb-4 flex justify-between tracking-widest text-xs font-bold">
                     <span>AI_VERDICT_OUTPUT</span>
-                    <span className="text-xs text-[#00FF41]">{loading ? "● LIVE" : "● READY"}</span>
+                    <span className={`text-[#00FF41] ${loading ? 'animate-pulse' : ''}`}>{loading ? "● LIVE" : "● READY"}</span>
                 </div>
-                {/* 결과 영역 */}
+
                 {loading ? (
                     <div className="flex justify-center p-12">
                         <TerminalLoader />
                     </div>
+                ) : result.startsWith("Error") ? (
+                    <div className="text-red-400 whitespace-pre-line bg-red-950/20 p-4 border border-red-900 rounded">{result}</div>
                 ) : result ? (
-                    <div className="w-full max-w-4xl mx-auto">
+                    <div className="w-full">
                         <div className="p-4 bg-[#111] border border-[#333] rounded mb-4">
-                            <h3 className="text-[#00FF41] font-bold mb-2">ANALYSIS PREVIEW</h3>
+                            <h3 className="text-[#00FF41] font-bold mb-4">ANALYSIS PREVIEW</h3>
                             {(() => {
                                 try {
-                                    const analysis = JSON.parse(result);
+                                    const analysisStr = result.split("\\n\\n[System]")[0]; // remove saved tag before parse
+                                    const analysis = JSON.parse(analysisStr);
                                     return (
-                                        <div className="space-y-4 text-sm font-mono">
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div className="p-4 border border-[#333]">
-                                                    <strong className="block text-gray-500 mb-1">CEO CLAIM</strong>
-                                                    <span className="text-gray-300">"{analysis.ceo_claim}"</span>
+                                        <div className="space-y-6 text-sm font-mono">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-wrap">
+                                                <div className="p-4 border border-[#333] rounded bg-black">
+                                                    <strong className="block text-gray-500 mb-2">CEO CLAIM</strong>
+                                                    <span className="text-gray-300 leading-relaxed">&quot;{analysis.ceo_claim}&quot;</span>
                                                 </div>
-                                                <div className="p-4 border border-[#333]">
-                                                    <strong className="block text-[#00FF41] mb-1">REALITY</strong>
-                                                    <span className="text-white">{analysis.reality_check}</span>
+                                                <div className="p-4 border border-[#333] rounded bg-black">
+                                                    <strong className="block text-[#00FF41] mb-2">REALITY</strong>
+                                                    <span className="text-white leading-relaxed">{analysis.reality_check}</span>
                                                 </div>
                                             </div>
-                                            <div className="flex justify-between items-center border-t border-[#333] pt-4">
+                                            <div className="flex flex-col sm:flex-row justify-between items-center bg-zinc-900 border border-zinc-700 p-4 rounded gap-4">
                                                 <span>VERDICT: <strong className={analysis.verdict === 'SELL' ? 'text-red-500' : 'text-[#00FF41]'}>{analysis.verdict}</strong></span>
-                                                <span>RISK SCORE: {analysis.risk_score}</span>
+                                                <span>RISK SCORE: <strong className="text-white">{analysis.investment_score?.total || analysis.risk_score}</strong></span>
                                             </div>
-                                            <div className="text-gray-400 italic">
-                                                "{analysis.one_line_summary}"
+                                            <div className="text-gray-400 italic p-4 border-l-2 border-emerald-900 bg-emerald-950/10">
+                                                &quot;{analysis.executive_summary || analysis.one_line_summary}&quot;
                                             </div>
                                         </div>
                                     );
@@ -111,18 +238,144 @@ export default function AdminPage() {
                                 }
                             })()}
                         </div>
-                        <div className="text-center">
-                            <Link href="/" className="text-[#00FF41] hover:underline">
-                                View Full Dashboard &rarr;
-                            </Link>
+                    </div>
+                ) : null}
+            </div>
+
+            {/* Archive Management Table -> Folder Tree Overhaul */}
+            <div className="bg-[#111] border border-[#333] rounded-xl overflow-hidden shadow-2xl mt-12 mb-20">
+                <div className="p-6 border-b border-[#333] flex justify-between items-center bg-[#151515]">
+                    <h2 className="text-xl font-bold flex items-center text-white">
+                        <Database className="w-5 h-5 mr-3 text-emerald-500" />
+                        Report Archive Database
+                    </h2>
+                    <span className="text-zinc-500 font-mono text-sm">{reports.length} Total Records</span>
+                </div>
+
+                <div className="bg-[#09090b]">
+                    {fetchingReports ? (
+                        <div className="p-12 text-center text-zinc-500">
+                            <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3" />
+                            Loading database records...
                         </div>
-                    </div>
-                ) : (
-                    <div className="text-center text-gray-500 py-12">
-                        <AlertTriangle className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                        <p>Enter a ticker to expose the truth.</p>
-                    </div>
-                )}
+                    ) : reports.length === 0 ? (
+                        <div className="p-12 text-center text-zinc-500">
+                            <AlertTriangle className="w-10 h-10 mx-auto mb-4 opacity-50 text-rose-500" />
+                            No reports found in the archive.
+                        </div>
+                    ) : (
+                        <div className="divide-y divide-zinc-800/50">
+                            {(() => {
+                                // Group reports by ticker
+                                const grouped = reports.reduce((acc, r) => {
+                                    const t = r.ticker;
+                                    if (!acc[t]) acc[t] = { research: [], earnings: [] };
+                                    if (r.report_type === "earnings") acc[t].earnings.push(r);
+                                    else acc[t].research.push(r);
+                                    return acc;
+                                }, {} as Record<string, { research: any[], earnings: any[] }>);
+
+                                return Object.keys(grouped).map(ticker => {
+                                    const isOpen = !!openFolders[ticker];
+                                    const folderData = grouped[ticker];
+                                    const totalCount = folderData.research.length + folderData.earnings.length;
+
+                                    return (
+                                        <div key={ticker} className="flex flex-col">
+                                            {/* Folder Header */}
+                                            <button
+                                                onClick={() => toggleFolder(ticker)}
+                                                className="flex items-center justify-between p-5 hover:bg-zinc-900 transition-colors w-full text-left"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <ChevronRight className={`w-4 h-4 text-zinc-600 transition-transform duration-200 ${isOpen ? "rotate-90 text-emerald-500" : ""}`} />
+                                                    {isOpen ? <FolderOpen className="w-6 h-6 text-emerald-400" /> : <Folder className="w-6 h-6 text-emerald-500/70" />}
+                                                    <span className="text-xl font-black text-white">{ticker} <span className="text-zinc-500 font-normal text-sm ml-2 font-mono">WORKSPACE</span></span>
+                                                </div>
+                                                <span className="px-3 py-1 bg-zinc-800 text-zinc-400 font-mono text-xs font-bold rounded-full">
+                                                    {totalCount} ITEMS
+                                                </span>
+                                            </button>
+
+                                            {/* Folder Contents (Tree Branches) */}
+                                            {isOpen && (
+                                                <div className="bg-[#0f0f12] pl-[52px] border-t border-zinc-900">
+                                                    {/* Category: Deep Research */}
+                                                    {folderData.research.length > 0 && (
+                                                        <div className="py-4 border-l border-zinc-800 ml-3 pl-6 relative">
+                                                            <div className="absolute top-8 -left-px w-4 h-px bg-zinc-800"></div>
+                                                            <h4 className="flex items-center gap-2 text-zinc-400 font-bold text-sm tracking-widest uppercase mb-4">
+                                                                <FileText className="w-4 h-4 text-zinc-500" /> Deep Research Scans
+                                                            </h4>
+                                                            <div className="space-y-2">
+                                                                {folderData.research.map((r: any) => (
+                                                                    <div key={r.id} className="flex items-center justify-between p-3 bg-black border border-zinc-800 rounded-lg hover:border-emerald-500/50 group transition-all mr-6">
+                                                                        <div className="flex items-center gap-4">
+                                                                            <span className={`px-2 py-1 flex items-center justify-center font-mono font-bold text-xs rounded border ${r.risk_score >= 80 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : r.risk_score <= 40 ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30'}`}>
+                                                                                {r.risk_score} SCORE
+                                                                            </span>
+                                                                            <span className="text-zinc-300 font-mono text-xs flex items-center gap-2">
+                                                                                <Calendar className="w-3 h-3 text-zinc-600" />
+                                                                                {new Date(r.created_at).toISOString().split('T')[0]}
+                                                                            </span>
+                                                                        </div>
+                                                                        <div className="flex items-center gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                                                                            <Link href={`/report/${r.id}`} className="text-xs font-bold px-3 py-1.5 bg-zinc-800 hover:bg-emerald-900/50 hover:text-emerald-400 rounded text-zinc-300 transition-colors">
+                                                                                VIEW
+                                                                            </Link>
+                                                                            <button onClick={() => handleDelete(r.id)} className="p-1.5 text-zinc-600 hover:text-rose-500 hover:bg-rose-500/10 rounded transition-colors">
+                                                                                <Trash2 className="w-4 h-4" />
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Category: Earnings */}
+                                                    {folderData.earnings.length > 0 && (
+                                                        <div className="py-4 border-l border-zinc-800 ml-3 pl-6 relative">
+                                                            <div className="absolute top-8 -left-px w-4 h-px bg-zinc-800"></div>
+                                                            <h4 className="flex items-center gap-2 text-amber-500/70 font-bold text-sm tracking-widest uppercase mb-4">
+                                                                <TrendingUp className="w-4 h-4 text-amber-500/50" /> Earnings & Guidance
+                                                            </h4>
+                                                            <div className="space-y-2">
+                                                                {folderData.earnings.map((r: any) => (
+                                                                    <div key={r.id} className="flex items-center justify-between p-3 bg-black border border-zinc-800 rounded-lg hover:border-amber-500/50 group transition-all mr-6">
+                                                                        <div className="flex items-center gap-4">
+                                                                            <span className="px-2 py-1 flex items-center justify-center font-mono font-bold text-xs rounded border border-amber-500/30 bg-amber-500/10 text-amber-400">
+                                                                                {r.quarter || "N/A"}
+                                                                            </span>
+                                                                            <span className="text-zinc-500 font-mono text-xs">
+                                                                                ID: {r.id}
+                                                                            </span>
+                                                                        </div>
+                                                                        <div className="flex items-center gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                                                                            <button onClick={() => handleDelete(r.id)} className="p-1.5 text-zinc-600 hover:text-rose-500 hover:bg-rose-500/10 rounded transition-colors">
+                                                                                <Trash2 className="w-4 h-4" />
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                });
+                            })()}
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            <div className="text-center pt-8 pb-12">
+                <Link href="/" className="text-zinc-500 hover:text-[#00FF41] hover:underline font-mono text-sm transition-colors">
+                    &larr; Return to Public Dashboard
+                </Link>
             </div>
         </div>
     );

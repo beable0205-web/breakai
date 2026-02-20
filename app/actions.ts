@@ -3,10 +3,12 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { supabase } from "./lib/supabase";
 
-export async function analyzeTicker(ticker: string) {
+export async function analyzeTicker(ticker: string, reportType: "research" | "earnings" = "research", quarter: string = "") {
     // 1. 비밀 금고(.env.local)에서 키 꺼내기
     const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) return "Error: API Key not found. (키를 못 찾겠어요!)";
+    // Add dynamically current Date to anchor the AI to the live present timeline
+    const today = new Date().toISOString().split('T')[0];
+    if (!apiKey) return "Error: API Key not found.";
 
     // 2. 제미나이 연결
     const genAI = new GoogleGenerativeAI(apiKey);
@@ -20,68 +22,109 @@ export async function analyzeTicker(ticker: string) {
 
     // Priority Model List
     const modelsToTry = [
-        "gemini-2.5-flash",
-        "gemini-2.0-flash",
-        "gemini-1.5-flash",
-        "gemini-2.0-flash-lite-001"
+        "gemini-2.5-flash"
     ];
 
     // Log to capture errors for each model
-    let errorLog = [];
+    let errorLog: string[] = [];
 
-    const prompt = `
-    You are a legendary "Forensic Accountant" & "Short Seller" (like Muddy Waters or Hindenburg Research).
-    Your goal is to assign a "Risk Score" (0-100) to the target company: ${ticker}.
+    // Dual-Mode Prompt Definitions
+    const researchPrompt = `
+    You are a top-tier Wall Street proprietary trader and analyst who perfectly combines Fundamental Analysis with Technical Analysis (Tracking Smart Money).
+    Your goal is to assign an "Investment Score" (0-100) to the target company: ${ticker}.
+
+    **STRICT TEMPORAL ANCHOR (CRITICAL)**:
+    **CURRENT DATE (CRITICAL): The current date today is ${today}. All data, financial analysis, quarter reports, and trend projections MUST be calculated up to ${today}. Do NOT use 2024 data. YOU ARE IN THE YEAR 2026. USE THE LATEST AVAILABLE DATA UP TO ${today}.**
+    - **TODAY IS ${today}. YOU ARE IN THE YEAR 2026.**
+    - All of your analytics, fundamental health checks, trailing twelves months (TTM), and macro context MUST reflect the reality up to and including **${today}**.
+    - DO NOT use old data from 2024. Pull the most recent earnings, the most recent product releases, and the absolute latest market conditions.
 
     **STRICT SOURCE REQUIREMENT**:
-    - Use \`Google Search\` to find:
-      1. Latest 10-K/10-Q Financials (Cash Flow, Debt, Revenue).
-      2. Recent CEO/CFO Quotes from Earnings Calls (The "Promise").
-      3. Insider Trading Data (Net Buy/Sell last 6 months).
-      4. Valuation Metrics (Current P/E vs 5yr Avg).
+    - Use \`Google Search\` to find the absolute latest real-time data and news for ${ticker} up to ${today}.
 
-    **SCORING ALGORITHM (Sum these 4 factors to get 'risk_score'):**
-    1. **Divergence (Max 40 pts):**
-       - 0 pts: CEO claims match reality.
-       - 20 pts: Minor exaggeration.
-       - 40 pts: Direct contradiction (The "Lie").
-    2. **Solvency (Max 30 pts):**
-       - 0 pts: Strong Cash Flow & Low Debt.
-       - 15 pts: Flat Cash Flow or Rising Debt.
-       - 30 pts: Negative Operating Cash Flow OR spiraling Debt.
-    3. **Insider Sentiment (Max 20 pts):**
-       - 0 pts: Net Buying or neutral.
-       - 20 pts: Significant Net Insider Selling (> $5M recent).
-    4. **Valuation (Max 10 pts):**
-       - 0 pts: Undervalued/Fair.
-       - 10 pts: Overvalued (e.g., P/E > 50 or >2x historical avg).
+    **OUTPUT FORMAT (CRITICAL)**:
+    You MUST structure your response into TWO distinct parts to completely prevent JSON parsing errors.
 
+    **PART 1: JSON METRICS**
+    Provide the scores and summary strictly in valid JSON wrapped in a \`\`\`json code block. Do NOT include the detailed report in this JSON.
+    \`\`\`json
+    {
+      "investment_score": {
+        "total": 85,
+        "breakdown": [
+          { "category": "Fundamental Health", "score": 22, "max_score": 25, "reason": "Stable turnaround." },
+          { "category": "Technical Trend", "score": 24, "max_score": 25, "reason": "Stage 3 markup." },
+          { "category": "Valuation", "score": 15, "max_score": 25, "reason": "High P/E." },
+          { "category": "Momentum", "score": 24, "max_score": 25, "reason": "Institutional buying." }
+        ]
+      },
+      "verdict": "BUY",
+      "executive_summary": "4 high-impact bullet points summarizing the core fundamental thesis.",
+      "bull_case_summary": "2 sharp sentences on why this stock will explode upwards.",
+      "bear_case_summary": "2 sharp sentences on the existential threat that could crush this stock."
+    }
+    \`\`\`
+
+    **PART 2: DETAILED REPORT (MARKDOWN)**
+    Immediately below the JSON block, write the 10-chapter Detailed Report in standard Markdown.
+    - Provide deep, expansive analysis, analogies, and specific data points. (Aim for 150-200 words per chapter).
+    - **CRITICAL FORMATTING INSTRUCTIONS (Readability)**: 
+      1. Format the report to look like a premium **Wall Street Journal** newsletter.
+      2. You MUST use frequent **DOUBLE NEWLINES** to break apart paragraphs. Never write giant walls of text. Make the text highly readable for subscribers constraint to 3-4 sentences per paragraph.
+      3. Use rich markdown: **Bold** key metrics, utilize bullet point lists, and use blockquotes (\`>\`) to highlight key takeaways.
+    - **Chapter 8**: Identify EMAs, Base Building, 4-Stage Cycle, and Bear Traps concisely.
+    - **CRITICAL**: The output MUST be strictly in ENGLISH.
+
+    # Table of Contents
+    Prologue: Welcome to the World of Investing
+    ## Chapter 1. Financial Health Checkup
+    ## Chapter 2. Industry Analysis
+    ## Chapter 3. Why This Company?
+    ## Chapter 4. 10-K Breakdown
+    ## Chapter 5. Business Model Analysis
+    ## Chapter 6. Core Competitive Advantage
+    ## Chapter 7. Top Catalysts
+    ## Chapter 8. Technical Analysis: Smart Money Tracks 🎯
+    ## Chapter 9. Potential Risks
+    ## Chapter 10. Valuation
+    [Outro] Epilogue: Investing with Conviction
+    `;
+
+    const earningsPrompt = `
+    You are a top-tier Wall Street Equity Research Analyst focusing on earnings performance.
+    Your goal is to parse and evaluate the specific ${quarter} earnings report for the target company: ${ticker}.
+    The analyst needs critical Q-o-Q, Y-o-Y growth numbers, and Forward Guidance immediately summarized without hallucinations.
+    
+    **STRICT TEMPORAL ANCHOR (CRITICAL)**:
+    - **TODAY IS ${today}. YOU ARE IN THE YEAR 2026.**
+    - Only report on the absolutely most recently closed Quarter before ${today}.
+    
+    **STRICT SOURCE REQUIREMENT**:
+    - Use \`Google Search\` to pull the exact Wall Street consensus estimates AND the resulting actual figures for the ${quarter} earnings release for ${ticker}.
+
+    **OUTPUT CONSTRAINTS (CRITICAL)**:
+    - Output strictly in valid **JSON format**. NO MARKDOWN OUTSIDE THE JSON BLOCK.
+    - DO NOT generate a 10-chapter markdown report for this task.
+    - Ensure all numbers are precise strings (e.g. "1.24", "$25.4B").
+    - **CRITICAL: You are writing JSON. YOU MUST ESCAPE ALL NEWLINES AS \\n AND ALL DOUBLE QUOTES AS \\" INSIDE STRING VALUES! DO NOT USE LITERAL NEWLINES IN THE MARKDOWN FIELD!**
+    
     **OUTPUT JSON STRUCTURE:**
     {
-      "risk_score": 85,
-      "verdict": "SELL",
-      "score_breakdown": {
-        "divergence": 35,
-        "solvency": 30,
-        "insider": 15,
-        "valuation": 5
-      },
-      "one_line_summary": "CEO promised X, but Cash Flow is Y. Insiders are dumping.",
-      "ceo_claim": "CEO stated: '...'",
-      "reality_check": "Fact: ...",
-      "financial_table": {
-        "revenue_trend": "Down 5% YoY",
-        "net_income_trend": "Down 12% YoY",
-        "cash_flow": "-$200M (Negative)",
-        "debt_to_equity": "High (2.5x)"
-      },
-      "detailed_report": "# Investment Memo: [Ticker] Short Thesis\\n\\n## 1. Executive Summary\\n... (Summarize the 4 factors)\\n\\n## 2. Forensic Analysis\\n... (Deep dive into Divergence & Solvency)\\n\\n## 3. Insider Activity\\n...\\n\\n## 4. Conclusion\\n..."
+        "actual_eps": 1.25,
+        "est_eps": 1.10,
+        "actual_rev": "25.1B",
+        "est_rev": "24.5B",
+        "guidance_summary": "Management raised full-year guidance by 150 basis points citing accelerated AI adoption.",
+        "ai_interpretation": "BULLISH SIGNAL. The strong double-beat combined with raised guidance indicates durable pricing power.",
+        "verdict": "BUY",
+        "executive_summary": "Double beat on EPS and Revenue with strong forward guidance raised.",
+        "investment_score": { "total": 90 }
     }
-
-    **IMPORTANT**: 
-    - Output strictly in valid **JSON format**. 
-    - 'detailed_report' must be Markdown.
+    
+    CRITICAL INSTRUCTION: You must output ONLY valid, raw JSON. Do NOT wrap the JSON in markdown formatting or code blocks. Do NOT include any conversational text or explanations outside the JSON.
     `;
+
+    const prompt = reportType === "earnings" ? earningsPrompt : researchPrompt;
 
     for (const modelName of modelsToTry) {
         try {
@@ -100,28 +143,62 @@ export async function analyzeTicker(ticker: string) {
             // Debug logging
             console.log(`Model ${modelName} raw response length:`, text.length);
 
-            // Robust JSON Extraction
-            const jsonMatch = text.match(/\{[\s\S]*\}/);
-            if (!jsonMatch) {
-                throw new Error("No JSON found in response");
+            let jsonString = "";
+            let finalMarkdown = "";
+
+            if (reportType === "research") {
+                // Safely extract the JSON block from the mixed response
+                const jsonMatch = text.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/) || text.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) {
+                    throw new Error("No JSON block found in research response");
+                }
+
+                jsonString = jsonMatch[1] || jsonMatch[0];
+
+                // Extract everything that IS NOT the JSON string to form the robust markdown body
+                finalMarkdown = text.replace(jsonMatch[0], '').trim();
+
+            } else {
+                // Earnings are entirely JSON, use robust cleanup
+                let cleanText = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+                const start = cleanText.indexOf('{');
+                const end = cleanText.lastIndexOf('}');
+                if (start !== -1 && end !== -1) {
+                    cleanText = cleanText.substring(start, end + 1);
+                }
+                const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) throw new Error("No JSON found in earnings response");
+                jsonString = jsonMatch[0];
             }
-            const jsonString = jsonMatch[0];
 
             if (jsonString.includes("SOURCE_DATA_MISSING")) {
-                return "Error: SOURCE_DATA_MISSING. (최신 데이터를 찾을 수 없습니다. 티커를 확인해주세요.)";
+                return "Error: SOURCE_DATA_MISSING. (Cannot find latest data. Please check ticker.)";
             }
 
             let analysis;
             try {
                 analysis = JSON.parse(jsonString);
                 console.log(`Parsed JSON keys:`, Object.keys(analysis)); // Validating keys
-                if (!analysis.detailed_report || !analysis.score_breakdown) {
-                    throw new Error("Missing required fields (detailed_report or score_breakdown)");
+
+                if (reportType === "research") {
+                    if (!analysis.executive_summary) {
+                        throw new Error("Missing executive_summary");
+                    }
+                    // Handle edge cases where LLM ignored instructions and put markdown inside JSON
+                    if (analysis.detailed_report_markdown && finalMarkdown.length < 100) {
+                        finalMarkdown = analysis.detailed_report_markdown;
+                    }
+                    // Append the dynamic scores directly to the safe markdown payload
+                    finalMarkdown += '\n\n<!-- SCORE_BREAKDOWN: ' + JSON.stringify(analysis.investment_score) + ' -->';
+                } else {
+                    if (!analysis.actual_eps || !analysis.guidance_summary) {
+                        throw new Error("Missing required earnings fields");
+                    }
                 }
-            } catch (e) {
+            } catch (e: any) {
                 console.error(`JSON Parse/Validation Error (${modelName}):`, e);
-                console.error("Failed JSON Text snippet:", jsonString.substring(0, 200));
-                errorLog.push(`${modelName}: JSON Parse/Validation Error`);
+                console.error("Failed JSON Text snippet:", jsonString.substring(0, 300));
+                errorLog.push(`${modelName}: JSON Parse error - ${e.message}`);
                 continue;
             }
 
@@ -129,18 +206,19 @@ export async function analyzeTicker(ticker: string) {
                 .from('reports')
                 .insert({
                     ticker: ticker.toUpperCase(),
-                    risk_score: analysis.risk_score,
-                    verdict: analysis.verdict,
-                    ceo_claim: analysis.ceo_claim,
-                    reality_check: analysis.reality_check,
-                    one_line_summary: analysis.one_line_summary,
-                    detailed_report: analysis.detailed_report,
-                    score_breakdown: analysis.score_breakdown, // New JSONB field
-                    financial_table: analysis.financial_table, // New JSONB field
+                    risk_score: analysis.investment_score?.total || 50,
+                    verdict: analysis.verdict || "HOLD",
+                    one_line_summary: analysis.executive_summary,
+                    detailed_report: finalMarkdown,
                     analysis_text: JSON.stringify(analysis),
+                    report_type: reportType,
+                    quarter: quarter || null
                 });
 
-            if (error) console.error("Supabase Save Error:", error);
+            if (error) {
+                console.error("Supabase Save Error:", error);
+                return `Error: Failed to save to Database - ${error.message}`;
+            }
 
             return JSON.stringify(analysis);
 
@@ -149,7 +227,7 @@ export async function analyzeTicker(ticker: string) {
             errorLog.push(`${modelName}: ${error.message}`);
 
             if (error.message?.includes("API key")) {
-                return "Error: API Key Invalid. (키를 확인해주세요)";
+                return "Error: API Key Invalid.";
             }
 
             if (!error.message?.includes("429")) {
@@ -160,5 +238,5 @@ export async function analyzeTicker(ticker: string) {
     }
 
     // Return detailed error log to user
-    return `Error: 모든 모델 분석 실패.\n\n[Details]\n${errorLog.join("\n")}`;
+    return `Error: All models failed to analyze.\n\n[Details]\n${errorLog.join("\n")}`;
 }
