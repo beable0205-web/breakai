@@ -7,6 +7,7 @@ import remarkBreaks from 'remark-breaks';
 import ScoreGauge from "../../../components/ScoreGauge";
 import TradingViewWidget from "../../../components/TradingViewWidget";
 import CheckoutButton from "../../components/CheckoutButton";
+import { createClient } from "../../../utils/supabase/server";
 
 // Force dynamic rendering since we are fetching data that changes
 export const dynamic = "force-dynamic";
@@ -49,7 +50,8 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
     else if (scoreObj.total <= 30) scoreColor = "text-red-500"; // Low score is bad/sell
 
     // Check if the current user is the admin to bypass the paywall
-    const { data: { session } } = await supabase.auth.getSession();
+    const supabaseServer = await createClient();
+    const { data: { session } } = await supabaseServer.auth.getSession();
     const isAdmin = session?.user?.email === "beable9489@gmail.com";
 
     // Regular Paywall logic + Admin Bypass
