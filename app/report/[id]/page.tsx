@@ -67,7 +67,6 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
                                 src={report.ticker === 'TSLA' ? 'https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png' : `https://logo.clearbit.com/${report.ticker.toLowerCase()}.com`}
                                 alt={`${report.ticker} logo`}
                                 className="w-16 h-16 rounded-2xl object-contain bg-white p-2 shadow-lg"
-                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
                             />
                             <h1 className="text-6xl font-black tracking-tighter">
                                 {report.ticker === 'TSLA' ? 'TESLA' : report.ticker} <span className="text-4xl text-zinc-600">({report.ticker})</span>

@@ -60,9 +60,6 @@ export default async function CompanyHubPage({ params }: { params: Promise<{ tic
                             src={ticker === 'TSLA' ? 'https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png' : logoUrl}
                             alt={`${ticker} logo`}
                             className="w-20 h-20 rounded-2xl object-contain bg-white p-2 shadow-lg"
-                            onError={(e) => {
-                                e.currentTarget.src = `https://ui-avatars.com/api/?name=${ticker}&background=27272a&color=fff&bold=true&rounded=true`;
-                            }}
                         />
                         <div>
                             <h1 className="text-5xl font-black tracking-tighter text-white mb-1">
