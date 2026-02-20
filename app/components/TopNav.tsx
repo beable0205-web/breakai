@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "../lib/supabase";
+import { createClient } from "../../utils/supabase/client";
 import AuthModal from "./AuthModal";
 import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
@@ -9,6 +9,8 @@ import type { User } from "@supabase/supabase-js";
 export default function TopNav() {
     const [user, setUser] = useState<User | null>(null);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+    const supabase = createClient();
 
     useEffect(() => {
         // Initialize active session

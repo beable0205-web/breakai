@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "../lib/supabase";
+import { createClient } from "../../utils/supabase/client";
+
 import { X, Loader2, Mail, Lock } from "lucide-react";
 
 interface AuthModalProps {
@@ -12,6 +13,7 @@ interface AuthModalProps {
 export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
+    const supabase = createClient();
 
     if (!isOpen) return null;
 
