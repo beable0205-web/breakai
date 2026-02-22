@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, Activity } from "lucide-react";
 import TradingViewWidget from "../../../components/TradingViewWidget";
 import HubTabs from "../../components/HubTabs";
+import ReportCard from "../../components/ReportCard";
 
 // Ensure dynamic fetching so pricing/reports are fresh
 export const revalidate = 0;
@@ -11,12 +12,20 @@ export default async function CompanyHubPage({ params }: { params: Promise<{ tic
     const { ticker: rawTicker } = await params;
     const ticker = decodeURIComponent(rawTicker).toUpperCase();
 
-    // 1. Fetch all reports for this specific ticker (including new dual-mode columns)
+    // 1. Fetch all reports for this specific ticker (Fetch ALL columns to populate ReportCard)
     const { data: reports, error } = await supabase
         .from('reports')
-        .select('id, ticker, risk_score, created_at, verdict, report_type, quarter, analysis_text')
+        .select('*')
         .eq('ticker', ticker)
         .order('created_at', { ascending: false });
+
+    // Separate newest research report from the rest
+    const researchReports = (reports || []).filter(r => !r.report_type || r.report_type === "research");
+    const earningsReports = (reports || []).filter(r => r.report_type === "earnings");
+
+    const latestResearch = researchReports.length > 0 ? researchReports[0] : null;
+    const archivedResearch = researchReports; // Show all reports in the archive tab, including the easiest one
+    const archiveReportsForTabs = [...archivedResearch, ...earningsReports];
 
     // 2. Fetch Live Price Data from Yahoo Finance v8 Chart
     let livePrice = 0;
@@ -84,9 +93,21 @@ export default async function CompanyHubPage({ params }: { params: Promise<{ tic
                         </div>
                     </div>
                 </header>
+            </div>
 
-                {/* Securely Bound TradingView Widget */}
-                <section className="w-full h-[450px] rounded-xl overflow-hidden border border-zinc-800 bg-[#131722] shadow-inner relative z-10">
+            {/* LATEST AI ANALYSIS (PROMINENT DISPLAY) */}
+            {latestResearch ? (
+                <div className="mt-12">
+                    <h2 className="text-2xl font-black text-white mb-6 flex items-center gap-3">
+                        <span className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.8)] animate-pulse"></span>
+                        Latest AI Analysis
+                    </h2>
+                    {/* Re-use our beautiful ReportCard component! */}
+                    <ReportCard report={latestResearch} />
+                </div>
+            ) : (
+                /* Securely Bound TradingView Widget Backup */
+                <section className="mt-8 w-full h-[450px] rounded-xl overflow-hidden border border-zinc-800 bg-[#131722] shadow-inner relative z-10">
                     <div className="absolute top-4 left-4 z-20 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-zinc-700 shadow-lg">
                         <span className="text-[10px] text-emerald-400 font-mono tracking-widest uppercase">Live Technical Analysis</span>
                     </div>
@@ -95,10 +116,13 @@ export default async function CompanyHubPage({ params }: { params: Promise<{ tic
                         <TradingViewWidget ticker={ticker} />
                     </div>
                 </section>
-            </div>
+            )}
 
-            {/* MIDDLE SECTION: Interactive Tabs (Client Component) */}
-            <HubTabs ticker={ticker} reports={reports || []} />
+            {/* MIDDLE SECTION: Interactive Tabs (Archive & Earnings) */}
+            <div className="mt-16">
+                <h2 className="text-2xl font-black text-white mb-6">Historical Archives & Earnings</h2>
+                <HubTabs ticker={ticker} reports={archiveReportsForTabs} />
+            </div>
         </div>
     );
 }

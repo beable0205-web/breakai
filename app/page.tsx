@@ -63,6 +63,13 @@ export default async function Home() {
     };
   });
 
+  // Sort exactly to put NVDA first
+  trendingStocks.sort((a, b) => {
+    if (a.ticker === 'NVDA') return -1;
+    if (b.ticker === 'NVDA') return 1;
+    return 0;
+  });
+
   return (
     <div className="max-w-5xl mx-auto space-y-12 mt-10 p-4 font-mono text-gray-100">
       {/* Grand Hero Section */}

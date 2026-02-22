@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google"; // Changed font
 import "./globals.css";
 import TopNav from "./components/TopNav";
+import DisableCopy from "@/components/DisableCopy";
 
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"] }); // Initialize font
 
@@ -18,6 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${jetbrainsMono.className} bg-black text-white antialiased`}>
+        <DisableCopy />
         <div className="min-h-screen flex flex-col">
           {/* Header */}
           <TopNav />

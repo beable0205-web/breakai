@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Upload, AlertTriangle, Loader2, Trash2, Database, ShieldAlert, Folder, FolderOpen, ChevronRight, FileText, TrendingUp, Calendar } from "lucide-react";
+import { Search, Upload, AlertTriangle, Loader2, Trash2, Database, ShieldAlert, Folder, FolderOpen, ChevronRight, FileText, TrendingUp, Calendar, Users, Star, UserCircle, BadgeCheck } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { analyzeTicker } from "../actions";
@@ -23,6 +23,10 @@ export default function AdminPage() {
     const [fetchingReports, setFetchingReports] = useState(true);
     const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
 
+    // For user management
+    const [profiles, setProfiles] = useState<any[]>([]);
+    const [fetchingProfiles, setFetchingProfiles] = useState(true);
+
     const toggleFolder = (t: string) => {
         setOpenFolders(prev => ({ ...prev, [t]: !prev[t] }));
     };
@@ -31,7 +35,7 @@ export default function AdminPage() {
         setFetchingReports(true);
         const { data, error } = await supabase
             .from('reports')
-            .select('id, ticker, risk_score, created_at')
+            .select('id, ticker, risk_score, created_at, report_type, quarter')
             .order('created_at', { ascending: false });
 
         if (!error && data) {
@@ -49,6 +53,17 @@ export default function AdminPage() {
             if (email === "beable9489@gmail.com") {
                 setIsAuthorized(true);
                 fetchReports();
+
+                // Fetch Users
+                setFetchingProfiles(true);
+                try {
+                    const res = await fetch('/api/admin/users');
+                    const data = await res.json();
+                    if (data.users) setProfiles(data.users);
+                } catch (e) {
+                    console.error("Failed to fetch users");
+                }
+                setFetchingProfiles(false);
             } else {
                 setIsAuthorized(false);
                 setTimeout(() => {
@@ -367,6 +382,73 @@ export default function AdminPage() {
                                     );
                                 });
                             })()}
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* User Management Database */}
+            <div className="bg-[#111] border border-[#333] rounded-xl overflow-hidden shadow-2xl mb-20">
+                <div className="p-6 border-b border-[#333] flex justify-between items-center bg-[#151515]">
+                    <h2 className="text-xl font-bold flex items-center text-white">
+                        <Users className="w-5 h-5 mr-3 text-amber-500" />
+                        User Management & Subscriptions
+                    </h2>
+                    <span className="text-zinc-500 font-mono text-sm">{profiles.length} Registered Users</span>
+                </div>
+
+                <div className="bg-[#09090b]">
+                    {fetchingProfiles ? (
+                        <div className="p-12 text-center text-zinc-500">
+                            <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3" />
+                            Loading user profiles...
+                        </div>
+                    ) : profiles.length === 0 ? (
+                        <div className="p-12 text-center text-zinc-500">
+                            <UserCircle className="w-10 h-10 mx-auto mb-4 opacity-50" />
+                            No user records found.
+                        </div>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left text-sm whitespace-nowrap">
+                                <thead className="bg-[#18181b] border-b border-[#333]">
+                                    <tr>
+                                        <th className="px-6 py-4 font-mono text-zinc-500 uppercase tracking-widest text-xs font-bold">User Email</th>
+                                        <th className="px-6 py-4 font-mono text-zinc-500 uppercase tracking-widest text-xs font-bold">Status</th>
+                                        <th className="px-6 py-4 font-mono text-zinc-500 uppercase tracking-widest text-xs font-bold">Subscription ID</th>
+                                        <th className="px-6 py-4 font-mono text-zinc-500 uppercase tracking-widest text-xs font-bold text-right">Registered On</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-zinc-800">
+                                    {profiles.map((user) => (
+                                        <tr key={user.id} className="hover:bg-zinc-900/50 transition-colors">
+                                            <td className="px-6 py-4 text-white flex items-center gap-3">
+                                                <UserCircle className={`w-5 h-5 ${user.is_pro ? 'text-amber-500' : 'text-zinc-500'}`} />
+                                                <span className="font-bold">{user.email}</span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {user.is_pro ? (
+                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400 font-black text-xs uppercase tracking-wider">
+                                                        <Star className="w-3 h-3 fill-amber-400" /> Pro Member
+                                                    </span>
+                                                ) : (
+                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-zinc-800 border border-zinc-700 text-zinc-400 font-bold text-xs uppercase tracking-wider">
+                                                        Free Active
+                                                    </span>
+                                                )}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="text-zinc-500 font-mono text-xs">{user.subscription_id || '-'}</span>
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <span className="text-zinc-400 font-mono text-xs border border-zinc-800 bg-black px-2 py-1 rounded">
+                                                    {new Date(user.created_at).toLocaleString()}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     )}
                 </div>

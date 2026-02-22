@@ -48,16 +48,20 @@ export default function ReportCard({ report }: ReportCardProps) {
     }
 
     // Fallback: parse analysis_text directly if comment regex fails
-    if (scoreBreakdown.length === 0 && report.analysis_text) {
+    let parsedAnalysis: any = {};
+    if (report.analysis_text) {
         try {
-            const parsed = typeof report.analysis_text === 'string' ? JSON.parse(report.analysis_text) : report.analysis_text;
-            if (parsed?.investment_score?.breakdown) {
-                scoreBreakdown = parsed.investment_score.breakdown;
+            parsedAnalysis = typeof report.analysis_text === 'string' ? JSON.parse(report.analysis_text) : report.analysis_text;
+            if (scoreBreakdown.length === 0 && parsedAnalysis?.investment_score?.breakdown) {
+                scoreBreakdown = parsedAnalysis.investment_score.breakdown;
             }
         } catch (e) {
             console.error("Failed to parse analysis_text", e);
         }
     }
+
+    const bullCase = report.bull_case_summary || parsedAnalysis?.bull_case_summary || report.ceo_claim || parsedAnalysis?.ceo_claim || "No data available.";
+    const bearCase = report.bear_case_summary || parsedAnalysis?.bear_case_summary || report.reality_check || parsedAnalysis?.reality_check || "No data available.";
 
     return (
         <div className="bg-[#18181b] border border-[#27272a] rounded-2xl overflow-hidden shadow-2xl font-sans mb-8 transition-all hover:border-[#3f3f46]">
@@ -156,7 +160,7 @@ export default function ReportCard({ report }: ReportCardProps) {
                         THE BULL CASE
                     </h4>
                     <p className="text-zinc-400 text-sm leading-relaxed">
-                        {report.bull_case_summary || report.ceo_claim || "No data available."}
+                        {bullCase}
                     </p>
                 </div>
 
@@ -167,7 +171,7 @@ export default function ReportCard({ report }: ReportCardProps) {
                         THE BEAR CASE
                     </h4>
                     <p className="text-zinc-400 text-sm leading-relaxed">
-                        {report.bear_case_summary || report.reality_check || "No data available."}
+                        {bearCase}
                     </p>
                 </div>
 
@@ -188,7 +192,7 @@ export default function ReportCard({ report }: ReportCardProps) {
                             onClick={() => setExpanded(!expanded)}
                             className="w-full py-4 text-xs font-bold text-zinc-500 hover:text-white hover:bg-[#18181b] transition-all uppercase tracking-widest flex items-center justify-center gap-2"
                         >
-                            {expanded ? "Deep research" : "Read Full Investment Memo"}
+                            {expanded ? "Close Deep Research" : "Read Deep Research Memo"}
                             <span className="text-[10px]">{expanded ? "▲" : "▼"}</span>
                         </button>
                         {expanded && (

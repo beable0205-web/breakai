@@ -4,6 +4,18 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { supabase } from "./lib/supabase";
 
 export async function analyzeTicker(ticker: string, reportType: "research" | "earnings" = "research", quarter: string = "") {
+    // PRE-VALIDATION: Check if ticker exists via Yahoo Finance API
+    try {
+        const queryTicker = ticker === "LNK" ? "LINK-USD" : ticker;
+        const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${queryTicker}?interval=1d&range=1d`, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+        const data = await res.json();
+        if (data?.chart?.error?.code === "Not Found" || data?.chart?.error?.description?.includes("delisted")) {
+            return "Error: Invalid Ticker. The specified ticker does not exist or is delisted.";
+        }
+    } catch (err) {
+        console.error("Ticker validation fetch failed, proceeding anyway...", err);
+    }
+
     // 1. 비밀 금고(.env.local)에서 키 꺼내기
     const apiKey = process.env.GEMINI_API_KEY;
     // Add dynamically current Date to anchor the AI to the live present timeline
