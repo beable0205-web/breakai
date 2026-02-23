@@ -27,14 +27,23 @@ export default async function CompanyHubPage({ params }: { params: Promise<{ tic
     const archivedResearch = researchReports; // Show all reports in the archive tab, including the easiest one
     const archiveReportsForTabs = [...archivedResearch, ...earningsReports];
 
-    // 2. Fetch Live Price Data from Yahoo Finance v8 Chart
     let livePrice = 0;
     let changePercent = 0;
+
+    // Analyst Consensus Data
+    let targetMeanPrice = 0;
+    let analystCount = 0;
+
     const queryTicker = ticker === "LNK" ? "LINK-USD" : ticker;
     const url = `https://query1.finance.yahoo.com/v8/finance/chart/${queryTicker}?interval=1d&range=1d`;
+    const targetUrl = `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${queryTicker}?modules=financialData`;
 
     try {
-        const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' }, next: { revalidate: 60 } });
+        const [res, targetRes] = await Promise.all([
+            fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' }, next: { revalidate: 60 } }),
+            fetch(targetUrl, { headers: { 'User-Agent': 'Mozilla/5.0' }, next: { revalidate: 3600 } })
+        ]);
+
         if (res.ok) {
             const data = await res.json();
             const meta = data?.chart?.result?.[0]?.meta;
@@ -44,12 +53,31 @@ export default async function CompanyHubPage({ params }: { params: Promise<{ tic
                 changePercent = ((livePrice - prev) / prev) * 100;
             }
         }
+
+        if (targetRes.ok) {
+            const targetData = await targetRes.json();
+            const finData = targetData?.quoteSummary?.result?.[0]?.financialData;
+            if (finData) {
+                targetMeanPrice = finData.targetMeanPrice?.raw || 0;
+                analystCount = finData.numberOfAnalystOpinions?.raw || 0;
+            }
+        }
+
     } catch (err) {
         console.error("Failed to fetch yahoo finance data strictly for hub:", err);
     }
 
     const isPositive = changePercent >= 0;
     const colorClass = isPositive ? "text-emerald-400" : "text-rose-400";
+
+    // Analyst Upside Math
+    let upsidePercent = 0;
+    if (livePrice > 0 && targetMeanPrice > 0) {
+        upsidePercent = ((targetMeanPrice - livePrice) / livePrice) * 100;
+    }
+    const isTargetPositive = upsidePercent >= 0;
+    const targetColorClass = isTargetPositive ? "text-emerald-400" : "text-rose-400";
+
     const logoUrl = `https://logo.clearbit.com/${ticker.toLowerCase()}.com`;
 
     return (
@@ -80,17 +108,41 @@ export default async function CompanyHubPage({ params }: { params: Promise<{ tic
                         </div>
                     </div>
 
-                    <div className="text-left md:text-right bg-black/50 p-4 rounded-xl border border-zinc-800 backdrop-blur-sm relative overflow-hidden">
-                        <div className={`absolute left-0 top-0 w-1 h-full ${isPositive ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
-                        <p className="text-xs text-zinc-500 uppercase tracking-widest font-bold mb-1 ml-2">Real-Time Market Data</p>
-                        <div className="flex items-baseline md:justify-end gap-3 ml-2">
-                            <h2 className="text-4xl font-black text-white font-mono">
-                                ${livePrice ? livePrice.toFixed(2) : "0.00"}
-                            </h2>
-                            <span className={`font-mono text-lg font-bold ${colorClass}`}>
-                                {isPositive ? "+" : ""}{changePercent ? changePercent.toFixed(2) : "0.00"}%
-                            </span>
+                    <div className="flex flex-col gap-3">
+                        {/* Current Market Price Block */}
+                        <div className="text-left md:text-right bg-black/50 p-4 rounded-xl border border-zinc-800 backdrop-blur-sm relative overflow-hidden">
+                            <div className={`absolute left-0 top-0 w-1 h-full ${isPositive ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
+                            <p className="text-xs text-zinc-500 uppercase tracking-widest font-bold mb-1 ml-2">Real-Time Market Data</p>
+                            <div className="flex items-baseline md:justify-end gap-3 ml-2">
+                                <h2 className="text-4xl font-black text-white font-mono">
+                                    ${livePrice ? livePrice.toFixed(2) : "0.00"}
+                                </h2>
+                                <span className={`font-mono text-lg font-bold ${colorClass}`}>
+                                    {isPositive ? "+" : ""}{changePercent ? changePercent.toFixed(2) : "0.00"}%
+                                </span>
+                            </div>
                         </div>
+
+                        {/* Analyst Consensus Target Block */}
+                        {targetMeanPrice > 0 && (
+                            <div className="text-left md:text-right bg-indigo-950/20 p-4 rounded-xl border border-indigo-900/50 backdrop-blur-sm relative overflow-hidden group hover:bg-indigo-900/40 transition-colors">
+                                <div className={`absolute left-0 top-0 w-1 h-full ${isTargetPositive ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
+                                <div className="flex items-center md:justify-end gap-2 mb-1 ml-2">
+                                    <p className="text-xs text-indigo-400 uppercase tracking-widest font-bold">Analyst Consensus</p>
+                                    <span className="bg-indigo-900/50 border border-indigo-500/30 text-indigo-300 text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold">
+                                        {analystCount} RATINGS
+                                    </span>
+                                </div>
+                                <div className="flex items-baseline md:justify-end gap-3 ml-2">
+                                    <h2 className="text-2xl font-black text-white font-mono">
+                                        ${targetMeanPrice.toFixed(2)}
+                                    </h2>
+                                    <span className={`font-mono text-sm font-bold bg-[#111] px-2 py-0.5 rounded border border-zinc-800 ${targetColorClass}`}>
+                                        {isTargetPositive ? "+" : ""}{upsidePercent.toFixed(2)}% UPSIDE
+                                    </span>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </header>
             </div>
