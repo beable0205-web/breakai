@@ -184,22 +184,17 @@ export default function ReportCard({ report }: ReportCardProps) {
 
             </div>
 
-            {/* Footer: Expand Button */}
+    // Footer: Link to Full Report
             {
                 report.detailed_report && (
                     <div className="border-t border-[#27272a] bg-[#09090b]">
-                        <button
-                            onClick={() => setExpanded(!expanded)}
+                        <a
+                            href={`/report/${report.id}`}
                             className="w-full py-4 text-xs font-bold text-zinc-500 hover:text-white hover:bg-[#18181b] transition-all uppercase tracking-widest flex items-center justify-center gap-2"
                         >
-                            {expanded ? "Close Deep Research" : "Read Deep Research Memo"}
-                            <span className="text-[10px]">{expanded ? "▲" : "▼"}</span>
-                        </button>
-                        {expanded && (
-                            <div className="p-8 md:p-12 prose prose-invert prose-zinc max-w-none border-t border-[#27272a] bg-[#09090b]">
-                                <ReactMarkdown>{report.detailed_report.replace(/<!--[\s\S]*?-->/g, '')}</ReactMarkdown>
-                            </div>
-                        )}
+                            Read Full Deep Research Report
+                            <span className="text-[10px]">→</span>
+                        </a>
                     </div>
                 )
             }

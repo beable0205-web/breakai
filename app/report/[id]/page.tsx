@@ -54,8 +54,8 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
     const { data: { session } } = await supabaseServer.auth.getSession();
     const isAdmin = session?.user?.email === "beable9489@gmail.com";
 
-    // Regular Paywall logic + Admin Bypass
-    const isProUser = isAdmin || false;
+    // Regular Paywall logic + Admin Bypass + NVDA Free Sample
+    const isProUser = isAdmin || report.ticker === 'NVDA' || false;
 
     return (
         <div className="max-w-4xl mx-auto mt-10 p-6 space-y-8 mb-20">
