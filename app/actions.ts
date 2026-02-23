@@ -59,15 +59,18 @@ export async function analyzeTicker(ticker: string, reportType: "research" | "ea
 
     **PART 1: JSON METRICS**
     Provide the scores and summary strictly in valid JSON wrapped in a \`\`\`json code block. Do NOT include the detailed report in this JSON.
+    **CRITICAL INVESTOR FRAMEWORK SCORING**:
+    You MUST break down the \`investment_score\` into exactly 4 categories summarizing: Valuation, Fundamental Health, Technical Trend, and Sentiment.
+    Calculate these carefully based on real peer-comparison metrics.
     \`\`\`json
     {
       "investment_score": {
         "total": 85,
         "breakdown": [
-          { "category": "Fundamental Health", "score": 22, "max_score": 25, "reason": "Stable turnaround." },
-          { "category": "Technical Trend", "score": 24, "max_score": 25, "reason": "Stage 3 markup." },
-          { "category": "Valuation", "score": 15, "max_score": 25, "reason": "High P/E." },
-          { "category": "Momentum", "score": 24, "max_score": 25, "reason": "Institutional buying." }
+          { "category": "Valuation (vs Peers)", "score": 22, "max_score": 30, "reason": "P/E is expanding but justified by 45% EPS growth." },
+          { "category": "Fundamental Health & FCF", "score": 28, "max_score": 30, "reason": "Debt-to-equity below 0.5, expanding gross margins, robust FCF." },
+          { "category": "Technical Trend & Smart Money", "score": 18, "max_score": 20, "reason": "Consistent volume accumulation above 50-day EMA." },
+          { "category": "Catalysts & Market Sentiment", "score": 17, "max_score": 20, "reason": "Upcoming product cycle driving institutional upgrades." }
         ]
       },
       "verdict": "BUY",
