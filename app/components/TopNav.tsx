@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "../../utils/supabase/client";
 import AuthModal from "./AuthModal";
+import RequestCompanyModal from "./RequestCompanyModal";
 import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
 
@@ -10,6 +11,7 @@ export default function TopNav() {
     const [user, setUser] = useState<User | null>(null);
     const [isPro, setIsPro] = useState(false);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
 
     const supabase = createClient();
 
@@ -88,6 +90,12 @@ export default function TopNav() {
                                 {user.email?.split("@")[0]}
                             </span>
                             <button
+                                onClick={() => setIsRequestModalOpen(true)}
+                                className="text-zinc-400 hover:text-white transition-colors text-sm font-bold"
+                            >
+                                Request Analysis
+                            </button>
+                            <button
                                 onClick={handleLogout}
                                 className="text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 px-3 py-1 rounded transition-colors"
                             >
@@ -108,6 +116,11 @@ export default function TopNav() {
             <AuthModal
                 isOpen={isAuthModalOpen}
                 onClose={() => setIsAuthModalOpen(false)}
+            />
+
+            <RequestCompanyModal
+                isOpen={isRequestModalOpen}
+                onClose={() => setIsRequestModalOpen(false)}
             />
         </>
     );
