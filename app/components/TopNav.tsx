@@ -23,6 +23,16 @@ export default function TopNav() {
     };
 
     useEffect(() => {
+        // Automatically open modal if redirected from checkout
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('login') === 'true') {
+                setIsAuthModalOpen(true);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
         // Initialize active session
         supabase.auth.getSession().then(({ data: { session } }) => {
             const currentUser = session?.user ?? null;

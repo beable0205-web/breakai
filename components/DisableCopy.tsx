@@ -69,8 +69,8 @@ export default function DisableCopy() {
 
         // A lot of snipping tools cause the window to lose focus when activated
         const handleWindowBlur = () => {
-            document.body.style.filter = "blur(10px)";
-            document.body.style.opacity = "0"; // Additional hiding
+            document.body.style.filter = "blur(8px)";
+            document.body.style.opacity = "0.05"; // Show a faint outline to prevent "broken screen" panic
         };
 
         const handleWindowFocus = () => {
