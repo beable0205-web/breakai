@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono } from "next/font/google"; // Changed font
+import { Inter } from "next/font/google";
 import "./globals.css";
 import TopNav from "./components/TopNav";
 import DisableCopy from "@/components/DisableCopy";
 import PromoBanner from "./components/PromoBanner";
 
-const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"] }); // Initialize font
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Truth of Market | Wall Street Lies Exposed",
+  title: "Breakout AI | Institutional Screener",
   description: "Data-driven financial analysis powered by AI.",
 };
 
@@ -20,23 +20,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <GoogleTagManager gtmId="GTM-W9538SHJ" />
-      <body className={`${jetbrainsMono.className} bg-black text-white antialiased`}>
+      <body className={`${inter.className} bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col selection:bg-blue-500/30 font-sans`}>
         <DisableCopy />
-        <div className="min-h-screen flex flex-col">
+        <div className="flex-grow flex flex-col">
           <PromoBanner />
           {/* Header */}
           <TopNav />
 
           {/* Main Content */}
-          <main className="flex-grow p-6">
+          <main className="flex-grow">
             {children}
           </main>
 
           {/* Footer */}
-          <footer className="border-t border-[#333] py-6 text-center text-xs text-gray-500">
-            © 2026 Truth of Market. Not Financial Advice.
+          <footer className="border-t border-slate-200 py-8 text-center text-xs text-slate-500 font-semibold uppercase tracking-widest bg-white">
+            © 2026 Breakout AI. Institutional Research. Not Financial Advice.
           </footer>
         </div>
       </body>

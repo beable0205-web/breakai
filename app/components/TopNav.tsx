@@ -64,11 +64,11 @@ export default function TopNav() {
     return (
         <>
             <header className="border-b border-[#333] py-4 px-6 flex justify-between items-center bg-[#0a0a0a]">
-                <Link href="/" className="text-xl font-bold tracking-tighter text-[#00FF41] hover:opacity-80 transition-opacity">
-                    TRUTH_OF_MARKET<span className="animate-pulse">_</span>
+                <Link href="/" className="text-2xl font-serif font-black tracking-tight text-white hover:text-blue-400 transition-colors">
+                    BREAKOUT<span className="text-blue-500">_AI</span>
                 </Link>
-                <nav className="flex items-center text-sm text-gray-400 font-medium font-mono gap-6">
-                    <Link href="/" className="cursor-pointer hover:text-white transition-colors hidden md:inline">REPORTS</Link>
+                <nav className="flex items-center text-sm text-slate-400 font-semibold uppercase tracking-widest gap-8">
+                    <Link href="/picks" className="cursor-pointer text-white hover:text-blue-400 transition-colors hidden md:inline flex items-center gap-2">TODAY'S PICK <span className="text-[10px] bg-blue-600 text-white px-2 py-0.5 rounded-sm">LIVE</span></Link>
                     <Link href="/pricing" className="cursor-pointer hover:text-white transition-colors hidden md:inline">PRICING</Link>
                     <Link href="/about" className="cursor-pointer hover:text-white transition-colors hidden md:inline">ABOUT</Link>
 
