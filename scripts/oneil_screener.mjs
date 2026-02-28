@@ -142,39 +142,111 @@ function analyzeONeilPattern(prices) {
  * Generate Gemini Corporate Report
  */
 async function generateAIReport(ticker, technicalDetails) {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({
+        model: "gemini-2.5-flash",
+        tools: [{ googleSearch: {} }]
+    }, { apiVersion: "v1beta" });
+
+    const today = new Date().toISOString().split('T')[0];
+
     const prompt = `
-You are an elite financial analyst for 'Breakout AI'. You combine William O'Neil's CAN SLIM breakout strategies with profound, Warren Buffett-style fundamental analysis to find the absolute best stock of the day.
+You are an elite financial analyst for 'Breakout AI', combining William O'Neil's CAN SLIM breakout strategies with profound, Warren Buffett-style fundamental analysis.
+
+**STRICT TEMPORAL ANCHOR (CRITICAL)**:
+**CURRENT DATE: ${today}. YOU ARE IN THE YEAR 2026.**
+All data, financial analysis, and market conditions MUST be calculated up to ${today}. Use the Google Search tool to pull the absolute latest data for ${ticker}.
 
 We have identified the stock ticker ${ticker} as today's #1 breakout pick.
 Technical Details: Current Price: $${technicalDetails.currentPrice.toFixed(2)}, 224-day MA: $${technicalDetails.ma224.toFixed(2)}, Pattern: ${technicalDetails.message}.
 
 Please generate a professional, highly detailed "One Stock A Day" Deep Dive Report.
-IMPORTANT: You must structure the report EXACTLY with these sections, emphasizing the profound fundamental approach of 'Truth of Market':
 
-# Breakout AI: Daily Top Pick Analysis for ${ticker}
+**OUTPUT FORMAT (CRITICAL)**:
+You MUST structure your response exactly as follows. Do NOT deviate.
 
-## 1. Technical Analysis Rationale (Why this stock?)
-Explain in detail *why* this stock was recommended today based on the technical details provided. Describe the William O'Neil Cup and Handle (or Deep Base) pattern taking place. Explain the psychological battle between buyers and sellers at the 224-day MA, volume implications, and why this is a highly asymmetric entry point right now.
+1. First, provide the scores strictly in valid JSON wrapped in a \`\`\`json block.
+2. Second, output the EXACT marker \`<!-- FUNDAMENTAL_REPORT -->\`
+3. Third, output the Fundamental Report in Markdown.
+4. Fourth, output the EXACT marker \`<!-- TECHNICAL_REPORT -->\`
+5. Fifth, output the Technical Report in Markdown.
 
-## 2. Intrinsic Value & Economic Moat
-Conduct a profound fundamental analysis. What is the core business model? Do they possess a durable competitive advantage (network effects, switching costs, brand power, IP)? How does their return on invested capital (ROIC) scale?
+\`\`\`json
+{
+  "investment_score": {
+    "total": 85,
+    "breakdown": [
+      { "category": "Valuation (vs Peers)", "score": 22, "max_score": 30, "reason": "P/E is expanding but justified by EPS growth." },
+      { "category": "Fundamental Health & FCF", "score": 28, "max_score": 30, "reason": "Debt-to-equity below 0.5, expanding gross margins, robust FCF." },
+      { "category": "Technical Trend & Smart Money", "score": 18, "max_score": 20, "reason": "Consistent volume accumulation above 224-day MA." },
+      { "category": "Catalysts & Market Sentiment", "score": 17, "max_score": 20, "reason": "Upcoming product cycle driving institutional upgrades." }
+    ]
+  },
+  "verdict": "STRONG BUY",
+  "executive_summary": "4 high-impact bullet points summarizing the core fundamental thesis.",
+  "bull_case_summary": "2 sharp sentences on why this stock will explode upwards.",
+  "bear_case_summary": "2 sharp sentences on the existential threat that could crush this stock."
+}
+\`\`\`
+<!-- FUNDAMENTAL_REPORT -->
+# ${ticker} Institutional Investment Analysis
 
-## 3. CAN SLIM Catalysts
-Are there any recent earnings surprises? Major institutional sponsorship (mutual funds buying in)? Is the general sector/industry currently leading the market? Highlight the fundamental catalysts that are fundamentally driving this technical breakout.
+[Table of Contents]
+Prologue: Welcome to the Institutional Edge
+Why this company right now?
+Chapter 1. Financial Health Checkup: The Numbers Don't Lie
+(Analyze turnaround, margins, and financial stability. Write in profound, engaging English.)
+Chapter 2. Industry Analysis: The Macro Environment
+(Analyze the massive paradigm shift in the industry and TAM)
+Chapter 3. Alpha Selection: Why THIS Specific Stock?
+(Analyze Economic Moat and Turnaround potential)
+Chapter 4. 10-K Autopsy: Reading Between the Lines
+(Analyze revenue breakdown, outsourcing, or on-demand traits)
+Chapter 5. Business Model (BM): The Profit Engine
+(P x Q - C analysis, direct sales vs distributors)
+Chapter 6. The Ultimate Catalyst: Core Competency
+(Analyze core technologies and patents)
+Chapter 7. Institutional Triggers: Why Buy NOW?
+(Analyze catalysts, new products, mega deals)
+Chapter 8. Risk Assessment: The Invalidating Factors
+(Analyze legal, overhang, or subsidiary risks)
+Chapter 9. Valuation Matrix: Exploring the Upside
+(Relative valuation vs peers and upside potential)
 
-## 4. Risk Factors & Downside Protection
-What are the macroeconomic, regulatory, or competitive threats that could destroy this company's moat over the next 5 years? Technically, where is the invalidation point (e.g., if it drops back below the 112/224-day MA)?
+<!-- TECHNICAL_REPORT -->
+# ${ticker} Smart Money & Algo Validation (Technical Setup)
 
-## 5. Strategic Conclusion
-A final wrap-up of why this is the #1 pick today.
-
-Format the output entirely in clean Markdown (no HTML). Make it sound authoritative, incredibly insightful, and elite.
+[Table of Contents]
+Prologue: The Art of Timing
+Chapter 1. Moving Averages: The Institutional Footprint
+(Analyze the 224-day MA bounce and what it means for long-term trend reversal)
+Chapter 2. Volume Profiling: Decoding the Smart Money
+(Analyze accumulation days vs distribution days in the recent base)
+Chapter 3. Pattern Recognition: The O'Neil Setup
+(Analyze the Cup and Handle, Double Bottom, or Flat Base pattern forming)
+Chapter 4. Risk / Reward: Asymmetrical Entry Point
+(Analyze where to set the stop-loss and the immediate upside target)
 `;
 
     try {
         const result = await model.generateContent(prompt);
-        return result.response.text();
+        let text = result.response.text();
+
+        let jsonString = "";
+        let finalMarkdown = "";
+
+        const jsonMatch = text.match(/\`\`\`(?:json)?\\s*(\\{[\\s\\S]*?\\})\\s*\`\`\`/);
+        if (jsonMatch) {
+            jsonString = jsonMatch[1];
+            finalMarkdown = text.replace(jsonMatch[0], '').trim();
+        } else {
+            finalMarkdown = text; // Fallback
+        }
+
+        return JSON.stringify({
+            json_data: jsonString ? JSON.parse(jsonString) : null,
+            markdown: finalMarkdown
+        });
+
     } catch (err) {
         console.error("Gemini failed for", ticker, err);
         return null;
@@ -184,39 +256,50 @@ Format the output entirely in clean Markdown (no HTML). Make it sound authoritat
 async function main() {
     console.log("Starting Breakout AI Screener...");
 
-    // Check if we already picked a stock today
-    const todayStr = new Date().toISOString().split('T')[0];
+    // Check if we already picked today to save Gemini API calls
+    const today = new Date().toISOString().split('T')[0];
     const { data: existing } = await supabase
         .from('oneil_picks')
-        .select('id, ticker')
-        .gte('pick_date', `${todayStr}T00:00:00Z`)
-        .limit(1);
+        .select('id')
+        .gte('pick_date', today);
 
     if (existing && existing.length > 0) {
-        console.log(`Already found today's pick (${existing[0].ticker}). Exiting to prevent duplicates.`);
+        console.log("Already found today's pick. Exiting to prevent duplicates.");
         return;
     }
 
-    let bestPick = null;
-    let highestScore = 0;
+    // [ANTI-DUPLICATION] Fetch tickers picked in the last 30 days
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const { data: recentPicks } = await supabase
+        .from('oneil_picks')
+        .select('ticker')
+        .gte('pick_date', thirtyDaysAgo.toISOString().split('T')[0]);
+
+    const recentTickers = new Set((recentPicks || []).map(p => p.ticker));
+    if (recentTickers.size > 0) {
+        console.log(`Skipping recently picked tickers (last 30 days): ${Array.from(recentTickers).join(', ')}`);
+    }
+
+    let candidates = [];
 
     // Scan all tickers to find the absolute best setup
     for (const ticker of TARGET_TICKERS) {
+        if (recentTickers.has(ticker)) {
+            continue; // Skip if already picked recently
+        }
+
         try {
             const prices = await fetchHistoricalData(ticker);
             const analysis = analyzeONeilPattern(prices);
 
             if (analysis.isPick) {
                 console.log(`  🟡 Potential Match: ${ticker} (Score: ${analysis.score}) - ${analysis.details.message}`);
-
-                if (analysis.score > highestScore) {
-                    highestScore = analysis.score;
-                    bestPick = {
-                        ticker: ticker,
-                        score: analysis.score,
-                        details: analysis.details
-                    };
-                }
+                candidates.push({
+                    ticker: ticker,
+                    score: analysis.score,
+                    details: analysis.details
+                });
             }
             // Wait to avoid rate limits
             await new Promise(r => setTimeout(r, 200));
@@ -225,28 +308,47 @@ async function main() {
         }
     }
 
-    if (bestPick) {
-        console.log(`\n🏆 TODAY'S WINNER: ${bestPick.ticker} with Score ${bestPick.score}`);
-        console.log(`   Generating profound AI Report for ${bestPick.ticker}...`);
+    if (candidates.length > 0) {
+        // Sort descending by score
+        candidates.sort((a, b) => b.score - a.score);
+        console.log(`\nFound ${candidates.length} candidates today. Attempting to generate report...`);
 
-        const reportMd = await generateAIReport(bestPick.ticker, bestPick.details);
+        let success = false;
 
-        if (reportMd) {
-            const { error } = await supabase
-                .from('oneil_picks')
-                .insert({
-                    ticker: bestPick.ticker,
-                    oneil_score: bestPick.score,
-                    picked_price: bestPick.details.currentPrice, // Save for ROI calculation
-                    technical_details: bestPick.details,
-                    ai_report: reportMd
-                });
-            if (error) {
-                console.error("   Supabase Insert Error:", error.message);
+        for (const candidate of candidates) {
+            if (success) break;
+
+            console.log(`\n🏆 ATTEMPTING CANDIDATE: ${candidate.ticker} with Score ${candidate.score}`);
+            console.log(`   Generating profound AI Report for ${candidate.ticker}...`);
+
+            const reportMd = await generateAIReport(candidate.ticker, candidate.details);
+
+            if (reportMd) {
+                const { error } = await supabase
+                    .from('oneil_picks')
+                    .insert({
+                        ticker: candidate.ticker,
+                        oneil_score: candidate.score,
+                        picked_price: candidate.details.currentPrice, // Save for ROI calculation
+                        technical_details: candidate.details,
+                        ai_report: reportMd
+                    });
+                if (error) {
+                    console.error("   Supabase Insert Error (might be duplicate):", error.message);
+                    console.log("   --> Moving to next alternate candidate...");
+                } else {
+                    console.log(`   ✅ Successfully saved today's pick (${candidate.ticker}) to database!`);
+                    success = true;
+                }
             } else {
-                console.log(`   ✅ Successfully saved today's #1 pick (${bestPick.ticker}) to database!`);
+                console.log(`   ❌ AI Report generation failed for ${candidate.ticker}. Moving to next...`);
             }
         }
+
+        if (!success) {
+            console.log("\n⚪ Screener finished. Failed to generate and save any reports today.");
+        }
+
     } else {
         console.log("\n⚪ Screener finished. No high-probability setups found today.");
     }

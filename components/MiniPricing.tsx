@@ -2,6 +2,9 @@ import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 
 export default function MiniPricing() {
+    // Temporarily hidden for pre-monetization free tier
+    if (true) return null;
+
     return (
         <section className="mt-24 mb-10">
             <div className="max-w-3xl mx-auto bg-gradient-to-b from-zinc-900 to-black border border-zinc-800 rounded-3xl p-10 text-center shadow-2xl relative overflow-hidden">

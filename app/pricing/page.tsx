@@ -1,4 +1,4 @@
-import { Check, X } from "lucide-react";
+import { Check, X, Shield, Zap, TrendingUp } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = {
@@ -8,96 +8,105 @@ export const metadata = {
 
 export default function PricingPage() {
     return (
-        <div className="max-w-6xl mx-auto py-20 px-6 font-sans">
-            <div className="text-center mb-16">
-                <div className="inline-flex items-center gap-2 mb-6 bg-blue-50 text-blue-700 border border-blue-200 px-4 py-1.5 rounded-sm">
-                    <span className="font-semibold text-xs tracking-widest uppercase">Select Access Level</span>
+        <div className="max-w-6xl mx-auto py-24 px-6 font-sans selection:bg-[#00FF41]/30">
+            {/* Header Section */}
+            <div className="text-center mb-20 relative">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#00FF41]/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+                <div className="inline-flex items-center gap-2 mb-6 bg-emerald-950/30 text-[#00FF41] border border-[#00FF41]/30 px-5 py-2 rounded-full shadow-[0_0_15px_rgba(0,255,65,0.15)]">
+                    <span className="w-2 h-2 rounded-full bg-[#00FF41] animate-pulse"></span>
+                    <span className="font-bold text-xs tracking-widest uppercase font-mono">Select Access Level</span>
                 </div>
-                <h1 className="text-4xl md:text-5xl font-extrabold mb-4 font-serif tracking-tight text-slate-900">
-                    Institutional Data, <span className="text-blue-600">Retail Premium.</span>
+                <h1 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-white">
+                    Institutional Data, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00FF41] to-emerald-600">Retail Premium.</span>
                 </h1>
-                <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-                    Access the exact quantitative signals Wall Street relies on. <br />
+                <p className="text-xl text-zinc-400 max-w-2xl mx-auto font-mono leading-relaxed">
+                    Access the exact quantitative signals Wall Street relies on.<br />
                     Secure your edge in the global equities market.
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+            {/* Pricing Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch relative z-10">
 
                 {/* Tier 1: Daily */}
-                <div className="bg-white border border-slate-200 rounded-sm p-8 relative shadow-sm hover:shadow-md transition-shadow">
-                    <h3 className="text-xl font-bold text-slate-900 mb-2 font-serif">Daily Terminal</h3>
-                    <p className="text-slate-500 text-sm mb-6 h-10">24-hour access to today's #1 asymmetrical breakout setup.</p>
-                    <div className="mb-6">
-                        <span className="text-4xl font-extrabold text-slate-900">$9.99</span>
-                        <span className="text-slate-400">/day</span>
+                <div className="bg-[#0a0a0c] border border-zinc-800 rounded-2xl p-8 relative flex flex-col hover:border-zinc-700 transition-colors group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/10 to-transparent rounded-2xl pointer-events-none"></div>
+                    <h3 className="text-2xl font-bold text-white mb-3 tracking-tight font-mono uppercase">Daily Terminal</h3>
+                    <p className="text-zinc-500 text-sm mb-8 font-mono">24-hour access to today's #1 asymmetrical breakout setup.</p>
+                    <div className="mb-8 flex items-baseline">
+                        <span className="text-5xl font-black text-white font-mono">$9.99</span>
+                        <span className="text-zinc-500 ml-2 font-mono uppercase tracking-widest text-xs">/ Day</span>
                     </div>
-                    <Link href="/api/checkout/daily" className="block w-full text-center bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-sm transition-colors mb-8 text-sm uppercase tracking-wider">
+                    <Link href="/api/checkout/daily" className="block w-full text-center bg-zinc-900 border border-zinc-700 hover:bg-zinc-800 hover:border-zinc-500 text-white font-bold py-4 rounded-xl transition-all mb-10 text-xs uppercase tracking-[0.2em] group-hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]">
                         Request 24h Access
                     </Link>
-                    <ul className="space-y-4 text-sm text-slate-600">
-                        <li className="flex gap-3"><Check className="text-blue-600 w-5 h-5 shrink-0" /> Today's #1 Institutional Pick</li>
-                        <li className="flex gap-3"><Check className="text-blue-600 w-5 h-5 shrink-0" /> Deep Fundamental Analysis Report</li>
-                        <li className="flex gap-3"><Check className="text-blue-600 w-5 h-5 shrink-0" /> Technical DMA Breakout Levels</li>
-                        <li className="flex gap-3 text-slate-400"><X className="w-5 h-5 shrink-0" /> Historical Pick Archive</li>
-                        <li className="flex gap-3 text-slate-400"><X className="w-5 h-5 shrink-0" /> Pre-Market SMS Alerts</li>
+                    <ul className="space-y-5 text-sm text-zinc-400 font-mono mt-auto pt-8 border-t border-zinc-900">
+                        <li className="flex items-start gap-3"><Check className="text-[#00FF41] w-5 h-5 shrink-0 mt-0.5" /> <span className="leading-snug">Today's #1 Institutional Pick</span></li>
+                        <li className="flex items-start gap-3"><Check className="text-[#00FF41] w-5 h-5 shrink-0 mt-0.5" /> <span className="leading-snug">Deep Fundamental Analysis Report</span></li>
+                        <li className="flex items-start gap-3"><Check className="text-[#00FF41] w-5 h-5 shrink-0 mt-0.5" /> <span className="leading-snug">Technical DMA Breakout Levels</span></li>
+                        <li className="flex items-start gap-3 text-zinc-700"><X className="w-5 h-5 shrink-0 mt-0.5" /> <span className="leading-snug line-through">Historical Pick Archive</span></li>
+                        <li className="flex items-start gap-3 text-zinc-700"><X className="w-5 h-5 shrink-0 mt-0.5" /> <span className="leading-snug line-through">Pre-Market SMS Alerts</span></li>
                     </ul>
                 </div>
 
-                {/* Tier 2: Monthly (Highlighted - Decoy Effect) */}
-                <div className="bg-slate-900 border-2 border-slate-900 rounded-sm p-8 relative transform md:-translate-y-4 shadow-xl">
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white px-4 py-1 rounded-sm text-xs font-bold tracking-widest uppercase">
-                        Institutional Standard
+                {/* Tier 2: Monthly (Highlighted) */}
+                <div className="bg-[#050505] border-2 border-[#00FF41]/40 rounded-2xl p-8 relative flex flex-col transform lg:-translate-y-6 shadow-[0_0_50px_rgba(0,255,65,0.05)] hover:shadow-[0_0_80px_rgba(0,255,65,0.1)] transition-shadow">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#00FF41] text-black px-6 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase shadow-[0_0_20px_rgba(0,255,65,0.4)] whitespace-nowrap">
+                        <Zap className="w-3 h-3 inline-block mr-1.5 -mt-0.5" /> Institutional Standard
                     </div>
-                    <h3 className="text-2xl font-bold text-white mb-2 font-serif">Pro Monthly</h3>
-                    <p className="text-slate-400 text-sm mb-6 h-10">Continuous daily signals. Less than $1 a day to hedge your portfolio risk.</p>
-                    <div className="mb-6">
-                        <span className="text-5xl font-extrabold text-white">$29.99</span>
-                        <span className="text-slate-400">/mo</span>
+                    <div className="absolute inset-0 bg-gradient-to-b from-[#00FF41]/5 to-transparent rounded-2xl pointer-events-none"></div>
+
+                    <h3 className="text-3xl font-black text-[#00FF41] mb-3 tracking-tight uppercase font-mono mt-2">Pro Monthly</h3>
+                    <p className="text-zinc-400 text-sm mb-8 font-mono">Continuous daily signals. Less than $1 a day to hedge your portfolio risk.</p>
+                    <div className="mb-8 flex items-baseline">
+                        <span className="text-6xl font-black text-white font-mono">$29.99</span>
+                        <span className="text-zinc-500 ml-2 font-mono uppercase tracking-widest text-xs">/ Month</span>
                     </div>
-                    <Link href="/api/checkout/monthly" className="block w-full text-center bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-sm transition-colors mb-8 shadow-lg shadow-blue-600/20 text-sm uppercase tracking-widest">
+                    <Link href="/api/checkout/monthly" className="block w-full text-center bg-[#00FF41] hover:bg-[#00FF41]/80 text-black font-black py-4 rounded-xl transition-all mb-10 shadow-[0_0_20px_rgba(0,255,65,0.2)] hover:shadow-[0_0_30px_rgba(0,255,65,0.4)] text-xs uppercase tracking-[0.2em]">
                         Activate Monthly
                     </Link>
-                    <ul className="space-y-4 text-sm text-slate-300 font-medium">
-                        <li className="flex gap-3"><Check className="text-blue-400 w-5 h-5 shrink-0" /> <strong>All Daily Terminal Features</strong></li>
-                        <li className="flex gap-3"><Check className="text-blue-400 w-5 h-5 shrink-0" /> Unrestricted Historical Archive Access</li>
-                        <li className="flex gap-3"><Check className="text-blue-400 w-5 h-5 shrink-0" /> Automated Live ROI Tracking</li>
-                        <li className="flex gap-3 font-bold text-white"><Check className="text-blue-400 w-5 h-5 shrink-0" /> Pre-Market Email & SMS Alerts</li>
-                        <li className="flex gap-3 font-bold text-white"><Check className="text-blue-400 w-5 h-5 shrink-0" /> Priority Algorithmic Execution Ideas</li>
+                    <ul className="space-y-5 text-sm font-mono mt-auto pt-8 border-t border-zinc-800">
+                        <li className="flex items-start gap-3 text-white"><Check className="text-[#00FF41] w-5 h-5 shrink-0 mt-0.5 drop-shadow-[0_0_8px_rgba(0,255,65,0.8)]" /> <span className="leading-snug font-bold">All Daily Terminal Features</span></li>
+                        <li className="flex items-start gap-3 text-zinc-300"><Check className="text-[#00FF41] w-5 h-5 shrink-0 mt-0.5" /> <span className="leading-snug">Unrestricted Historical Archive Access</span></li>
+                        <li className="flex items-start gap-3 text-zinc-300"><Check className="text-[#00FF41] w-5 h-5 shrink-0 mt-0.5" /> <span className="leading-snug">Automated Live ROI Tracking</span></li>
+                        <li className="flex items-start gap-3 text-white"><Check className="text-[#00FF41] w-5 h-5 shrink-0 mt-0.5 drop-shadow-[0_0_8px_rgba(0,255,65,0.8)]" /> <span className="leading-snug font-bold">Pre-Market Email & SMS Alerts</span></li>
+                        <li className="flex items-start gap-3 text-white"><Check className="text-[#00FF41] w-5 h-5 shrink-0 mt-0.5 drop-shadow-[0_0_8px_rgba(0,255,65,0.8)]" /> <span className="leading-snug font-bold">Priority Algorithmic Execution Ideas</span></li>
                     </ul>
                 </div>
 
                 {/* Tier 3: Yearly */}
-                <div className="bg-white border border-slate-200 rounded-sm p-8 relative shadow-sm hover:shadow-md transition-shadow">
-                    <div className="absolute top-4 right-4 bg-green-100 text-green-700 px-3 py-1 rounded-sm text-xs font-bold border border-green-200 uppercase tracking-wider">
+                <div className="bg-[#0a0a0c] border border-zinc-800 rounded-2xl p-8 relative flex flex-col hover:border-zinc-700 transition-colors group">
+                    <div className="absolute top-4 right-4 bg-emerald-950/40 text-[#00FF41] px-4 py-1.5 rounded-full text-[10px] font-black border border-[#00FF41]/20 uppercase tracking-widest shadow-lg">
                         Save 16%
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2 font-serif">Pro Yearly</h3>
-                    <p className="text-slate-500 text-sm mb-6 h-10">The logical choice for long-term capital allocators. Save 2 months.</p>
-                    <div className="mb-6 flex flex-col">
-                        <span className="text-slate-400 line-through text-sm mb-1">$359.88</span>
-                        <div>
-                            <span className="text-4xl font-extrabold text-slate-900">$299.99</span>
-                            <span className="text-slate-400">/yr</span>
+                    <div className="absolute inset-0 bg-gradient-to-bl from-zinc-800/10 to-transparent rounded-2xl pointer-events-none"></div>
+
+                    <h3 className="text-2xl font-bold text-white mb-3 tracking-tight uppercase font-mono">Pro Yearly</h3>
+                    <p className="text-zinc-500 text-sm mb-8 font-mono pr-12">The logical choice for long-term capital allocators. Save 2 months.</p>
+                    <div className="mb-8 flex flex-col justify-center h-[72px]">
+                        <span className="text-zinc-600 line-through text-xs mb-1 font-mono tracking-widest inline-block">$359.88</span>
+                        <div className="flex items-baseline">
+                            <span className="text-5xl font-black text-white font-mono">$299.99</span>
+                            <span className="text-zinc-500 ml-2 font-mono uppercase tracking-widest text-xs">/ Year</span>
                         </div>
                     </div>
-                    <Link href="/api/checkout/yearly" className="block w-full text-center bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-sm transition-colors mb-8 text-sm uppercase tracking-wider">
+                    <Link href="/api/checkout/yearly" className="block w-full text-center bg-zinc-900 border border-zinc-700 hover:bg-zinc-800 hover:border-zinc-500 text-white font-bold py-4 rounded-xl transition-all mb-10 text-xs uppercase tracking-[0.2em] group-hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]">
                         Commit Annually
                     </Link>
-                    <ul className="space-y-4 text-sm text-slate-600">
-                        <li className="flex gap-3"><Check className="text-blue-600 w-5 h-5 shrink-0" /> <strong>All Pro Monthly Features</strong></li>
-                        <li className="flex gap-3"><Check className="text-blue-600 w-5 h-5 shrink-0" /> Downloadable PDF Research Briefs</li>
-                        <li className="flex gap-3"><Check className="text-blue-600 w-5 h-5 shrink-0" /> Direct Premium Support Line</li>
-                        <li className="flex gap-3 opacity-0 hidden md:block"><Check className="w-5 h-5 shrink-0" /> Spacer</li>
+                    <ul className="space-y-5 text-sm text-zinc-400 font-mono mt-auto pt-8 border-t border-zinc-900">
+                        <li className="flex items-start gap-3 text-white"><Check className="text-[#00FF41] w-5 h-5 shrink-0 mt-0.5" /> <span className="leading-snug font-bold">All Pro Monthly Features</span></li>
+                        <li className="flex items-start gap-3"><Check className="text-[#00FF41] w-5 h-5 shrink-0 mt-0.5" /> <span className="leading-snug">Downloadable PDF Research Briefs</span></li>
+                        <li className="flex items-start gap-3"><Check className="text-[#00FF41] w-5 h-5 shrink-0 mt-0.5" /> <span className="leading-snug">Direct Premium Support Line</span></li>
+                        <li className="flex items-start gap-3 opacity-0 hidden lg:block"><Check className="w-5 h-5 shrink-0 mt-0.5" /> <span className="leading-snug">Spacer</span></li>
                     </ul>
                 </div>
 
             </div>
 
             {/* Security & Support Footer */}
-            <div className="mt-20 text-center border-t border-slate-200 pt-10">
-                <p className="text-slate-500 text-sm flex items-center justify-center gap-2 font-medium">
-                    🔒 Encrypted Institutional Transactions Processed by <strong className="text-slate-800">Lemon Squeezy</strong>.
+            <div className="mt-32 text-center pt-8 border-t border-zinc-900">
+                <p className="text-zinc-500 text-xs flex items-center justify-center gap-3 font-mono uppercase tracking-widest">
+                    <Shield className="w-4 h-4 text-[#00FF41]/70" /> Encrypted Institutional Transactions Processed by <strong className="text-white hover:text-[#00FF41] transition-colors cursor-pointer">Lemon Squeezy</strong>.
                 </p>
             </div>
         </div>

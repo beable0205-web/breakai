@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <GoogleTagManager gtmId="GTM-W9538SHJ" />
-      <body className={`${inter.className} bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col selection:bg-blue-500/30 font-sans`}>
+      <body className={`${inter.className} bg-black text-slate-200 antialiased min-h-screen flex flex-col selection:bg-[#00FF41]/30 font-sans`}>
         <DisableCopy />
         <div className="flex-grow flex flex-col">
           <PromoBanner />
@@ -35,7 +35,7 @@ export default function RootLayout({
           </main>
 
           {/* Footer */}
-          <footer className="border-t border-slate-200 py-8 text-center text-xs text-slate-500 font-semibold uppercase tracking-widest bg-white">
+          <footer className="border-t border-[#333] py-8 text-center text-xs text-zinc-500 font-semibold uppercase tracking-widest bg-[#0a0a0c]">
             © 2026 Breakout AI. Institutional Research. Not Financial Advice.
           </footer>
         </div>

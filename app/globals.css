@@ -3,7 +3,7 @@
 
 @layer base {
   body {
-    @apply bg-[#09090b] text-zinc-100 font-sans antialiased;
+    @apply bg-[#000] text-slate-200 font-sans antialiased;
   }
 }
 
@@ -13,16 +13,19 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #09090b;
+  background: #f8fafc;
+  /* slate-50 */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
+  background: #cbd5e1;
+  /* slate-300 */
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: #94a3b8;
+  /* slate-400 */
 }
 
 /* ANTI-COPY & ANTI-PRINT PROTECTION */

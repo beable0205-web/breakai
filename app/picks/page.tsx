@@ -4,7 +4,7 @@ import { ArrowUpRight, Cpu, Activity, TrendingUp, Presentation } from "lucide-re
 import { fetchLiveQuote } from "../../utils/yahooFinance";
 
 export const metadata = {
-    title: "Breakout AI | Institutional Grade Stock Screener",
+    title: "Truth of Market | Institutional Grade Stock Screener",
     description: "Our AI scans 1,000+ top US stocks daily to find the single best William O'Neil Cup & Handle setup.",
 };
 
@@ -31,23 +31,24 @@ export default async function PicksPage() {
     }));
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-900 selection:bg-blue-500/30 font-sans">
+        <div className="min-h-screen bg-black text-slate-200 selection:bg-[#00FF41]/30 font-sans">
             {/* Hero Section */}
-            <div className="relative pt-20 pb-12 border-b border-slate-200 bg-white">
+            <div className="relative pt-20 pb-12 border-b border-[#333] bg-[#0a0a0c]">
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#00FF41]/5 rounded-full blur-[120px] pointer-events-none"></div>
                 <div className="max-w-6xl mx-auto px-6 relative z-10">
-                    <div className="inline-flex items-center gap-2 mb-6 bg-blue-50 text-blue-700 border border-blue-200 px-4 py-1.5 rounded-sm">
+                    <div className="inline-flex items-center gap-3 mb-6 bg-emerald-950/30 text-[#00FF41] border border-emerald-900/50 px-4 py-2 rounded font-mono shadow-[0_0_15px_rgba(0,255,65,0.1)]">
                         <span className="relative flex h-2.5 w-2.5">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-600"></span>
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00FF41] opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#00FF41]"></span>
                         </span>
-                        <span className="font-semibold text-xs tracking-widest uppercase">Institutional AI Screener</span>
+                        <span className="font-bold text-xs tracking-widest uppercase">Truth of Market Matrix</span>
                     </div>
 
-                    <h1 className="text-4xl md:text-6xl font-serif font-black mb-4 tracking-tight text-slate-900 leading-tight">
+                    <h1 className="text-4xl md:text-6xl font-black mb-4 tracking-tighter text-white leading-tight font-serif">
                         One Stock. <br className="hidden md:block" />
                         Maximum Asymmetry.
                     </h1>
-                    <p className="text-lg md:text-xl text-slate-600 max-w-3xl leading-relaxed mb-8">
+                    <p className="text-lg md:text-xl text-zinc-400 max-w-3xl leading-relaxed mb-8">
                         Our proprietary algorithm scans the top 1,000 highly liquid US equities daily. We identify the single highest-probability technical breakout, backed by profound fundamental research.
                     </p>
                 </div>
@@ -57,33 +58,33 @@ export default async function PicksPage() {
             <div className="max-w-6xl mx-auto px-6 py-16 relative z-10">
 
                 {/* Stats / Headers Bar */}
-                <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-8 pb-4 border-b-2 border-slate-800 gap-4">
+                <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-8 pb-4 border-b border-[#333] gap-4">
                     <div className="flex items-center gap-3">
-                        <Presentation className="w-6 h-6 text-slate-800" />
-                        <h2 className="text-2xl font-serif font-bold tracking-tight text-slate-900">Historical Signals</h2>
+                        <Presentation className="w-6 h-6 text-zinc-400" />
+                        <h2 className="text-2xl font-black tracking-tighter text-white uppercase">Historical Signals</h2>
                     </div>
-                    <div className="text-slate-500 text-sm font-semibold uppercase tracking-widest flex gap-6">
+                    <div className="text-zinc-500 text-sm font-bold uppercase tracking-widest flex gap-6">
                         <span className="flex items-center gap-1">Universe: Top 1000 US</span>
                     </div>
                 </div>
 
                 {error && (
-                    <div className="p-6 bg-red-50 text-red-700 border border-red-200 rounded-sm flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+                    <div className="p-6 bg-red-950/30 text-red-500 border border-red-900/50 rounded-sm flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-red-900/50 flex items-center justify-center shrink-0">
                             <span className="text-xl">⚠️</span>
                         </div>
                         <div>
                             <h3 className="font-bold text-lg mb-1">System Error</h3>
-                            <p className="text-red-600/80">Failed to connect to the signal database.</p>
+                            <p className="text-red-400/80">Failed to connect to the signal database.</p>
                         </div>
                     </div>
                 )}
 
                 {!error && picksWithPrices.length === 0 && (
-                    <div className="h-64 border-2 border-dashed border-slate-300 rounded-sm flex flex-col items-center justify-center bg-white">
-                        <Activity className="w-12 h-12 text-slate-400 mb-4" />
-                        <h3 className="text-xl font-bold text-slate-700 mb-2">Awaiting Signals</h3>
-                        <p className="text-slate-500 text-center max-w-md">The algorithm has not detected any verified institutional breakouts today. Quality over quantity.</p>
+                    <div className="h-64 border border-dashed border-zinc-800 rounded-sm flex flex-col items-center justify-center bg-[#0a0a0c]">
+                        <Activity className="w-12 h-12 text-zinc-700 mb-4" />
+                        <h3 className="text-xl font-bold text-zinc-400 mb-2">Awaiting Signals</h3>
+                        <p className="text-zinc-600 text-center max-w-md">The algorithm has not detected any verified institutional breakouts today. Quality over quantity.</p>
                     </div>
                 )}
 
@@ -102,23 +103,25 @@ export default async function PicksPage() {
                             <Link
                                 key={pick.id}
                                 href={`/picks/${pick.id}`}
-                                className={`group flex flex-col md:flex-row items-start md:items-center justify-between p-6 border transition-all duration-200 hover:shadow-lg relative overflow-hidden ${isLatest
-                                        ? "bg-slate-900 text-white border-slate-900"
-                                        : "bg-white border-slate-200 hover:border-blue-300"
+                                className={`group flex flex-col md:flex-row items-start md:items-center justify-between p-6 border transition-all duration-300 relative overflow-hidden ${isLatest
+                                    ? "bg-zinc-900/50 border-[#00FF41]/30 hover:shadow-[0_0_30px_rgba(0,255,65,0.1)]"
+                                    : "bg-black border-zinc-800 hover:border-zinc-600 hover:bg-zinc-900/30"
                                     }`}
                             >
+                                {isLatest && <div className="absolute left-0 top-0 w-1 h-full bg-[#00FF41]"></div>}
+
                                 {/* Ticker and Date */}
-                                <div className="flex items-center gap-6 md:w-1/4 mb-6 md:mb-0 relative z-10 w-full">
-                                    <div className={`w-16 h-16 flex items-center justify-center rounded-sm font-serif font-black text-2xl shrink-0 ${isLatest ? "bg-white text-slate-900" : "bg-slate-100 text-slate-800"
+                                <div className="flex items-center gap-6 md:w-1/4 mb-6 md:mb-0 relative z-10 w-full ml-2">
+                                    <div className={`w-16 h-16 flex items-center justify-center rounded font-serif font-black text-2xl shrink-0 ${isLatest ? "bg-[#00FF41]/10 text-[#00FF41] border border-[#00FF41]/30" : "bg-zinc-900 text-zinc-500 border border-zinc-800"
                                         }`}>
                                         {pick.ticker.substring(0, 2)}
                                     </div>
                                     <div>
-                                        {isLatest && <span className="text-blue-400 text-[10px] font-bold tracking-widest uppercase mb-1 block">📌 Today's Pick</span>}
-                                        <h3 className={`text-3xl font-serif font-black tracking-tight leading-none mb-1 ${isLatest ? 'text-white' : 'text-slate-900'} group-hover:text-blue-500 transition-colors`}>
+                                        {isLatest && <span className="text-[#00FF41] text-[10px] font-bold tracking-widest uppercase mb-1 flex items-center gap-1 font-mono"><Activity className="w-3 h-3" /> Active Pick</span>}
+                                        <h3 className={`text-4xl font-serif font-black tracking-tight leading-none mb-1 ${isLatest ? 'text-white' : 'text-zinc-300'} group-hover:text-white transition-colors`}>
                                             {pick.ticker}
                                         </h3>
-                                        <p className={`text-sm font-medium ${isLatest ? 'text-slate-400' : 'text-slate-500'}`}>
+                                        <p className={`text-sm font-mono uppercase tracking-widest ${isLatest ? 'text-zinc-400' : 'text-zinc-600'}`}>
                                             {new Date(pick.pick_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                         </p>
                                     </div>
@@ -127,34 +130,39 @@ export default async function PicksPage() {
                                 {/* Setup Details */}
                                 <div className="md:flex-1 md:px-8 relative z-10 mb-6 md:mb-0 w-full">
                                     <div className="flex flex-wrap items-center gap-2 mb-3">
-                                        <span className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest ${isLatest ? "bg-slate-800 text-slate-300" : "bg-slate-100 text-slate-600"} rounded-sm border ${isLatest ? "border-slate-700" : "border-slate-200"}`}>
+                                        <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest font-mono ${isLatest ? "bg-emerald-950/50 text-[#00FF41] border border-[#00FF41]/20" : "bg-zinc-900 text-zinc-500 border border-zinc-800"} rounded`}>
                                             Algo Score: {pick.oneil_score}/100
                                         </span>
                                     </div>
-                                    <p className={`text-sm line-clamp-2 md:line-clamp-2 leading-relaxed ${isLatest ? 'text-slate-300' : 'text-slate-600'}`}>
+                                    <p className={`text-sm line-clamp-2 md:line-clamp-2 leading-relaxed font-mono ${isLatest ? 'text-zinc-300' : 'text-zinc-500'}`}>
                                         {details}
                                     </p>
                                 </div>
 
                                 {/* ROI Display */}
-                                <div className={`md:w-auto relative z-10 w-full flex items-center justify-between md:justify-end gap-8 border-t md:border-none pt-4 md:pt-0 ${isLatest ? 'border-slate-800' : 'border-slate-100'}`}>
+                                <div className={`md:w-auto relative z-10 w-full flex items-center justify-between md:justify-end gap-8 border-t md:border-none pt-4 md:pt-0 ${isLatest ? 'border-zinc-800' : 'border-[#222]'}`}>
                                     <div className="text-left md:text-right hidden sm:block">
-                                        <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${isLatest ? 'text-slate-500' : 'text-slate-400'}`}>Live Return</p>
+                                        <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 font-mono ${isLatest ? 'text-zinc-400' : 'text-zinc-600'}`}>Current Return</p>
                                         <div className="flex items-baseline gap-2 justify-start md:justify-end">
                                             {pick.roi !== null ? (
-                                                <span className={`text-2xl font-serif font-black tracking-tight ${pick.roi >= 0 ? (isLatest ? "text-green-400" : "text-green-600") : (isLatest ? "text-red-400" : "text-red-600")}`}>
-                                                    {pick.roi > 0 ? "+" : ""}{pick.roi.toFixed(2)}%
-                                                </span>
+                                                <>
+                                                    <span className={`text-xl font-mono font-bold text-white`}>
+                                                        ${pick.livePrice?.toFixed(2)}
+                                                    </span>
+                                                    <span className={`text-3xl font-mono font-black tracking-tight ${pick.roi >= 0 ? (isLatest ? "text-[#00FF41]" : "text-[#00cc33]") : "text-rose-500"}`}>
+                                                        {pick.roi > 0 ? "+" : ""}{pick.roi.toFixed(2)}%
+                                                    </span>
+                                                </>
                                             ) : (
-                                                <span className={`text-xl font-bold ${isLatest ? 'text-slate-600' : 'text-slate-300'}`}>N/A</span>
+                                                <span className={`text-xl font-mono font-bold ${isLatest ? 'text-zinc-500' : 'text-zinc-700'}`}>N/A</span>
                                             )}
                                         </div>
                                     </div>
 
                                     {/* Action Button */}
-                                    <div className={`flex items-center justify-center w-12 h-12 rounded-sm transition-all duration-300 ${isLatest
-                                            ? "bg-blue-600 text-white hover:bg-blue-500"
-                                            : "bg-slate-100 text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600"
+                                    <div className={`flex items-center justify-center w-12 h-12 rounded transition-all duration-300 ${isLatest
+                                        ? "bg-[#00FF41] text-black hover:bg-[#00cc33]"
+                                        : "bg-zinc-800 text-zinc-500 group-hover:bg-zinc-700 group-hover:text-white"
                                         }`}>
                                         <ArrowUpRight className="w-5 h-5" />
                                     </div>

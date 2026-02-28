@@ -1,12 +1,18 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 type ScoreBreakdownItem = { category: string, score: number, max_score: number, reason: string };
 type ScoreObj = { total?: number, breakdown?: ScoreBreakdownItem[] };
 
 export default function ScoreGauge({ scoreObj, scoreColor }: { scoreObj: ScoreObj, scoreColor: string }) {
     const [isOpen, setIsOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const score = scoreObj.total ?? 0;
     const radius = 80;
@@ -52,11 +58,11 @@ export default function ScoreGauge({ scoreObj, scoreColor }: { scoreObj: ScoreOb
                 </svg>
             </div>
 
-            {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-                    <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 w-full max-w-xl shadow-2xl relative">
+            {isOpen && mounted && createPortal(
+                <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+                    <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-8 md:p-12 w-full max-w-3xl shadow-2xl relative">
                         <button
-                            className="absolute top-4 right-4 text-gray-400 hover:text-white"
+                            className="absolute top-4 right-6 text-gray-400 hover:text-white"
                             onClick={() => setIsOpen(false)}
                         >
                             ✕
@@ -66,9 +72,9 @@ export default function ScoreGauge({ scoreObj, scoreColor }: { scoreObj: ScoreOb
                         <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-2">
                             {scoreObj.breakdown?.map((item, idx) => (
                                 <div key={idx} className="bg-zinc-800/50 p-4 rounded-xl border border-zinc-700/50">
-                                    <div className="flex justify-between items-center mb-2">
-                                        <h3 className="text-emerald-400 font-bold">{item.category}</h3>
-                                        <span className="font-mono text-white bg-zinc-800 px-2 py-1 rounded">
+                                    <div className="flex justify-between items-start sm:items-center gap-4 mb-2">
+                                        <h3 className="text-emerald-400 font-bold leading-tight">{item.category}</h3>
+                                        <span className="font-mono text-white bg-zinc-800 px-3 py-1 rounded whitespace-nowrap shrink-0 text-sm">
                                             {item.score} / {item.max_score}
                                         </span>
                                     </div>
@@ -86,7 +92,8 @@ export default function ScoreGauge({ scoreObj, scoreColor }: { scoreObj: ScoreOb
                             )}
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </>
     );

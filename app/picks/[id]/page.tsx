@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import ReactMarkdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
 import { fetchLiveQuote } from "../../../utils/yahooFinance";
+import TradingViewWidget from "../../../components/TradingViewWidget";
+import PickDetailUI from "../../components/PickDetailUI";
 
 export const dynamic = "force-dynamic";
 
@@ -38,8 +40,8 @@ export default async function PickDetail({ params }: { params: Promise<{ id: str
         if (profile?.is_pro) isDbPro = true;
     }
 
-    // Regular Paywall logic + Admin Bypass
-    const isProUser = isAdmin || isDbPro || false;
+    // Regular Paywall logic + Admin Bypass - TEMPORARILY OPEN FOR PREVIEW REVIEWS
+    const isProUser = true; // isAdmin || isDbPro || false;
 
     // Fetch live quote for ROI
     const livePrice = await fetchLiveQuote(pick.ticker);
@@ -54,137 +56,80 @@ export default async function PickDetail({ params }: { params: Promise<{ id: str
     }
 
     return (
-        <div className="max-w-4xl mx-auto mt-10 p-6 space-y-8 mb-20 font-sans selection:bg-blue-500/30 text-slate-900">
-            <Link href="/picks" className="flex items-center text-slate-500 hover:text-blue-600 font-semibold text-xs tracking-widest uppercase transition group w-fit">
+        <div className="max-w-4xl mx-auto mt-10 p-6 space-y-8 mb-20 font-sans selection:bg-emerald-500/30 text-slate-200">
+            <Link href="/picks" className="flex items-center text-zinc-500 hover:text-emerald-400 font-semibold text-xs tracking-widest uppercase transition group w-fit">
                 <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
                 RETURN TO TERMINAL
             </Link>
 
-            <header className="border-b-2 border-slate-800 pb-8 mt-4">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-                    <div>
-                        <div className="flex items-center gap-3 mb-3">
-                            <BarChart className="text-blue-600 w-8 h-8" />
-                            <h1 className="text-6xl md:text-7xl font-serif font-black tracking-tight text-slate-900">
-                                {isProUser ? pick.ticker : "******"}
+            {/* TOP SECTION: Price & Chart Matrix (Hub Style) */}
+            <div className="bg-[#111] border border-[#333] rounded-2xl p-6 shadow-2xl relative overflow-hidden mt-4">
+                <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+                <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-2 relative z-10">
+                    <div className="flex items-center gap-5">
+                        <div className="w-20 h-20 rounded-full bg-slate-900 flex items-center justify-center border-2 border-slate-700 shadow-xl">
+                            <BarChart className="text-blue-500 w-10 h-10" />
+                        </div>
+                        <div>
+                            <h1 className="text-5xl font-black tracking-tighter text-white mb-1">
+                                {pick.ticker}
                             </h1>
+                            <p className="text-blue-400 flex items-center font-mono text-xs font-bold tracking-widest uppercase mb-1">
+                                <Activity className="w-3 h-3 mr-1" /> Institutional Signal #{pick.id.split('-')[0]}
+                            </p>
+                            <p className="text-slate-500 text-xs font-mono uppercase tracking-widest mt-1">
+                                Generated on {new Date(pick.pick_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                            </p>
                         </div>
-                        <p className="text-slate-500 font-semibold text-sm tracking-widest uppercase">
-                            INSTITUTIONAL SIGNAL #{pick.id.split('-')[0]} • {new Date(pick.pick_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                        </p>
                     </div>
 
-                    {/* ROI Display */}
-                    <div className="bg-white border border-slate-200 rounded-sm p-5 min-w-[200px] shadow-sm relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-1 bg-blue-500 h-full"></div>
-                        <p className="text-slate-500 text-[10px] font-bold tracking-widest uppercase mb-1">Live Premium</p>
-                        {roi !== null ? (
-                            <div className="flex flex-col">
-                                <span className={`text-4xl font-serif font-black tracking-tight ${roi >= 0 ? "text-green-600" : "text-red-600"}`}>
-                                    {roi > 0 ? "+" : ""}{roi.toFixed(2)}%
-                                </span>
-                                <span className="text-slate-400 text-xs mt-1 font-medium">
-                                    Base Entry: ${Number(pick.picked_price).toFixed(2)}
-                                </span>
+                    <div className="flex flex-col gap-3">
+                        {/* Current Market Price Block */}
+                        <div className="text-left md:text-right bg-black/50 p-4 rounded-xl border border-zinc-800 backdrop-blur-sm relative overflow-hidden min-w-[200px]">
+                            <div className={`absolute left-0 top-0 w-1 h-full ${roi !== null && roi >= 0 ? 'bg-[#00FF41]' : 'bg-rose-500'}`}></div>
+                            <div className="flex justify-between items-center md:block">
+                                <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold mb-1 ml-2 font-mono">Current Price</p>
                             </div>
-                        ) : (
-                            <span className="text-2xl font-bold text-slate-400">Yielding...</span>
-                        )}
-                    </div>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-3 mt-6">
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-sm">
-                        <Activity className="w-4 h-4 text-blue-600" />
-                        <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">Algo Confidence: {pick.oneil_score}/100</span>
-                    </div>
-                    {details?.currentPrice && (
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-sm">
-                            <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">224 DMA Floor: ${(details.ma224).toFixed(2)}</span>
-                        </div>
-                    )}
-                </div>
-            </header>
-
-            {/* Always Visible: Technical Context Summary */}
-            <section className="bg-slate-50 p-6 md:p-8 rounded-sm border border-slate-200 shadow-sm relative overflow-hidden">
-                <div className="absolute left-0 top-0 w-1 h-full bg-slate-800"></div>
-                <h3 className="text-slate-800 font-semibold text-xs mb-3 flex items-center tracking-widest uppercase">
-                    <span className="w-2 h-2 bg-blue-600 rounded-full mr-3 animate-pulse"></span>
-                    Terminal Output Summary
-                </h3>
-                <p className="text-lg text-slate-700 leading-relaxed font-serif">
-                    {details?.message || "Technical details aggregated in full AI report."}
-                </p>
-            </section>
-
-            {/* The Paywall Logic */}
-            <section className="mt-12">
-                {!isProUser ? (
-                    // FREE USER STATE
-                    <div className="relative w-full bg-white border border-slate-200 rounded-sm shadow-xl overflow-hidden mt-8">
-                        {/* Fake Blurred Content Background */}
-                        <div className="absolute inset-0 pointer-events-none select-none blur-md opacity-20 px-10 py-12">
-                            <div className="prose prose-slate prose-lg max-w-none">
-                                <h1>Breakout AI: Institutional Analysis</h1>
-                                <h2>1. Technical Setup Confirmation</h2>
-                                <p>Our algorithm detected a massive volume surge right at the 224-day moving average, creating a textbook asymmetrical entry point...</p>
-                                <div className="w-full h-40 bg-slate-200 rounded-sm animate-pulse my-6"></div>
-                                <h2>2. Intrinsic Value Assessment</h2>
-                                <p>Scouring the latest 10-K, the company maintains a dominant 68% market share in its primary segment with extreme pricing power...</p>
-                            </div>
-                        </div>
-
-                        {/* Top CTA Overlay */}
-                        <div className="relative z-10 w-full flex flex-col items-center justify-center p-8 md:p-16 min-h-[600px] bg-gradient-to-b from-transparent via-slate-50/95 to-slate-100">
-                            <div className="bg-white border border-slate-200 p-8 md:p-12 rounded-sm max-w-xl text-center shadow-2xl w-full">
-                                <div className="w-20 h-20 bg-slate-900 rounded-full mx-auto flex items-center justify-center mb-6 shadow-lg">
-                                    <Lock className="w-8 h-8 text-white" />
+                            {roi !== null ? (
+                                <div className="flex flex-col md:items-end justify-center ml-2">
+                                    <div className="flex items-baseline gap-2 mb-1">
+                                        <span className="text-4xl font-black font-mono tracking-tight text-white">
+                                            ${livePrice?.toFixed(2)}
+                                        </span>
+                                        <span className={`text-lg font-mono font-bold ${roi >= 0 ? "text-[#00FF41]" : "text-rose-500"}`}>
+                                            {roi > 0 ? "+" : ""}{roi.toFixed(2)}%
+                                        </span>
+                                    </div>
+                                    <p className="text-zinc-500 text-xs font-mono uppercase tracking-widest">
+                                        Base Entry: ${Number(pick.picked_price).toFixed(2)}
+                                    </p>
                                 </div>
-
-                                <h3 className="text-3xl md:text-4xl font-serif font-black text-slate-900 mb-4 tracking-tight">
-                                    Access Institutional Research
-                                </h3>
-
-                                <p className="text-slate-600 mb-8 text-lg leading-relaxed">
-                                    Elevate your trading. Let our AI uncover the single highest-probability breakout setup from the top 1,000 equities daily.
-                                </p>
-
-                                <Link href="/pricing" className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-sm shadow-md transition-all md:text-lg mb-4 hover:-translate-y-0.5 transform uppercase tracking-widest text-sm">
-                                    View PRO Plans (From $9.99)
-                                </Link>
-                                <p className="text-slate-400 text-xs font-semibold uppercase tracking-widest">Secure Payments via Lemon Squeezy</p>
-                            </div>
-                        </div>
-                    </div>
-                ) : (
-                    // PRO USER STATE: Render beautiful markdown
-                    <div className="bg-white rounded-sm border border-slate-200 p-8 md:p-12 shadow-xl">
-                        <div className="flex items-center gap-3 mb-8 pb-6 border-b-2 border-slate-800">
-                            <FileText className="w-6 h-6 text-blue-600" />
-                            <h3 className="text-2xl font-serif font-black tracking-tight text-slate-900 uppercase">Institutional Research Report</h3>
-                        </div>
-
-                        <div className="prose prose-slate prose-lg max-w-none 
-                            prose-headings:mt-12 prose-headings:font-serif prose-headings:font-black prose-headings:tracking-tight
-                            prose-h1:text-4xl prose-h1:text-slate-900 prose-h1:mb-8
-                            prose-h2:text-2xl prose-h2:text-blue-800 prose-h2:border-b-2 prose-h2:border-slate-100 prose-h2:pb-3 prose-h2:uppercase prose-h2:tracking-wider
-                            prose-h3:text-xl prose-h3:text-slate-800
-                            prose-p:leading-relaxed prose-p:text-slate-700 prose-p:mb-6 
-                            prose-strong:text-slate-900 prose-strong:font-bold
-                            prose-li:text-slate-700 prose-li:mb-2
-                            prose-ul:my-6
-                            prose-hr:border-slate-200
-                            ">
-                            {pick.ai_report ? (
-                                <ReactMarkdown remarkPlugins={[remarkBreaks]}>{pick.ai_report}</ReactMarkdown>
                             ) : (
-                                <p className="text-slate-500 italic font-serif">Research aggregation in progress. Please check back shortly.</p>
+                                <span className="text-sm font-bold text-slate-500 ml-2">Yielding Data...</span>
                             )}
                         </div>
+
+                        {/* Algo Confidence Block */}
+                        <div className="text-left md:text-right bg-blue-950/20 p-4 rounded-xl border border-blue-900/50 backdrop-blur-sm relative overflow-hidden">
+                            <div className="absolute left-0 top-0 w-1 h-full bg-blue-500"></div>
+                            <div className="flex items-center md:justify-end gap-2 mb-1 ml-2">
+                                <p className="text-[10px] text-blue-400 uppercase tracking-widest font-bold">Algo Confidence Score</p>
+                            </div>
+                            <div className="flex items-baseline md:justify-end gap-3 ml-2 mt-1">
+                                <h2 className="text-2xl font-black text-white font-mono">
+                                    {pick.oneil_score}
+                                </h2>
+                                <span className="font-mono text-sm font-bold bg-[#111] px-2 py-0.5 rounded border border-zinc-800 text-slate-300">
+                                    / 100
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                )}
-            </section>
+                </header>
+            </div>
+
+            <PickDetailUI pick={pick} isProUser={isProUser} roi={roi} />
         </div>
     );
 }

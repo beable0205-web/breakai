@@ -22,8 +22,29 @@ export default function TradingViewWidget({ ticker }: { ticker: string }) {
           enable_publishing: false,
           hide_side_toolbar: false,
           container_id: containerRef.current.id,
-          // 단테 기법 5, 15, 56, 112, 224일선 세팅
-          studies: ["EMA@tv-basicstudies", "EMA@tv-basicstudies", "EMA@ThemeRiver", "EMA@ThemeRiver", "EMA@ThemeRiver"]
+          // 단테 기법 5, 15, 56, 112, 224일선 세팅 (Moving Averages)
+          studies: [
+            {
+              id: "MASimple@tv-basicstudies",
+              inputs: { length: 5 },
+            },
+            {
+              id: "MASimple@tv-basicstudies",
+              inputs: { length: 15 },
+            },
+            {
+              id: "MASimple@tv-basicstudies",
+              inputs: { length: 56 },
+            },
+            {
+              id: "MASimple@tv-basicstudies",
+              inputs: { length: 112 },
+            },
+            {
+              id: "MASimple@tv-basicstudies",
+              inputs: { length: 224 },
+            }
+          ]
         });
       }
     };

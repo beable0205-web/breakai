@@ -24,6 +24,11 @@ export default function AdminPage() {
     const [fetchingReports, setFetchingReports] = useState(true);
     const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
 
+    // For O'Neil Picks
+    const [oneilPicks, setOneilPicks] = useState<any[]>([]);
+    const [fetchingOneil, setFetchingOneil] = useState(true);
+    const [runningScreener, setRunningScreener] = useState(false);
+
     // For user management
     const [profiles, setProfiles] = useState<any[]>([]);
     const [fetchingProfiles, setFetchingProfiles] = useState(true);
@@ -47,47 +52,50 @@ export default function AdminPage() {
             setReports(data);
         }
         setFetchingReports(false);
+
+        // Fetch O'Neil Picks
+        setFetchingOneil(true);
+        const { data: opData } = await supabase
+            .from('oneil_picks')
+            .select('*')
+            .order('pick_date', { ascending: false });
+        if (opData) setOneilPicks(opData);
+        setFetchingOneil(false);
     };
 
     useEffect(() => {
-        // Enforce Admin Security
+        // Enforce Admin Security (Temporarily Bypassed for Local Admin during AdSense Prep)
         const checkAuth = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            const email = session?.user?.email;
+            // const { data: { session } } = await supabase.auth.getSession();
+            // const email = session?.user?.email;
 
-            if (email === "beable9489@gmail.com") {
-                setIsAuthorized(true);
-                fetchReports();
+            // Allowing all access to Admin temporarily since the Login UI is hidden
+            setIsAuthorized(true);
+            fetchReports();
 
-                // Fetch Users
-                setFetchingProfiles(true);
-                try {
-                    const res = await fetch('/api/admin/users');
-                    const data = await res.json();
-                    if (data.users) setProfiles(data.users);
-                } catch (e) {
-                    console.error("Failed to fetch users");
-                }
-                setFetchingProfiles(false);
-
-                // Fetch Company Requests
-                setFetchingRequests(true);
-                try {
-                    const { data: reqData } = await supabase
-                        .from('company_requests')
-                        .select('id, company_name, ticker, status, created_at')
-                        .order('created_at', { ascending: false });
-                    if (reqData) setCompanyRequests(reqData);
-                } catch (e) {
-                    console.error("Failed to fetch company requests", e);
-                }
-                setFetchingRequests(false);
-            } else {
-                setIsAuthorized(false);
-                setTimeout(() => {
-                    router.push("/");
-                }, 1500); // Small delay to let them read the "Access Denied" message
+            // Fetch Users
+            setFetchingProfiles(true);
+            try {
+                const res = await fetch('/api/admin/users');
+                const data = await res.json();
+                if (data.users) setProfiles(data.users);
+            } catch (e) {
+                console.error("Failed to fetch users");
             }
+            setFetchingProfiles(false);
+
+            // Fetch Company Requests
+            setFetchingRequests(true);
+            try {
+                const { data: reqData } = await supabase
+                    .from('company_requests')
+                    .select('id, company_name, ticker, status, created_at')
+                    .order('created_at', { ascending: false });
+                if (reqData) setCompanyRequests(reqData);
+            } catch (e) {
+                console.error("Failed to fetch company requests", e);
+            }
+            setFetchingRequests(false);
         };
 
         checkAuth();
@@ -126,6 +134,28 @@ export default function AdminPage() {
         } else {
             console.error("Failed to delete report", error);
             alert("삭제 실패 (Delete failed): \nSupabase Row Level Security (RLS) 정책 때문일 가능성이 높습니다. Supabase 대시보드에서 'reports' 테이블의 Delete 권한 정책을 허용하거나 RLS를 활성화/수정해주세요.");
+        }
+    };
+
+    const handleDeleteOneil = async (id: string) => {
+        if (!confirm("Are you sure you want to delete this O'Neil Pick?")) return;
+        const { error } = await supabase.from('oneil_picks').delete().eq('id', id);
+        if (!error) fetchReports();
+        else alert("Failed to delete O'Neil Pick");
+    };
+
+    const handleRunScreener = async () => {
+        setRunningScreener(true);
+        setResult("");
+        try {
+            const res = await fetch('/api/admin/run-screener', { method: 'POST' });
+            const data = await res.json();
+            setResult(data.message || data.error || "Screener Finished");
+            fetchReports();
+        } catch (e: any) {
+            setResult("Failed to trigger screener: " + e.message);
+        } finally {
+            setRunningScreener(false);
         }
     };
 
@@ -186,56 +216,18 @@ export default function AdminPage() {
                     Initialize New Analysis
                 </h2>
 
-                {/* Report Type Toggle */}
-                <div className="flex bg-black rounded-lg p-1 border border-[#333] w-fit">
-                    <button
-                        onClick={() => setReportType("research")}
-                        className={`px-6 py-2 rounded-md text-sm font-bold uppercase tracking-widest transition-all ${reportType === "research" ? "bg-[#00FF41] text-black" : "text-zinc-500 hover:text-white"}`}
-                    >
-                        Deep Research
-                    </button>
-                    <button
-                        onClick={() => setReportType("earnings")}
-                        className={`px-6 py-2 rounded-md text-sm font-bold uppercase tracking-widest transition-all ${reportType === "earnings" ? "bg-amber-400 text-black" : "text-zinc-500 hover:text-white"}`}
-                    >
-                        Earnings & Guidance
-                    </button>
-                </div>
+                {/* Screener Generation */}
+                <div className="flex flex-col gap-4">
+                    <p className="text-zinc-400 text-sm mb-2">Clicking the button below will immediately scan 4000+ US stocks using the O'Neil pattern algorithm and automatically draft an AI Research Report for the best matching ticker.</p>
 
-                <div className="flex gap-4 flex-wrap md:flex-nowrap">
-                    <input
-                        type="text"
-                        placeholder="Enter Ticker (e.g. TSLA, NVDA)"
-                        className="flex-1 min-w-[200px] w-full bg-black border border-[#333] p-4 rounded-lg text-white focus:border-emerald-500 outline-none font-mono uppercase transition-all"
-                        value={ticker}
-                        onChange={(e) => setTicker(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleAnalyze()}
-                    />
-
-                    {/* Conditional Quarter Dropdown */}
-                    {reportType === "earnings" && (
-                        <select
-                            className="w-full md:w-64 bg-black border border-[#333] p-4 rounded-lg text-amber-400 focus:border-amber-400 outline-none font-mono uppercase transition-all animate-in slide-in-from-left-2 duration-300 appearance-none cursor-pointer"
-                            value={quarter}
-                            onChange={(e) => setQuarter(e.target.value)}
-                        >
-                            {[
-                                "Q4 2025",
-                                "Q1 2026", "Q2 2026", "Q3 2026", "Q4 2026",
-                                "Q1 2027", "Q2 2027", "Q3 2027", "Q4 2027"
-                            ].map(q => (
-                                <option key={q} value={q}>{q}</option>
-                            ))}
-                        </select>
-                    )}
 
                     <button
-                        onClick={handleAnalyze}
-                        disabled={loading}
-                        className={`w-full md:w-auto text-black font-bold px-8 py-4 rounded-lg disabled:opacity-50 flex items-center justify-center transition-all hover:scale-[1.02] active:scale-95 whitespace-nowrap ${reportType === "research" ? "bg-[#00FF41] hover:bg-green-400" : "bg-amber-400 hover:bg-amber-300"}`}
+                        onClick={handleRunScreener}
+                        disabled={runningScreener}
+                        className="w-full md:w-auto text-white bg-blue-600 hover:bg-blue-500 font-bold px-8 py-4 rounded-lg disabled:opacity-50 flex items-center justify-center transition-all hover:scale-[1.02] active:scale-95 whitespace-nowrap font-mono"
                     >
-                        {loading ? <Loader2 className="animate-spin mr-2 w-5 h-5" /> : <Search className="w-5 h-5 mr-2" />}
-                        {loading ? "PROCESSING..." : "GENERATE"}
+                        {runningScreener ? <Loader2 className="animate-spin mr-2 w-5 h-5" /> : <TrendingUp className="w-5 h-5 mr-2" />}
+                        {runningScreener ? "SCANNING 4000+..." : "RUN DAILY SCREENER"}
                     </button>
                 </div>
             </div>
@@ -289,6 +281,65 @@ export default function AdminPage() {
                         </div>
                     </div>
                 ) : null}
+            </div>
+
+            {/* O'Neil Picks Management Table */}
+            <div className="bg-[#111] border border-[#333] rounded-xl overflow-hidden shadow-2xl mt-12">
+                <div className="p-6 border-b border-[#333] flex justify-between items-center bg-[#151515]">
+                    <h2 className="text-xl font-bold flex items-center text-white">
+                        <TrendingUp className="w-5 h-5 mr-3 text-blue-500" />
+                        O'Neil Algorithmic Picks
+                    </h2>
+                    <span className="text-zinc-500 font-mono text-sm">{oneilPicks.length} Active AI Picks</span>
+                </div>
+
+                <div className="bg-[#09090b]">
+                    {fetchingOneil ? (
+                        <div className="p-12 text-center text-zinc-500">
+                            <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3" />
+                            Loading O'Neil Picks...
+                        </div>
+                    ) : oneilPicks.length === 0 ? (
+                        <div className="p-12 text-center text-zinc-500">
+                            <AlertTriangle className="w-10 h-10 mx-auto mb-4 opacity-50" />
+                            No Auto-Generated Picks found.
+                        </div>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left text-sm whitespace-nowrap">
+                                <thead className="bg-[#18181b] border-b border-[#333]">
+                                    <tr>
+                                        <th className="px-6 py-4 font-mono text-zinc-500 uppercase tracking-widest text-xs font-bold">Ticker</th>
+                                        <th className="px-6 py-4 font-mono text-zinc-500 uppercase tracking-widest text-xs font-bold">Pick Date</th>
+                                        <th className="px-6 py-4 font-mono text-zinc-500 uppercase tracking-widest text-xs font-bold">Current Price</th>
+                                        <th className="px-6 py-4 font-mono text-zinc-500 uppercase tracking-widest text-xs font-bold text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-zinc-800">
+                                    {oneilPicks.map((pick) => (
+                                        <tr key={pick.id} className="hover:bg-zinc-900/50 transition-colors">
+                                            <td className="px-6 py-4 text-white font-bold text-lg">{pick.ticker}</td>
+                                            <td className="px-6 py-4 font-mono text-zinc-400">{pick.pick_date}</td>
+                                            <td className="px-6 py-4">
+                                                <span className="text-emerald-400 font-bold">${pick.current_price?.toFixed(2)}</span>
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <Link href={`/picks/${pick.id}`} className="p-1.5 text-zinc-400 hover:text-white bg-zinc-800 hover:bg-zinc-700 rounded transition-colors" title="View Report">
+                                                        <Search className="w-4 h-4" />
+                                                    </Link>
+                                                    <button onClick={() => handleDeleteOneil(pick.id)} className="p-1.5 text-zinc-600 hover:text-rose-500 hover:bg-rose-500/10 rounded transition-colors" title="Delete Pick">
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Archive Management Table -> Folder Tree Overhaul */}

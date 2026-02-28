@@ -174,72 +174,24 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
 
             {/* The Paywall Logic */}
             <section className="mt-12">
-                {!isProUser ? (
-                    // FREE USER STATE: Render a fake blurred background behind the CTA
-                    <div className="relative w-full bg-[#111] border border-[#333] rounded-2xl shadow-2xl overflow-hidden mt-8">
-                        {/* Fake Blurred Content Background */}
-                        <div className="absolute inset-0 pointer-events-none select-none blur-[6px] opacity-40 px-10 py-12">
-                            <div className="prose prose-invert prose-lg max-w-none">
-                                <h1 className="text-gray-200">Deep Research & Institutional Flow Breakdown</h1>
-                                <h2>1. Insider Divergence Metrics</h2>
-                                <p className="text-gray-400">Our deep analysis indicates severe divergence between institutional block trades and retail volume. Over the past 72 hours, dark pool distribution has surged by 450%, indicating quiet off-loading by smart money.</p>
-                                <div className="w-full h-32 bg-zinc-800 rounded-lg animate-pulse my-6"></div>
-                                <h2>2. 10Q Financial Irregularities</h2>
-                                <p className="text-gray-400">Scanning the latest SEC filings, we found 3 critical red flags regarding inventory turnover and accounts receivable that the CEO deliberately minimized during the latest earnings call...</p>
-                                <ul>
-                                    <li className="text-gray-400 font-mono text-sm bg-zinc-900 p-2 border border-zinc-800 rounded mt-2">Divergence Alert: Q3 Operating Margins...</li>
-                                    <li className="text-gray-400 font-mono text-sm bg-zinc-900 p-2 border border-zinc-800 rounded mt-2">Smart Money Index (SMI): Neutral/Bearish...</li>
-                                    <li className="text-gray-400 font-mono text-sm bg-zinc-900 p-2 border border-zinc-800 rounded mt-2">Volume Profile: Heavy resistance at...</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        {/* Top CTA Overlay */}
-                        <div className="relative z-10 w-full flex flex-col items-center justify-center p-12 min-h-[500px] bg-gradient-to-b from-transparent via-[#111]/80 to-[#111]">
-                            <div className="bg-zinc-900/95 backdrop-blur-2xl border border-zinc-700 p-10 rounded-2xl max-w-xl text-center shadow-2xl w-full transform transition-all hover:scale-[1.02]">
-                                <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-600 rounded-3xl mx-auto flex items-center justify-center mb-8 shadow-lg shadow-orange-500/20">
-                                    <Lock className="w-10 h-10 text-black shadow-inner" />
-                                </div>
-
-                                <h3 className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-amber-200 to-orange-400 mb-4 tracking-tight">
-                                    🔓 Unlock Premium Analysis
-                                </h3>
-
-                                <p className="text-zinc-400 mb-8 text-lg leading-relaxed font-medium">
-                                    Subscribe to instantly reveal the hidden institutional flow, 10-step fundamental Breakdown, and 10Q reality checks.<br />
-                                    <span className="text-zinc-500 text-sm mt-4 block font-normal flex items-center justify-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                                        Don't trade blind. See what Wall Street sees.
-                                    </span>
-                                </p>
-
-                                <Link href="/pricing" className="block w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-black font-extrabold py-4 rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.4)] hover:shadow-[0_0_30px_rgba(245,158,11,0.6)] transition-all text-lg mb-4">
-                                    View Pro Plans (From $9.99)
-                                </Link>
-                                <p className="text-zinc-500 text-xs text-center">Cancel anytime. Instant access guaranteed.</p>
-                            </div>
-                        </div>
+                {/* ALWAYS Render beautiful markdown for free tier */}
+                <div className="bg-[#111] rounded-2xl border border-[#333] p-10 shadow-2xl">
+                    <div className="prose prose-invert prose-lg max-w-none prose-headings:mt-10 prose-headings:font-black prose-h1:text-5xl prose-h2:text-4xl prose-p:leading-loose prose-p:text-gray-300 prose-p:mb-8 prose-li:mb-3">
+                        {cleanMarkdown ? (
+                            <ReactMarkdown remarkPlugins={[remarkBreaks]}>{cleanMarkdown}</ReactMarkdown>
+                        ) : (
+                            <pre className="font-mono text-gray-300 whitespace-pre-wrap">
+                                {report.analysis_text}
+                            </pre>
+                        )}
                     </div>
-                ) : (
-                    // PRO USER STATE: Render beautiful markdown
-                    <div className="bg-[#111] rounded-2xl border border-[#333] p-10 shadow-2xl">
-                        <div className="prose prose-invert prose-lg max-w-none prose-headings:mt-10 prose-headings:font-black prose-h1:text-5xl prose-h2:text-4xl prose-p:leading-loose prose-p:text-gray-300 prose-p:mb-8 prose-li:mb-3">
-                            {cleanMarkdown ? (
-                                <ReactMarkdown remarkPlugins={[remarkBreaks]}>{cleanMarkdown}</ReactMarkdown>
-                            ) : (
-                                <pre className="font-mono text-gray-300 whitespace-pre-wrap">
-                                    {report.analysis_text}
-                                </pre>
-                            )}
-                        </div>
-                    </div>
-                )}
-            </section>
+                </div>
+            </section >
 
             {/* Newsletter Subscription (Retention Loop) */}
-            <section className="mt-20">
+            < section className="mt-20" >
                 <LeadMagnet />
-            </section>
-        </div>
+            </section >
+        </div >
     );
 }

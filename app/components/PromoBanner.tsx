@@ -20,28 +20,29 @@ export default function PromoBanner() {
         sessionStorage.setItem("hidePromoBanner", "true");
     };
 
-    if (!isVisible) return null;
+    // Temporarily hidden for pre-monetization free tier
+    if (true) return null;
 
     return (
-        <div className="bg-gradient-to-r from-emerald-500 to-emerald-700 text-black py-2 px-4 flex justify-between items-center relative z-50 overflow-hidden shadow-lg border-b border-emerald-900">
+        <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white py-2 px-4 flex justify-between items-center relative z-50 overflow-hidden shadow-lg border-b border-blue-950">
             {/* Shimmer Effect */}
             <div className="absolute inset-0 bg-white/20 w-1/4 skew-x-12 -translate-x-[200%] animate-[shimmer_3s_infinite_ease-in-out]"></div>
 
-            <div className="flex-grow text-center flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-3 text-xs sm:text-sm font-bold tracking-tight">
+            <div className="flex-grow text-center flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-3 text-xs sm:text-sm font-semibold tracking-wider font-sans uppercase">
                 <span className="flex items-center gap-2">
-                    <span className="animate-bounce">🔥</span>
-                    LIMITED TIME LAUNCH OFFER:
+                    <span className="animate-pulse w-2 h-2 bg-white rounded-full"></span>
+                    INSTITUTIONAL ACCESS OFFER:
                 </span>
-                <span>
-                    Save 16% on the Pro Yearly Plan.
+                <span className="text-blue-100">
+                    Secure 16% off the Pro Annual Terminal.
                 </span>
-                <Link href="/pricing" className="underline underline-offset-2 decoration-black/50 hover:text-white transition-colors ml-2 bg-black/10 px-2 py-0.5 rounded">
-                    Claim Discount Now &rarr;
+                <Link href="/pricing" className="underline underline-offset-4 decoration-white/50 hover:text-white transition-colors ml-2 bg-white/10 px-3 py-0.5 rounded-sm hover:bg-white/20">
+                    Apply Discount &rarr;
                 </Link>
             </div>
             <button
                 onClick={handleClose}
-                className="text-black/70 hover:text-black hover:bg-black/10 p-1 rounded-full transition-colors ml-2 shrink-0"
+                className="text-white/70 hover:text-white hover:bg-white/10 p-1 rounded-sm transition-colors ml-2 shrink-0"
                 aria-label="Close promo banner"
             >
                 <X className="w-4 h-4" />
