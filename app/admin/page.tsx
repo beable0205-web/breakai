@@ -12,6 +12,7 @@ export default function AdminPage() {
     const router = useRouter();
     const supabase = createClient();
     const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+    const [detectedEmail, setDetectedEmail] = useState<string | null>(null);
 
     const [ticker, setTicker] = useState("");
     const [reportType, setReportType] = useState<"research" | "earnings">("research");
@@ -68,16 +69,18 @@ export default function AdminPage() {
         const checkAuth = async () => {
             const { data: { session } } = await supabase.auth.getSession();
             const email = session?.user?.email;
+            setDetectedEmail(email || "None");
 
             // Restrict access to admin only
-            if (email === "beable9489@gmail.com") {
+            if (email && email.toLowerCase() === "beable9489@gmail.com") {
                 setIsAuthorized(true);
             } else {
+                console.log("Admin Access Denied for email:", email);
                 setIsAuthorized(false);
                 // Redirect non-admins after a short delay
                 setTimeout(() => {
                     router.push("/");
-                }, 2000);
+                }, 4000); // 4 seconds delay to see the message
             }
 
             fetchReports();
@@ -125,6 +128,7 @@ export default function AdminPage() {
                 <ShieldAlert className="w-20 h-20" />
                 <h1 className="text-4xl font-black uppercase tracking-widest">Access Denied</h1>
                 <p className="text-zinc-400">Your email address is not authorized for server-level access.</p>
+                <p className="text-zinc-500 text-sm font-mono bg-zinc-900 px-3 py-1 rounded">Detected Email Address: {detectedEmail}</p>
                 <p className="text-zinc-600 text-sm animate-pulse">Redirecting to public zone...</p>
             </div>
         );

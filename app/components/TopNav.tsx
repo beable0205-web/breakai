@@ -79,6 +79,14 @@ export default function TopNav() {
 
                     <div className="w-px h-4 bg-zinc-700 mx-2 hidden md:block"></div>
 
+                    {user?.email === "beable9489@gmail.com" && (
+                        <>
+                            <span className="text-white normal-case">beable9489</span>
+                            <Link href="/admin" className="text-emerald-400 hover:text-emerald-300 transition-colors font-bold">ADMIN DASHBOARD</Link>
+                            <button onClick={handleLogout} className="text-red-500 hover:text-red-400 transition-colors normal-case">Logout</button>
+                        </>
+                    )}
+
                     {/* 
                       Temporarily Hiding Auth UI for AdSense Approval
                       {user ? (...) : (...)} 
