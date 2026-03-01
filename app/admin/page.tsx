@@ -66,11 +66,20 @@ export default function AdminPage() {
     useEffect(() => {
         // Enforce Admin Security (Temporarily Bypassed for Local Admin during AdSense Prep)
         const checkAuth = async () => {
-            // const { data: { session } } = await supabase.auth.getSession();
-            // const email = session?.user?.email;
+            const { data: { session } } = await supabase.auth.getSession();
+            const email = session?.user?.email;
 
-            // Allowing all access to Admin temporarily since the Login UI is hidden
-            setIsAuthorized(true);
+            // Restrict access to admin only
+            if (email === "beable9489@gmail.com") {
+                setIsAuthorized(true);
+            } else {
+                setIsAuthorized(false);
+                // Redirect non-admins after a short delay
+                setTimeout(() => {
+                    router.push("/");
+                }, 2000);
+            }
+
             fetchReports();
 
             // Fetch Users
