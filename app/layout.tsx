@@ -60,7 +60,7 @@ export default function RootLayout({
               {/* Legal & Navigation Links */}
               <div className="flex flex-wrap justify-center md:justify-end gap-x-8 gap-y-4 text-sm font-semibold text-zinc-400">
                 <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
-                <a href="mailto:contact@breakout.ai" className="hover:text-white transition-colors">Contact</a>
+                <a href="mailto:beable9489@gmail.com" className="hover:text-white transition-colors">Contact</a>
                 <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
                 <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
                 <Link href="/disclaimer" className="hover:text-rose-400 transition-colors">Disclaimer</Link>

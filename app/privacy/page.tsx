@@ -39,7 +39,7 @@ export default function PrivacyPolicy() {
 
                 <section>
                     <h2 className="text-2xl font-semibold text-emerald-400 mb-4">5. Contact Us</h2>
-                    <p>If you have any questions about this Privacy Policy, You can contact us by email: <strong>contact@breakout.ai</strong></p>
+                    <p>If you have any questions about this Privacy Policy, You can contact us by email: <strong>beable9489@gmail.com</strong></p>
                 </section>
             </div>
         </div>
