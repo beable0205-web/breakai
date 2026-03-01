@@ -104,7 +104,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
                             {/* Share Buttons (Viral Loop) */}
                             <ShareButtons
                                 url={`${process.env.NEXT_PUBLIC_SITE_URL || 'https://truthofmarket.com'}/report/${report.id}`}
-                                title={`${report.ticker} AI Deep Analysis Report | Truth of Market`}
+                                title={`${report.ticker} AI Deep Analysis Report | Breakout AI`}
                                 description={report.one_line_summary || "Wall street lies exposed."}
                             />
                         </div>

@@ -64,7 +64,7 @@ export default function TopNav() {
     return (
         <>
             <header className="border-b border-[#333] py-4 px-6 flex justify-between items-center bg-[#0a0a0a]">
-                <Link href="/" className="text-2xl font-serif font-black tracking-tight text-white hover:text-blue-400 transition-colors">
+                <Link href="/" onDoubleClick={() => setIsAuthModalOpen(true)} className="text-2xl font-serif font-black tracking-tight text-white hover:text-blue-400 transition-colors">
                     BREAKOUT<span className="text-blue-500">_AI</span>
                 </Link>
                 <nav className="flex items-center text-sm text-slate-400 font-semibold uppercase tracking-widest gap-8">

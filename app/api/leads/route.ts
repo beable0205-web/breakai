@@ -35,12 +35,12 @@ export async function POST(req: Request) {
                 // otherwise 'onboarding@resend.dev' works for testing to the registered email only.
                 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
                 await resend.emails.send({
-                    from: 'Truth of Market <onboarding@resend.dev>',
+                    from: 'Breakout AI <onboarding@resend.dev>',
                     to: email,
-                    subject: 'Welcome to Truth of Market 📉 (Your PDF is Here)',
+                    subject: 'Welcome to Breakout AI 📉 (Your PDF is Here)',
                     html: `
-                        <div style="font-family: sans-serif; color: #111;">
-                            <h2>Welcome to Truth of Market.</h2>
+                        <div style="font-family: sans-serif; padding: 20px;">
+                            <h2>Welcome to Breakout AI.</h2>
                             <p>Thank you for subscribing. We expose the Wall Street narratives so you can see the actual fundamental truths of the market.</p>
                             
                             <hr style="border: 1px solid #eee; margin: 20px 0;" />
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
                             <hr style="border: 1px solid #eee; margin: 20px 0;" />
                             
                             <p>Keep an eye on your inbox tomorrow for a deep dive into how our AI model spots divergent market trends before institutional dumps.</p>
-                            <p>Best,<br><strong>The Truth of Market Team</strong></p>
+                            <p>Best,<br><strong>The Breakout AI Team</strong></p>
                             <p style="font-size: 11px; color: #666; margin-top: 30px;">You are receiving this because you opted in on our website.</p>
                         </div>
                     `

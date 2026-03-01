@@ -4,7 +4,7 @@ import { ArrowUpRight, Cpu, Activity, TrendingUp, Presentation } from "lucide-re
 import { fetchLiveQuote } from "../../utils/yahooFinance";
 
 export const metadata = {
-    title: "Truth of Market | Institutional Grade Stock Screener",
+    title: "Breakout AI | Institutional Grade Stock Screener",
     description: "Our AI scans 1,000+ top US stocks daily to find the single best William O'Neil Cup & Handle setup.",
 };
 
@@ -43,7 +43,7 @@ export default async function PicksPage() {
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00FF41] opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#00FF41]"></span>
                         </span>
-                        <span className="font-bold text-xs tracking-widest uppercase">Truth of Market Matrix</span>
+                        <span className="font-bold text-xs tracking-widest uppercase">Breakout AI Matrix</span>
                     </div>
 
                     <h1 className="text-4xl md:text-6xl font-black mb-4 tracking-tighter text-white leading-tight font-serif">

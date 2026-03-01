@@ -109,7 +109,7 @@ export default function AboutPage() {
                         <Fingerprint className="w-7 h-7 text-[#00FF41]" />
                     </div>
                     <h3 className="text-white font-black mb-3 font-mono uppercase tracking-widest text-sm">Deep Forensics</h3>
-                    <p className="text-sm text-zinc-500 font-mono leading-relaxed">A technical breakout is a trap without fundamental validity. We run deep AI research on 10-Ks to verify the "Truth of Market" narrative before greenlighting every setup.</p>
+                    <p className="text-sm text-zinc-500 font-mono leading-relaxed">A technical breakout is a trap without fundamental validity. We run deep AI research on 10-Ks to verify the "Breakout AI" narrative before greenlighting every setup.</p>
                 </div>
             </div>
 
