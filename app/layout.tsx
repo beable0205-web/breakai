@@ -23,6 +23,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4633321310054654" crossOrigin="anonymous"></script>
+        <meta name="google-adsense-account" content="ca-pub-4633321310054654" />
+      </head>
       <GoogleTagManager gtmId="GTM-W9538SHJ" />
       <body className={`${inter.className} bg-black text-slate-200 antialiased min-h-screen flex flex-col selection:bg-[#00FF41]/30 font-sans`}>
         <DisableCopy />

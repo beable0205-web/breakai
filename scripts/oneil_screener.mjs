@@ -256,6 +256,8 @@ Chapter 4. Risk / Reward: Asymmetrical Entry Point
 async function main() {
     console.log("Starting Breakout AI Screener...");
 
+    const isForceRun = process.argv.includes('--force');
+
     // Check if we already picked today to save Gemini API calls
     const today = new Date().toISOString().split('T')[0];
     const { data: existing } = await supabase
@@ -263,7 +265,7 @@ async function main() {
         .select('id')
         .gte('pick_date', today);
 
-    if (existing && existing.length > 0) {
+    if (!isForceRun && existing && existing.length > 0) {
         console.log("Already found today's pick. Exiting to prevent duplicates.");
         return;
     }

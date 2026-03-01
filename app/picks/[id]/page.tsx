@@ -44,10 +44,12 @@ export default async function PickDetail({ params }: { params: Promise<{ id: str
     const isProUser = true; // isAdmin || isDbPro || false;
 
     // Fetch live quote for ROI
-    const livePrice = await fetchLiveQuote(pick.ticker);
+    const quoteData = await fetchLiveQuote(pick.ticker);
+    let livePrice = null;
     let roi = null;
-    if (livePrice && pick.picked_price) {
-        roi = ((livePrice - pick.picked_price) / pick.picked_price) * 100;
+    if (quoteData) {
+        livePrice = quoteData.price;
+        roi = quoteData.changePercent;
     }
 
     let details = pick.technical_details;
@@ -129,7 +131,7 @@ export default async function PickDetail({ params }: { params: Promise<{ id: str
                 </header>
             </div>
 
-            <PickDetailUI pick={pick} isProUser={isProUser} roi={roi} />
+            <PickDetailUI pick={pick} isProUser={isProUser} roi={roi} livePrice={livePrice} />
         </div>
     );
 }

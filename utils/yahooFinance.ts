@@ -9,7 +9,12 @@ export async function fetchLiveQuote(ticker: string) {
         const result = data.chart?.result?.[0];
 
         if (result && result.meta && result.meta.regularMarketPrice) {
-            return result.meta.regularMarketPrice;
+            const price = result.meta.regularMarketPrice;
+            let changePercent = 0;
+            if (result.meta.chartPreviousClose) {
+                changePercent = ((price - result.meta.chartPreviousClose) / result.meta.chartPreviousClose) * 100;
+            }
+            return { price, changePercent };
         }
         return null;
     } catch (e) {

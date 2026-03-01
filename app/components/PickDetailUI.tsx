@@ -11,9 +11,10 @@ interface PickDetailUIProps {
     pick: any; // The record from oneil_picks
     isProUser: boolean;
     roi: number | null;
+    livePrice: number | null;
 }
 
-export default function PickDetailUI({ pick, isProUser, roi }: PickDetailUIProps) {
+export default function PickDetailUI({ pick, isProUser, roi, livePrice }: PickDetailUIProps) {
     const [activeTab, setActiveTab] = useState<"technical" | "fundamental">("fundamental");
 
     // Attempt to parse AI Report String into JSON + Markdown
@@ -53,12 +54,6 @@ export default function PickDetailUI({ pick, isProUser, roi }: PickDetailUIProps
     let details = pick.technical_details;
     if (typeof details === 'string') {
         try { details = JSON.parse(details); } catch (e) { }
-    }
-
-    // Attempt to extract live Price from ROI data, assuming roi is provided relative to picked_price
-    let livePrice = null;
-    if (roi !== null && pick.picked_price) {
-        livePrice = Number(pick.picked_price) * (1 + (roi / 100));
     }
 
     return (

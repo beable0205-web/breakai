@@ -22,10 +22,12 @@ export default async function PicksPage() {
 
     // Fetch live quotes for all picks in parallel
     const picksWithPrices = await Promise.all((picks || []).map(async (pick) => {
-        const livePrice = await fetchLiveQuote(pick.ticker);
+        const quoteData = await fetchLiveQuote(pick.ticker);
+        let livePrice = null;
         let roi = null;
-        if (livePrice && pick.picked_price) {
-            roi = ((livePrice - pick.picked_price) / pick.picked_price) * 100;
+        if (quoteData) {
+            livePrice = quoteData.price;
+            roi = quoteData.changePercent;
         }
         return { ...pick, livePrice, roi };
     }));
@@ -142,7 +144,7 @@ export default async function PicksPage() {
                                 {/* ROI Display */}
                                 <div className={`md:w-auto relative z-10 w-full flex items-center justify-between md:justify-end gap-8 border-t md:border-none pt-4 md:pt-0 ${isLatest ? 'border-zinc-800' : 'border-[#222]'}`}>
                                     <div className="text-left md:text-right hidden sm:block">
-                                        <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 font-mono ${isLatest ? 'text-zinc-400' : 'text-zinc-600'}`}>Current Return</p>
+                                        <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 font-mono ${isLatest ? 'text-zinc-400' : 'text-zinc-600'}`}>Daily Return</p>
                                         <div className="flex items-baseline gap-2 justify-start md:justify-end">
                                             {pick.roi !== null ? (
                                                 <>
