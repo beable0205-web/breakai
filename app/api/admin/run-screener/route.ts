@@ -7,8 +7,13 @@ export async function POST() {
     try {
         console.log("Admin triggering O'Neil Screener Action...");
 
+        // Extract Env Vars safely inside the API Route scope and pass down
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+        const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+        const geminiApiKey = process.env.GEMINI_API_KEY || '';
+
         // Execute the native library function instead of child_process
-        const result = await runScreener(true); // force run
+        const result = await runScreener(true, { supabaseUrl, supabaseKey, geminiApiKey }); // force run
 
         console.log("Screener Execution Log:\n", result.log);
 

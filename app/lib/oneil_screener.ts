@@ -5,23 +5,19 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 let supabase: any;
 let genAI: any;
 
-function initClients() {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-    const geminiApiKey = process.env.GEMINI_API_KEY || '';
-
-    if (!supabaseUrl || !supabaseKey || !geminiApiKey) {
+function initClients(env: { supabaseUrl: string, supabaseKey: string, geminiApiKey: string }) {
+    if (!env || !env.supabaseUrl || !env.supabaseKey || !env.geminiApiKey) {
         console.error("Missing required environment variables.");
         return false;
     }
 
     if (!supabase) {
-        supabase = createClient(supabaseUrl, supabaseKey, {
+        supabase = createClient(env.supabaseUrl, env.supabaseKey, {
             auth: { persistSession: false }
         });
     }
     if (!genAI) {
-        genAI = new GoogleGenerativeAI(geminiApiKey);
+        genAI = new GoogleGenerativeAI(env.geminiApiKey);
     }
     return true;
 }
@@ -258,7 +254,7 @@ Chapter 4. Risk / Reward: Asymmetrical Entry Point
     }
 }
 
-export async function runScreener(isForceRun = false) {
+export async function runScreener(isForceRun = false, env: { supabaseUrl: string, supabaseKey: string, geminiApiKey: string }) {
     console.log("Starting Breakout AI Screener...");
 
     let outputLogs: string[] = [];
@@ -267,7 +263,7 @@ export async function runScreener(isForceRun = false) {
         outputLogs.push(msg);
     };
 
-    if (!initClients()) {
+    if (!initClients(env)) {
         log("Error: Missing API Keys. Make sure GEMINI_API_KEY is set in Vercel.");
         return { success: false, message: "Error: Missing API Keys. Make sure GEMINI_API_KEY is set in Vercel.", log: outputLogs.join('\n') };
     }
