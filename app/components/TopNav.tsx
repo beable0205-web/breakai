@@ -16,7 +16,7 @@ export default function TopNav() {
     const supabase = createClient();
 
     const fetchProfile = async (user: User) => {
-        if (user.email === "beable9489@gmail.com") {
+        if (user.email?.toLowerCase() === "beable9489@gmail.com") {
             setIsPro(true);
             return;
         }
@@ -79,7 +79,7 @@ export default function TopNav() {
 
                     <div className="w-px h-4 bg-zinc-700 mx-2 hidden md:block"></div>
 
-                    {user?.email === "beable9489@gmail.com" && (
+                    {user?.email?.toLowerCase() === "beable9489@gmail.com" && (
                         <>
                             <span className="text-white normal-case">beable9489</span>
                             <Link href="/admin" className="text-emerald-400 hover:text-emerald-300 transition-colors font-bold">ADMIN DASHBOARD</Link>
