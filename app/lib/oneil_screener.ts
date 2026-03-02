@@ -29,7 +29,7 @@ const TARGET_TICKERS = [
 /**
  * Fetch ~2 years (500+ trading days) of daily historical prices for MA calculation
  */
-async function fetchHistoricalData(ticker) {
+async function fetchHistoricalData(ticker: string) {
     // 2 years back is roughly 504 trading days, let's fetch '2y' interval '1d'
     const url = `https://query2.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=2y`;
     const response = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
@@ -43,7 +43,7 @@ async function fetchHistoricalData(ticker) {
     }
 
     // Combine timestamp and close prices
-    const prices = [];
+    const prices: any[] = [];
     const closes = result.indicators.quote[0].close;
     for (let i = 0; i < result.timestamp.length; i++) {
         if (closes[i] !== null) {
@@ -54,13 +54,13 @@ async function fetchHistoricalData(ticker) {
             });
         }
     }
-    return prices.sort((a, b) => a.date - b.date);
+    return prices.sort((a, b) => a.date.getTime() - b.date.getTime());
 }
 
 /**
  * Calculates a simple moving average for the given period
  */
-function calculateMA(prices, period) {
+function calculateMA(prices: any[], period: number) {
     if (prices.length < period) return null;
     const subset = prices.slice(prices.length - period);
     const sum = subset.reduce((acc, val) => acc + val.close, 0);
@@ -72,7 +72,7 @@ function calculateMA(prices, period) {
  * Looks for stocks where price recently broke above the 224-day MA after a long 'Cup' consolidation, 
  * forming a 'Handle' near the MA prior to breakout.
  */
-function analyzeONeilPattern(prices) {
+function analyzeONeilPattern(prices: any[]) {
     if (prices.length < 448) {
         return { isPick: false, reason: "Not enough historical data for 448-day MA (requires ~2 years)." };
     }
@@ -96,7 +96,7 @@ function analyzeONeilPattern(prices) {
         const price20DaysAgo = prices[prices.length - 21].close;
         const ma224_20DaysAgo = calculateMA(prices.slice(0, prices.length - 20), 224);
 
-        const wasBelowOrNear = (price20DaysAgo < ma224_20DaysAgo * 1.02);
+        const wasBelowOrNear = ma224_20DaysAgo ? (price20DaysAgo < ma224_20DaysAgo * 1.02) : false;
         const volumeSurge = currentVolume > (avgVol20 * 1.5); // 50% above average volume is an excellent breakout signal
 
         if (wasBelowOrNear) {
@@ -135,10 +135,10 @@ function analyzeONeilPattern(prices) {
 /**
  * Generate Gemini Corporate Report
  */
-async function generateAIReport(ticker, technicalDetails) {
+async function generateAIReport(ticker: string, technicalDetails: any) {
     const model = genAI.getGenerativeModel({
         model: "gemini-2.5-flash",
-        tools: [{ googleSearch: {} }]
+        tools: [{ googleSearch: {} } as any]
     }, { apiVersion: "v1beta" });
 
     const today = new Date().toISOString().split('T')[0];
@@ -250,7 +250,7 @@ Chapter 4. Risk / Reward: Asymmetrical Entry Point
 export async function runScreener(isForceRun = false) {
     console.log("Starting Breakout AI Screener...");
 
-    let outputLogs = [];
+    let outputLogs: string[] = [];
     const log = (msg: string) => {
         console.log(msg);
         outputLogs.push(msg);
