@@ -155,6 +155,11 @@ export default function AdminPage() {
                 ) : (
                     <p className="text-zinc-600 text-sm animate-pulse">Redirecting to public zone...</p>
                 )}
+
+                <AuthModal
+                    isOpen={isAuthModalOpen}
+                    onClose={() => setIsAuthModalOpen(false)}
+                />
             </div>
         );
     }
