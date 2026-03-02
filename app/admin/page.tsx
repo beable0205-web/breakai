@@ -159,6 +159,7 @@ export default function AdminPage() {
                 <AuthModal
                     isOpen={isAuthModalOpen}
                     onClose={() => setIsAuthModalOpen(false)}
+                    redirectTo="/admin"
                 />
             </div>
         );
@@ -653,6 +654,7 @@ export default function AdminPage() {
             <AuthModal
                 isOpen={isAuthModalOpen}
                 onClose={() => setIsAuthModalOpen(false)}
+                redirectTo="/admin"
             />
         </div>
     );

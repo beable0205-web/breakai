@@ -8,9 +8,10 @@ import { X, Loader2, Mail, Lock } from "lucide-react";
 interface AuthModalProps {
     isOpen: boolean;
     onClose: () => void;
+    redirectTo?: string;
 }
 
-export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
+export default function AuthModal({ isOpen, onClose, redirectTo }: AuthModalProps) {
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const supabase = createClient();
@@ -21,10 +22,15 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         setLoading(true);
         setErrorMsg("");
 
+        const callbackUrl = new URL(`${window.location.origin}/api/auth/callback`);
+        if (redirectTo) {
+            callbackUrl.searchParams.set('next', redirectTo);
+        }
+
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: `${window.location.origin}/api/auth/callback` // Process session on server, then redirect to /admin
+                redirectTo: callbackUrl.toString() // Process session on server, then redirect to requested path
             }
         });
 
