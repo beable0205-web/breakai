@@ -1,23 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import fetch from 'cross-fetch';
-import dotenv from 'dotenv';
-import path from 'path';
 
-dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const geminiApiKey = process.env.GEMINI_API_KEY;
+// No need for dotenv in Next.js backend, process.env is injected
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const geminiApiKey = process.env.GEMINI_API_KEY || '';
 
 if (!supabaseUrl || !supabaseKey || !geminiApiKey) {
     console.error("Missing required environment variables.");
-    process.exit(1);
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey, {
-    auth: { persistSession: false },
-    global: { fetch: fetch }
+    auth: { persistSession: false }
 });
 const genAI = new GoogleGenerativeAI(geminiApiKey);
 
@@ -253,10 +247,19 @@ Chapter 4. Risk / Reward: Asymmetrical Entry Point
     }
 }
 
-async function main() {
+export async function runScreener(isForceRun = false) {
     console.log("Starting Breakout AI Screener...");
 
-    const isForceRun = process.argv.includes('--force');
+    let outputLogs = [];
+    const log = (msg: string) => {
+        console.log(msg);
+        outputLogs.push(msg);
+    };
+
+    if (!supabaseUrl || !supabaseKey || !geminiApiKey) {
+        log("Error: Missing API Keys.");
+        return { success: false, log: outputLogs.join('\n') };
+    }
 
     // Check if we already picked today to save Gemini API calls
     const today = new Date().toISOString().split('T')[0];
@@ -266,8 +269,8 @@ async function main() {
         .gte('pick_date', today);
 
     if (!isForceRun && existing && existing.length > 0) {
-        console.log("Already found today's pick. Exiting to prevent duplicates.");
-        return;
+        log("Already found today's pick. Exiting to prevent duplicates.");
+        return { success: true, message: "Skipped: Today's pick already exists.", log: outputLogs.join('\n') };
     }
 
     // [ANTI-DUPLICATION] Fetch tickers picked in the last 30 days
@@ -278,12 +281,12 @@ async function main() {
         .select('ticker')
         .gte('pick_date', thirtyDaysAgo.toISOString().split('T')[0]);
 
-    const recentTickers = new Set((recentPicks || []).map(p => p.ticker));
+    const recentTickers = new Set((recentPicks || []).map((p: any) => p.ticker));
     if (recentTickers.size > 0) {
-        console.log(`Skipping recently picked tickers (last 30 days): ${Array.from(recentTickers).join(', ')}`);
+        log(`Skipping recently picked tickers (last 30 days): ${Array.from(recentTickers).join(', ')}`);
     }
 
-    let candidates = [];
+    let candidates: any[] = [];
 
     // Scan all tickers to find the absolute best setup
     for (const ticker of TARGET_TICKERS) {
@@ -296,7 +299,7 @@ async function main() {
             const analysis = analyzeONeilPattern(prices);
 
             if (analysis.isPick) {
-                console.log(`  🟡 Potential Match: ${ticker} (Score: ${analysis.score}) - ${analysis.details.message}`);
+                log(`  🟡 Potential Match: ${ticker} (Score: ${analysis.score}) - ${analysis.details?.message}`);
                 candidates.push({
                     ticker: ticker,
                     score: analysis.score,
@@ -305,7 +308,7 @@ async function main() {
             }
             // Wait to avoid rate limits
             await new Promise(r => setTimeout(r, 200));
-        } catch (err) {
+        } catch (err: any) {
             console.error(`Error analyzing ${ticker}:`, err.message);
         }
     }
@@ -313,15 +316,15 @@ async function main() {
     if (candidates.length > 0) {
         // Sort descending by score
         candidates.sort((a, b) => b.score - a.score);
-        console.log(`\nFound ${candidates.length} candidates today. Attempting to generate report...`);
+        log(`\nFound ${candidates.length} candidates today. Attempting to generate report...`);
 
         let success = false;
 
         for (const candidate of candidates) {
             if (success) break;
 
-            console.log(`\n🏆 ATTEMPTING CANDIDATE: ${candidate.ticker} with Score ${candidate.score}`);
-            console.log(`   Generating profound AI Report for ${candidate.ticker}...`);
+            log(`\n🏆 ATTEMPTING CANDIDATE: ${candidate.ticker} with Score ${candidate.score}`);
+            log(`   Generating profound AI Report for ${candidate.ticker}...`);
 
             const reportMd = await generateAIReport(candidate.ticker, candidate.details);
 
@@ -336,24 +339,26 @@ async function main() {
                         ai_report: reportMd
                     });
                 if (error) {
-                    console.error("   Supabase Insert Error (might be duplicate):", error.message);
-                    console.log("   --> Moving to next alternate candidate...");
+                    log(`   Supabase Insert Error (might be duplicate): ${error.message}`);
+                    log("   --> Moving to next alternate candidate...");
                 } else {
-                    console.log(`   ✅ Successfully saved today's pick (${candidate.ticker}) to database!`);
+                    log(`   ✅ Successfully saved today's pick (${candidate.ticker}) to database!`);
                     success = true;
                 }
             } else {
-                console.log(`   ❌ AI Report generation failed for ${candidate.ticker}. Moving to next...`);
+                log(`   ❌ AI Report generation failed for ${candidate.ticker}. Moving to next...`);
             }
         }
 
         if (!success) {
-            console.log("\n⚪ Screener finished. Failed to generate and save any reports today.");
+            log("\n⚪ Screener finished. Failed to generate and save any reports today.");
+            return { success: false, message: "Failed to generate AI reports for matches.", log: outputLogs.join('\n') };
+        } else {
+            return { success: true, message: "Screener ran successfully. Check the Picks dashboard.", log: outputLogs.join('\n') };
         }
 
     } else {
-        console.log("\n⚪ Screener finished. No high-probability setups found today.");
+        log("\n⚪ Screener finished. No high-probability setups found today.");
+        return { success: true, message: "Screener finished. No high-probability setups found today.", log: outputLogs.join('\n') };
     }
 }
-
-main();

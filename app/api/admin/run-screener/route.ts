@@ -1,29 +1,22 @@
 import { NextResponse } from 'next/server';
-import { exec } from 'child_process';
-import util from 'util';
+import { runScreener } from '../../../lib/oneil_screener'; // Use the Next.js compatible exported function
 
 export const dynamic = 'force-dynamic';
-
-const execPromise = util.promisify(exec);
 
 export async function POST() {
     try {
         console.log("Admin triggering O'Neil Screener Action...");
 
-        // Execute the Node.js script with --force to bypass the daily limit
-        // Providing maxBuffer to prevent overflow if output is large
-        const { stdout, stderr } = await execPromise('node scripts/oneil_screener.mjs --force', {
-            maxBuffer: 1024 * 1024 * 10
-        });
+        // Execute the native library function instead of child_process
+        const result = await runScreener(true); // force run
 
-        console.log("Screener STDOUT:", stdout);
-        if (stderr) console.error("Screener STDERR:", stderr);
+        console.log("Screener Execution Log:\n", result.log);
 
-        if (stdout.includes("Already found today's pick")) {
-            return NextResponse.json({ success: true, message: "Skipped: Today's pick already exists.", stdout, stderr });
+        if (!result.success) {
+            return NextResponse.json({ success: false, error: result.message, stdout: result.log }, { status: 500 });
         }
 
-        return NextResponse.json({ success: true, message: "Screener ran successfully. Check the Picks dashboard.", stdout, stderr });
+        return NextResponse.json({ success: true, message: result.message, stdout: result.log, stderr: "" });
 
     } catch (error) {
         console.error("Failed to run screener:", error);
