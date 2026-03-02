@@ -1,19 +1,30 @@
 import { createClient } from '@supabase/supabase-js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// No need for dotenv in Next.js backend, process.env is injected
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const geminiApiKey = process.env.GEMINI_API_KEY || '';
+// Instantiate clients dynamically to ensure process.env is read at runtime
+let supabase: any;
+let genAI: any;
 
-if (!supabaseUrl || !supabaseKey || !geminiApiKey) {
-    console.error("Missing required environment variables.");
+function initClients() {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+    const geminiApiKey = process.env.GEMINI_API_KEY || '';
+
+    if (!supabaseUrl || !supabaseKey || !geminiApiKey) {
+        console.error("Missing required environment variables.");
+        return false;
+    }
+
+    if (!supabase) {
+        supabase = createClient(supabaseUrl, supabaseKey, {
+            auth: { persistSession: false }
+        });
+    }
+    if (!genAI) {
+        genAI = new GoogleGenerativeAI(geminiApiKey);
+    }
+    return true;
 }
-
-const supabase = createClient(supabaseUrl, supabaseKey, {
-    auth: { persistSession: false }
-});
-const genAI = new GoogleGenerativeAI(geminiApiKey);
 
 // A robust list of top high-volume, high-quality US stocks (S&P 500 & NASDAQ 100 leaders)
 // In production, this can be expanded to 1000+ stocks via an external JSON file.
@@ -256,9 +267,9 @@ export async function runScreener(isForceRun = false) {
         outputLogs.push(msg);
     };
 
-    if (!supabaseUrl || !supabaseKey || !geminiApiKey) {
-        log("Error: Missing API Keys.");
-        return { success: false, log: outputLogs.join('\n') };
+    if (!initClients()) {
+        log("Error: Missing API Keys. Make sure GEMINI_API_KEY is set in Vercel.");
+        return { success: false, message: "Error: Missing API Keys. Make sure GEMINI_API_KEY is set in Vercel.", log: outputLogs.join('\n') };
     }
 
     // Check if we already picked today to save Gemini API calls
@@ -288,29 +299,32 @@ export async function runScreener(isForceRun = false) {
 
     let candidates: any[] = [];
 
-    // Scan all tickers to find the absolute best setup
-    for (const ticker of TARGET_TICKERS) {
-        if (recentTickers.has(ticker)) {
-            continue; // Skip if already picked recently
-        }
+    // Batched concurrent fetching to reduce total scan time (Vercel 10s limit)
+    const chunkSize = 15;
+    for (let i = 0; i < TARGET_TICKERS.length; i += chunkSize) {
+        const batch = TARGET_TICKERS.slice(i, i + chunkSize);
 
-        try {
-            const prices = await fetchHistoricalData(ticker);
-            const analysis = analyzeONeilPattern(prices);
+        await Promise.all(batch.map(async (ticker) => {
+            if (recentTickers.has(ticker)) return;
+            try {
+                const prices = await fetchHistoricalData(ticker);
+                const analysis = analyzeONeilPattern(prices);
 
-            if (analysis.isPick) {
-                log(`  🟡 Potential Match: ${ticker} (Score: ${analysis.score}) - ${analysis.details?.message}`);
-                candidates.push({
-                    ticker: ticker,
-                    score: analysis.score,
-                    details: analysis.details
-                });
+                if (analysis.isPick) {
+                    log(`  🟡 Potential Match: ${ticker} (Score: ${analysis.score}) - ${analysis.details?.message}`);
+                    candidates.push({
+                        ticker: ticker,
+                        score: analysis.score,
+                        details: analysis.details
+                    });
+                }
+            } catch (err: any) {
+                console.error(`Error analyzing ${ticker}:`, err.message);
             }
-            // Wait to avoid rate limits
-            await new Promise(r => setTimeout(r, 200));
-        } catch (err: any) {
-            console.error(`Error analyzing ${ticker}:`, err.message);
-        }
+        }));
+
+        // Wait briefly after a batch of 15 API requests
+        await new Promise(r => setTimeout(r, 100));
     }
 
     if (candidates.length > 0) {

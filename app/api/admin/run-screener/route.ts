@@ -13,10 +13,19 @@ export async function POST() {
         console.log("Screener Execution Log:\n", result.log);
 
         if (!result.success) {
-            return NextResponse.json({ success: false, error: result.message, stdout: result.log }, { status: 500 });
+            return NextResponse.json({
+                success: false,
+                error: (result.message || "Screener failed to run.") + "\n\n=== EXECUTION LOGS ===\n" + result.log,
+                stdout: result.log
+            }, { status: 500 });
         }
 
-        return NextResponse.json({ success: true, message: result.message, stdout: result.log, stderr: "" });
+        return NextResponse.json({
+            success: true,
+            message: (result.message || "Screener Execution Complete.") + "\n\n=== EXECUTION LOGS ===\n" + result.log,
+            stdout: result.log,
+            stderr: ""
+        });
 
     } catch (error) {
         console.error("Failed to run screener:", error);
