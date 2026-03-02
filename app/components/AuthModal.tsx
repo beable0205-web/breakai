@@ -82,6 +82,18 @@ export default function AuthModal({ isOpen, onClose, redirectTo }: AuthModalProp
                         <p className="text-zinc-600 text-xs mt-6 px-4 leading-relaxed">
                             By continuing, you acknowledge that you have read and agree to our <a href="#" className="underline hover:text-white">Terms of Service</a> and <a href="#" className="underline hover:text-white">Privacy Policy</a>.
                         </p>
+
+                        {errorMsg && typeof window !== 'undefined' && (
+                            <div className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded text-left">
+                                <p className="text-red-400 text-xs font-bold mb-1">Auth Error: {errorMsg}</p>
+                                <p className="text-zinc-400 text-[10px] uppercase font-mono mt-2 mb-1">Diagnostic Info:</p>
+                                <p className="text-zinc-500 text-[10px]">Please ensure the exact URL below is added to your Supabase Project -&gt; Authentication -&gt; URL Configuration -&gt; Redirect URLs list:</p>
+                                <code className="block mt-1 p-2 bg-black text-[#00FF41] text-[10px] rounded break-all selection:bg-white/20">
+                                    {window.location.origin}/api/auth/callback
+                                </code>
+                                <p className="text-zinc-500 text-[10px] mt-2">Also check your Site URL matches your production domain exactly (including www if used).</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
