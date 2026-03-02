@@ -7,12 +7,14 @@ import { useRouter } from "next/navigation";
 import { analyzeTicker } from "../actions";
 import TerminalLoader from "../components/TerminalLoader";
 import { createClient } from "../../utils/supabase/client";
+import AuthModal from "../components/AuthModal";
 
 export default function AdminPage() {
     const router = useRouter();
     const supabase = createClient();
     const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
     const [detectedEmail, setDetectedEmail] = useState<string | null>(null);
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
     const [ticker, setTicker] = useState("");
     const [reportType, setReportType] = useState<"research" | "earnings">("research");
@@ -124,15 +126,6 @@ export default function AdminPage() {
         );
     }
 
-    const handleAdminLogin = async () => {
-        await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: `${window.location.origin}/admin`
-            }
-        });
-    };
-
     if (isAuthorized === false) {
         return (
             <div className="min-h-[70vh] flex flex-col items-center justify-center bg-black text-rose-500 space-y-4">
@@ -144,7 +137,7 @@ export default function AdminPage() {
                 {detectedEmail === "None" ? (
                     <div className="mt-8 flex flex-col items-center gap-4">
                         <button
-                            onClick={handleAdminLogin}
+                            onClick={() => setIsAuthModalOpen(true)}
                             className="bg-white text-black font-bold py-3 px-8 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-3 shadow-lg active:scale-95"
                         >
                             <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -651,6 +644,11 @@ export default function AdminPage() {
                     &larr; Return to Public Dashboard
                 </Link>
             </div>
+
+            <AuthModal
+                isOpen={isAuthModalOpen}
+                onClose={() => setIsAuthModalOpen(false)}
+            />
         </div>
     );
 }

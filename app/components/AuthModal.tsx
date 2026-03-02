@@ -24,7 +24,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: `${window.location.origin}/` // Redirect back to home after Google Auth
+                redirectTo: `${window.location.origin}/api/auth/callback` // Process session on server, then redirect to /admin
             }
         });
 
