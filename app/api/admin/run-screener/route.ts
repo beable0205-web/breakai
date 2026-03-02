@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { runScreener } from '../../../lib/oneil_screener'; // Use the Next.js compatible exported function
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
 
 export async function POST() {
     try {
@@ -10,7 +12,11 @@ export async function POST() {
         // Extract Env Vars safely inside the API Route scope and pass down
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
         const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+        // Using precise check to prevent empty string truthy bypass
         const geminiApiKey = process.env.GEMINI_API_KEY || '';
+
+        console.log("Checking ENV Context - Supabase URL Exists:", !!supabaseUrl);
+        console.log("Checking ENV Context - Gemini API Exists:", !!geminiApiKey);
 
         // Execute the native library function instead of child_process
         const result = await runScreener(true, { supabaseUrl, supabaseKey, geminiApiKey }); // force run
