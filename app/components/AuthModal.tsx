@@ -22,15 +22,12 @@ export default function AuthModal({ isOpen, onClose, redirectTo }: AuthModalProp
         setLoading(true);
         setErrorMsg("");
 
-        const callbackUrl = new URL(`${window.location.origin}/api/auth/callback`);
-        if (redirectTo) {
-            callbackUrl.searchParams.set('next', redirectTo);
-        }
+        const callbackUrl = `${window.location.origin}/api/auth/callback`;
 
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: callbackUrl.toString() // Process session on server, then redirect to requested path
+                redirectTo: callbackUrl // Process session on server
             }
         });
 

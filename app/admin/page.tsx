@@ -115,6 +115,14 @@ export default function AdminPage() {
         };
 
         checkAuth();
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+                checkAuth();
+            }
+        });
+
+        return () => subscription.unsubscribe();
     }, [router]);
 
     // Don't render the dashboard until auth is resolved completely
