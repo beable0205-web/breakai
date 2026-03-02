@@ -189,42 +189,55 @@ You MUST structure your response exactly as follows. Do NOT deviate.
 }
 \`\`\`
 <!-- FUNDAMENTAL_REPORT -->
-# ${ticker} Institutional Investment Analysis
 
-[Table of Contents]
-Prologue: Welcome to the Institutional Edge
-Why this company right now?
-Chapter 1. Financial Health Checkup: The Numbers Don't Lie
+## PROLOGUE: WELCOME TO THE INSTITUTIONAL EDGE
+(Write a profound introduction. No table of contents.)
+
+## WHY THIS COMPANY RIGHT NOW?
+(Summarize the immediate catalyst)
+
+## CHAPTER 1. FINANCIAL HEALTH CHECKUP: THE NUMBERS DON'T LIE
 (Analyze turnaround, margins, and financial stability. Write in profound, engaging English.)
-Chapter 2. Industry Analysis: The Macro Environment
+
+## CHAPTER 2. INDUSTRY ANALYSIS: THE MACRO ENVIRONMENT
 (Analyze the massive paradigm shift in the industry and TAM)
-Chapter 3. Alpha Selection: Why THIS Specific Stock?
+
+## CHAPTER 3. ALPHA SELECTION: WHY THIS SPECIFIC STOCK?
 (Analyze Economic Moat and Turnaround potential)
-Chapter 4. 10-K Autopsy: Reading Between the Lines
+
+## CHAPTER 4. 10-K AUTOPSY: READING BETWEEN THE LINES
 (Analyze revenue breakdown, outsourcing, or on-demand traits)
-Chapter 5. Business Model (BM): The Profit Engine
+
+## CHAPTER 5. BUSINESS MODEL (BM): THE PROFIT ENGINE
 (P x Q - C analysis, direct sales vs distributors)
-Chapter 6. The Ultimate Catalyst: Core Competency
+
+## CHAPTER 6. THE ULTIMATE CATALYST: CORE COMPETENCY
 (Analyze core technologies and patents)
-Chapter 7. Institutional Triggers: Why Buy NOW?
+
+## CHAPTER 7. INSTITUTIONAL TRIGGERS: WHY BUY NOW?
 (Analyze catalysts, new products, mega deals)
-Chapter 8. Risk Assessment: The Invalidating Factors
+
+## CHAPTER 8. RISK ASSESSMENT: THE INVALIDATING FACTORS
 (Analyze legal, overhang, or subsidiary risks)
-Chapter 9. Valuation Matrix: Exploring the Upside
+
+## CHAPTER 9. VALUATION MATRIX: EXPLORING THE UPSIDE
 (Relative valuation vs peers and upside potential)
 
 <!-- TECHNICAL_REPORT -->
-# ${ticker} Smart Money & Algo Validation (Technical Setup)
 
-[Table of Contents]
-Prologue: The Art of Timing
-Chapter 1. Moving Averages: The Institutional Footprint
+## PROLOGUE: THE ART OF TIMING
+(Introduction to the technical setup)
+
+## CHAPTER 1. MOVING AVERAGES: THE INSTITUTIONAL FOOTPRINT
 (Analyze the 224-day MA bounce and what it means for long-term trend reversal)
-Chapter 2. Volume Profiling: Decoding the Smart Money
+
+## CHAPTER 2. VOLUME PROFILING: DECODING THE SMART MONEY
 (Analyze accumulation days vs distribution days in the recent base)
-Chapter 3. Pattern Recognition: The O'Neil Setup
+
+## CHAPTER 3. PATTERN RECOGNITION: THE O'NEIL SETUP
 (Analyze the Cup and Handle, Double Bottom, or Flat Base pattern forming)
-Chapter 4. Risk / Reward: Asymmetrical Entry Point
+
+## CHAPTER 4. RISK / REWARD: ASYMMETRICAL ENTRY POINT
 (Analyze where to set the stop-loss and the immediate upside target)
 `;
 
