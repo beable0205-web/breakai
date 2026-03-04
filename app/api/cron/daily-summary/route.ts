@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { supabase } from "../../../lib/supabase";
 
 // We import the AI SDK for Gemini
-import { google } from "@ai-sdk/google";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
 
 // Vercel Cron will hit this URL automatically
@@ -83,7 +83,10 @@ TITLE: 💎 Market Briefing (${dateStr})
 Content begins on the next line.
 `;
 
-        const model = google("gemini-1.5-pro");
+        const customGoogle = createGoogleGenerativeAI({
+            apiKey: process.env.GEMINI_API_KEY || '',
+        });
+        const model = customGoogle("gemini-1.5-pro");
 
         const { text } = await generateText({
             model: model,

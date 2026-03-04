@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase } from "../../../lib/supabase";
-import { google } from "@ai-sdk/google";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
 
 export const dynamic = 'force-dynamic';
@@ -63,7 +63,10 @@ TITLE: 💎 Market Briefing (${dateStr})
 Content begins on the next line.
 `;
 
-        const model = google("gemini-1.5-pro");
+        const customGoogle = createGoogleGenerativeAI({
+            apiKey: process.env.GEMINI_API_KEY || '',
+        });
+        const model = customGoogle("gemini-1.5-pro");
 
         const { text } = await generateText({
             model: model,
