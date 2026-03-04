@@ -1,28 +1,15 @@
 import { NextResponse } from 'next/server';
 import { supabase } from "../../../lib/supabase";
-
-// We import the AI SDK for Gemini
 import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
 
-// Vercel Cron will hit this URL automatically
-export async function GET(req: Request) {
+export const dynamic = 'force-dynamic';
+
+export async function POST(req: Request) {
     try {
-        // 1. Basic Security: Ensure the request comes from Vercel's Cron Infrastructure
-        // Vercel sends a specific Authorization header with the cron secret we set
-        const authHeader = req.headers.get('authorization');
-        const cronSecret = process.env.CRON_SECRET;
+        console.log("[Admin] Starting Manual Daily Market Summary Generation...");
 
-        // Disable this check locally or if secret isn't set for easy manual testing during dev.
-        // In production, ALWAYS set CRON_SECRET in Vercel.
-        if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        console.log("[Cron] Starting Daily Market Summary Generation...");
-
-        // 2. Fetch Live Market Tickers from Yahoo Finance
-        // ^GSPC = S&P 500, ^IXIC = NASDAQ, ^DJI = Dow Jones
+        // 1. Fetch Live Market Tickers from Yahoo Finance
         const indices = ['^GSPC', '^IXIC', '^DJI'];
 
         const fetchPromises = indices.map(async (ticker) => {
@@ -51,16 +38,9 @@ export async function GET(req: Request) {
             marketDataStr = "Market data unavailable today.";
         }
 
-        await Promise.all(fetchPromises);
-
-        // Fallback if Yahoo Finance fails
-        if (!marketDataStr) {
-            marketDataStr = "Market data unavailable today.";
-        }
-
         const dateStr = new Date().toISOString().split('T')[0];
 
-        // 3. Prompt Gemini AI to write the summary
+        // 2. Prompt Gemini AI with "Truth of Market" English parameters
         const prompt = `
 You are a highly analytical, objective, and professional Wall Street algorithmic analyst.
 Your job is to write a short, punchy, engaging "Daily Market Briefing" in a style similar to "Truth of Market" newsletters, but entirely in English.
@@ -91,8 +71,8 @@ Content begins on the next line.
             temperature: 0.7,
         });
 
-        // 4. Parse the Title and Content
-        let title = `Market Briefing: ${dateStr}`;
+        // 3. Parse the Title and Content
+        let title = `💎 Market Briefing (${dateStr})`;
         let content = text;
 
         if (text.startsWith("TITLE:")) {
@@ -101,8 +81,7 @@ Content begins on the next line.
             content = lines.slice(1).join('\n').trim();
         }
 
-        // 5. Save to Supabase
-        // We use an upsert/onConflict approach to avoid duplicate daily summaries if cron runs twice by accident
+        // 4. Save to Supabase
         const { error } = await supabase
             .from('market_summaries')
             .upsert(
@@ -115,15 +94,15 @@ Content begins on the next line.
             );
 
         if (error) {
-            console.error("[Cron DB Error]:", error);
-            return NextResponse.json({ error: 'Failed to save summary to database' }, { status: 500 });
+            console.error("[Admin DB Error]:", error);
+            return NextResponse.json({ success: false, error: 'Failed to save summary to database' }, { status: 500 });
         }
 
-        console.log(`[Cron] Successfully generated and saved summary for ${dateStr}`);
-        return NextResponse.json({ success: true, date: dateStr, title });
+        console.log(`[Admin] Successfully generated and saved summary for ${dateStr}`);
+        return NextResponse.json({ success: true, message: `Market briefing for ${dateStr} generated successfully!`, date: dateStr, title });
 
     } catch (error) {
-        console.error('[Cron] Fatal error generating daily summary:', error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        console.error('[Admin] Fatal error generating daily summary:', error);
+        return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
     }
 }

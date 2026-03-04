@@ -2,6 +2,7 @@ import { createClient } from "../../utils/supabase/server";
 import Link from "next/link";
 import { ArrowUpRight, Cpu, Activity, TrendingUp, Presentation } from "lucide-react";
 import { fetchLiveQuote } from "../../utils/yahooFinance";
+import DailyBriefing from "../../components/DailyBriefing";
 
 export const metadata = {
     title: "Breakout AI | Institutional Grade Stock Screener",
@@ -19,6 +20,14 @@ export default async function PicksPage() {
         .select('*')
         .order('pick_date', { ascending: false })
         .limit(20);
+
+    // Fetch latest daily briefing
+    const { data: briefingData } = await supabaseServer
+        .from('market_summaries')
+        .select('*')
+        .order('date', { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
     // Fetch live quotes for all picks in parallel
     const picksWithPrices = await Promise.all((picks || []).map(async (pick) => {
@@ -56,8 +65,15 @@ export default async function PicksPage() {
                 </div>
             </div>
 
+            {/* Daily Briefing Section */}
+            {briefingData && (
+                <div className="max-w-6xl mx-auto px-6 pt-16 relative z-10">
+                    <DailyBriefing summary={briefingData} />
+                </div>
+            )}
+
             {/* List Section */}
-            <div className="max-w-6xl mx-auto px-6 py-16 relative z-10">
+            <div className="max-w-6xl mx-auto px-6 py-8 relative z-10">
 
                 {/* Stats / Headers Bar */}
                 <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-8 pb-4 border-b border-[#333] gap-4">
