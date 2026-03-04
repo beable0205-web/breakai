@@ -104,8 +104,8 @@ Content begins on the next line.
         console.log(`[Admin] Successfully generated and saved summary for ${dateStr}`);
         return NextResponse.json({ success: true, message: `Market briefing for ${dateStr} generated successfully!`, date: dateStr, title });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('[Admin] Fatal error generating daily summary:', error);
-        return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({ success: false, error: 'Internal server error: ' + (error.message || String(error)) }, { status: 500 });
     }
 }
