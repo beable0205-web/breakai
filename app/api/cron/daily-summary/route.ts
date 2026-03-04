@@ -86,7 +86,7 @@ Content begins on the next line.
         const customGoogle = createGoogleGenerativeAI({
             apiKey: process.env.GEMINI_API_KEY || '',
         });
-        const model = customGoogle("gemini-1.5-pro");
+        const model = customGoogle("gemini-2.5-flash");
 
         const { text } = await generateText({
             model: model,
