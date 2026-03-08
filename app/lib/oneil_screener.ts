@@ -136,7 +136,24 @@ function analyzeONeilPattern(prices: any[]) {
         }
     }
 
-    return { isPick: false, reason: "No specific William O'Neil pattern found." };
+    // Fallback scoring for ranking if no perfect setup is found
+    let fallbackScore = 50;
+    if (currentPrice > ma224) fallbackScore += 10;
+    if (currentPrice > ma112) fallbackScore += 10;
+    if (currentVolume > avgVol20) fallbackScore += 5;
+
+    // Closer to 224MA is better (pullback or consolidation)
+    if (Math.abs(distanceTo224) < 0.15) fallbackScore += 15;
+
+    return {
+        isPick: false,
+        score: fallbackScore,
+        reason: "No specific William O'Neil pattern found, but ranked for relative strength.",
+        details: {
+            ma112, ma224, ma448, currentPrice, volume: currentVolume,
+            message: "Solid technical baseline, evaluating as an alternate pick."
+        }
+    };
 }
 
 /**
@@ -307,6 +324,7 @@ export async function runScreener(isForceRun = false, env: { supabaseUrl: string
     }
 
     let candidates: any[] = [];
+    let fallbackCandidates: any[] = [];
 
     // Batched concurrent fetching to reduce total scan time (Vercel 10s limit)
     const chunkSize = 15;
@@ -326,6 +344,12 @@ export async function runScreener(isForceRun = false, env: { supabaseUrl: string
                         score: analysis.score,
                         details: analysis.details
                     });
+                } else if (analysis.score && analysis.details) {
+                    fallbackCandidates.push({
+                        ticker: ticker,
+                        score: analysis.score,
+                        details: analysis.details
+                    });
                 }
             } catch (err: any) {
                 console.error(`Error analyzing ${ticker}:`, err.message);
@@ -334,6 +358,16 @@ export async function runScreener(isForceRun = false, env: { supabaseUrl: string
 
         // Wait briefly after a batch of 15 API requests
         await new Promise(r => setTimeout(r, 100));
+    }
+
+    if (candidates.length === 0 && fallbackCandidates.length > 0) {
+        log("\n⚪ No strict O'Neil setups found. Falling back to next best ranked companies...");
+        fallbackCandidates.sort((a, b) => b.score - a.score);
+        // Take top 3 fallback candidates just in case
+        candidates = fallbackCandidates.slice(0, 3);
+        candidates.forEach(c => {
+            log(`  🟢 Alternate Pick: ${c.ticker} (Score: ${c.score}) - ${c.details?.message}`);
+        });
     }
 
     if (candidates.length > 0) {
