@@ -68,15 +68,15 @@ export default function DisableCopy() {
         };
 
         // A lot of snipping tools cause the window to lose focus when activated
-        const handleWindowBlur = () => {
-            document.body.style.filter = "blur(8px)";
-            document.body.style.opacity = "0.05"; // Show a faint outline to prevent "broken screen" panic
-        };
+        // const handleWindowBlur = () => {
+        //     document.body.style.filter = "blur(8px)";
+        //     document.body.style.opacity = "0.05"; // Show a faint outline to prevent "broken screen" panic
+        // };
 
-        const handleWindowFocus = () => {
-            document.body.style.filter = "blur(0px)";
-            document.body.style.opacity = "1";
-        };
+        // const handleWindowFocus = () => {
+        //     document.body.style.filter = "blur(0px)";
+        //     document.body.style.opacity = "1";
+        // };
 
         let blankTimeout: NodeJS.Timeout;
         const blankScreen = () => {
@@ -92,8 +92,8 @@ export default function DisableCopy() {
         document.addEventListener("keydown", handleKeyDown);
         document.addEventListener("keyup", handleKeyUp);
         document.addEventListener("dragstart", handleDragStart);
-        window.addEventListener("blur", handleWindowBlur);
-        window.addEventListener("focus", handleWindowFocus);
+        // window.addEventListener("blur", handleWindowBlur);
+        // window.addEventListener("focus", handleWindowFocus);
 
         return () => {
             document.removeEventListener("contextmenu", handleContextMenu);
@@ -101,8 +101,8 @@ export default function DisableCopy() {
             document.removeEventListener("keydown", handleKeyDown);
             document.removeEventListener("keyup", handleKeyUp);
             document.removeEventListener("dragstart", handleDragStart);
-            window.removeEventListener("blur", handleWindowBlur);
-            window.removeEventListener("focus", handleWindowFocus);
+            // window.removeEventListener("blur", handleWindowBlur);
+            // window.removeEventListener("focus", handleWindowFocus);
             clearTimeout(blankTimeout);
         };
     }, []);
