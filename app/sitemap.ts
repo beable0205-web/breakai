@@ -43,7 +43,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.8,
     }));
 
-    // 3. Static routes
+    // 3. Fetch all market_summaries for briefings
+    const { data: briefings } = await supabase
+        .from('market_summaries')
+        .select('id, date')
+        .order('date', { ascending: false });
+
+    const briefingRoutes: MetadataRoute.Sitemap = (briefings || []).map(briefing => ({
+        url: `${baseUrl}/briefing/${briefing.id}`,
+        lastModified: new Date(briefing.date),
+        changeFrequency: 'weekly',
+        priority: 0.8,
+    }));
+
+    // 4. Static routes
     const staticRoutes: MetadataRoute.Sitemap = [
         {
             url: baseUrl,
@@ -86,8 +99,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             lastModified: new Date(),
             changeFrequency: 'daily',
             priority: 0.9,
+        },
+        {
+            url: `${baseUrl}/briefing`,
+            lastModified: new Date(),
+            changeFrequency: 'daily',
+            priority: 0.9,
         }
     ];
 
-    return [...staticRoutes, ...hubRoutes, ...pickRoutes];
+    return [...staticRoutes, ...hubRoutes, ...pickRoutes, ...briefingRoutes];
 }

@@ -78,6 +78,34 @@ export async function GET() {
         });
     }
 
+    // 3. Fetch latest market summaries (Briefings)
+    const { data: summaries } = await supabase
+        .from('market_summaries')
+        .select('*')
+        .order('date', { ascending: false })
+        .limit(20);
+
+    if (summaries) {
+        summaries.forEach(summary => {
+            const url = `${baseUrl}/briefing/${summary.id}`;
+            feed.addItem({
+                title: `${summary.title}`,
+                id: url,
+                link: url,
+                description: summary.content.substring(0, 200) + '...',
+                content: summary.content,
+                author: [
+                    {
+                        name: "Breakout AI Market Intelligence",
+                        email: "beable9489@gmail.com",
+                        link: baseUrl
+                    }
+                ],
+                date: new Date(summary.date || new Date())
+            });
+        });
+    }
+
     // Sort feed items by date before generating XML to ensure chronological order
     feed.items.sort((a, b) => b.date.getTime() - a.date.getTime());
 
