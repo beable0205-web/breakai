@@ -27,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="alternate" type="application/rss+xml" title="Breakout AI RSS Feed" href="https://getbreakai.com/rss.xml" />
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4633321310054654" crossOrigin="anonymous"></script>
         <meta name="google-adsense-account" content="ca-pub-4633321310054654" />
         <script
