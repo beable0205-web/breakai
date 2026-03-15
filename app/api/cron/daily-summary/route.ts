@@ -15,9 +15,8 @@ export async function GET(req: Request) {
 
         // Disable this check locally or if secret isn't set for easy manual testing during dev.
         // In production, ALWAYS set CRON_SECRET in Vercel.
-        if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
+        // Endpoint disabled by request
+        return NextResponse.json({ error: 'Endpoint intentionally disabled' }, { status: 403 });
 
         console.log("[Cron] Starting Daily Market Summary Generation...");
 
