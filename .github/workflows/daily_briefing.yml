@@ -1,11 +1,6 @@
 name: Daily Market Briefing Generator
 
 on:
-  schedule:
-    # Runs at 21:30 UTC every day.
-    # 21:30 UTC corresponds to 06:30 AM KST (Korean Standard Time)
-    # This ensures the US market is closed and data is ready before picking the day's breakout stock.
-    - cron: '30 21 * * *'
   workflow_dispatch:
     # Allows you to manually trigger the run from the GitHub Actions tab anytime
 
