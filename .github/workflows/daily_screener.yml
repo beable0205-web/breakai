@@ -2,7 +2,8 @@ name: Daily O'Neil Screener & AI Analyst
 
 on:
   workflow_dispatch:
-    # Allows you to manually trigger the run from the GitHub Actions tab anytime
+  schedule:
+    - cron: '0 23 * * *' # Run at 23:00 UTC (08:00 KST) daily
 
 jobs:
   run-screener:
@@ -27,7 +28,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: node scripts/oneil_screener.mjs
+        run: npx tsx scripts/run_screener.ts
 
       - name: Auto-commit and Push generated reports
         run: |

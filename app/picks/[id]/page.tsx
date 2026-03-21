@@ -10,6 +10,26 @@ import PickDetailUI from "../../components/PickDetailUI";
 
 export const dynamic = "force-dynamic";
 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const supabaseServer = await createClient();
+    const { data: pick } = await supabaseServer
+        .from('oneil_picks')
+        .select('ticker')
+        .eq('id', id)
+        .single();
+        
+    const ticker = pick?.ticker || "Stock";
+    
+    return {
+        title: `Breakout AI | ${ticker} Institutional Signal`,
+        description: `Technical and fundamental AI analysis for ${ticker} institutional breakout signal.`,
+        alternates: {
+            canonical: `/picks/${id}`
+        }
+    };
+}
+
 export default async function PickDetail({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const supabaseServer = await createClient();

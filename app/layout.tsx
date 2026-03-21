@@ -10,6 +10,7 @@ import Link from "next/link";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://getbreakai.com"),
   title: "Breakout AI | Institutional Screener",
   description: "Data-driven financial analysis powered by AI.",
   verification: {

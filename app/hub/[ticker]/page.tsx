@@ -9,6 +9,19 @@ import CompanyLogo from "../../../components/CompanyLogo";
 // Ensure dynamic fetching so pricing/reports are fresh
 export const revalidate = 0;
 
+export async function generateMetadata({ params }: { params: Promise<{ ticker: string }> }) {
+    const { ticker: rawTicker } = await params;
+    const ticker = decodeURIComponent(rawTicker).toUpperCase();
+    
+    return {
+        title: `Breakout AI | ${ticker} Company Hub`,
+        description: `Real-time market data, analyst consensus, and historical AI reports for ${ticker}.`,
+        alternates: {
+            canonical: `/hub/${ticker}`
+        }
+    };
+}
+
 export default async function CompanyHubPage({ params }: { params: Promise<{ ticker: string }> }) {
     const { ticker: rawTicker } = await params;
     const ticker = decodeURIComponent(rawTicker).toUpperCase();

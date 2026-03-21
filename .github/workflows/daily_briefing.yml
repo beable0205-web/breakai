@@ -2,7 +2,8 @@ name: Daily Market Briefing Generator
 
 on:
   workflow_dispatch:
-    # Allows you to manually trigger the run from the GitHub Actions tab anytime
+  schedule:
+    - cron: '30 23 * * *' # Run at 23:30 UTC (08:30 KST) daily
 
 jobs:
   generate-briefing:
