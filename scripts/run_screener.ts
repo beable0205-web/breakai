@@ -8,9 +8,9 @@ async function main() {
     console.log("Starting Wrapper Script for O'Neil Screener...");
     
     const env = {
-        supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-        supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
-        geminiApiKey: process.env.GEMINI_API_KEY || ''
+        supabaseUrl: (process.env.NEXT_PUBLIC_SUPABASE_URL || '').trim(),
+        supabaseKey: (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').trim(),
+        geminiApiKey: (process.env.GEMINI_API_KEY || '').trim()
     };
 
     if (!env.supabaseUrl || !env.geminiApiKey) {
