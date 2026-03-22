@@ -19,7 +19,8 @@ async function main() {
     }
 
     try {
-        const result = await runScreener(false, env);
+        const isForce = process.argv.includes('--force');
+        const result = await runScreener(isForce, env);
         console.log("Execution Message: ", result.message);
         if (!result.success) {
             console.error("Screener failed or did not pick any stock.");

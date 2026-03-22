@@ -1,9 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { generateText } from 'ai';
 
 // Instantiate clients dynamically to ensure process.env is read at runtime
 let supabase: any;
-let genAI: any;
+let googleProvider: any;
 
 function initClients(env: { supabaseUrl: string, supabaseKey: string, geminiApiKey: string }) {
     if (!env || !env.supabaseUrl || !env.supabaseKey || !env.geminiApiKey) {
@@ -16,8 +17,10 @@ function initClients(env: { supabaseUrl: string, supabaseKey: string, geminiApiK
             auth: { persistSession: false }
         });
     }
-    if (!genAI) {
-        genAI = new GoogleGenerativeAI(env.geminiApiKey);
+    if (!googleProvider) {
+        googleProvider = createGoogleGenerativeAI({
+            apiKey: env.geminiApiKey,
+        });
     }
     return true;
 }
@@ -160,10 +163,7 @@ function analyzeONeilPattern(prices: any[]) {
  * Generate Gemini Corporate Report
  */
 async function generateAIReport(ticker: string, technicalDetails: any) {
-    const model = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash",
-        tools: [{ googleSearch: {} } as any]
-    }, { apiVersion: "v1beta" });
+    const model = googleProvider("gemini-2.5-flash");
 
     const today = new Date().toISOString().split('T')[0];
 
@@ -172,7 +172,7 @@ You are an elite financial analyst for 'Breakout AI', combining William O'Neil's
 
 **STRICT TEMPORAL ANCHOR (CRITICAL)**:
 **CURRENT DATE: ${today}. YOU ARE IN THE YEAR 2026.**
-All data, financial analysis, and market conditions MUST be calculated up to ${today}. Use the Google Search tool to pull the absolute latest data for ${ticker}.
+All data, financial analysis, and market conditions MUST be calculated up to ${today}. Use your latest knowledge to pull the most recent data for ${ticker}.
 
 We have identified the stock ticker ${ticker} as today's #1 breakout pick.
 Technical Details: Current Price: $${technicalDetails.currentPrice.toFixed(2)}, 224-day MA: $${technicalDetails.ma224.toFixed(2)}, Pattern: ${technicalDetails.message}.
@@ -259,8 +259,11 @@ You MUST structure your response exactly as follows. Do NOT deviate.
 `;
 
     try {
-        const result = await model.generateContent(prompt);
-        let text = result.response.text();
+        const { text } = await generateText({
+            model: model,
+            prompt: prompt,
+            temperature: 0.7,
+        });
 
         let jsonString = "";
         let finalMarkdown = "";
