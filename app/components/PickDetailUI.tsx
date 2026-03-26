@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { Lock, FileText, BarChart2, ShieldAlert, Activity } from "lucide-react";
+import { Lock, FileText, BarChart2, ShieldAlert, Activity, Download } from "lucide-react";
 import ReactMarkdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
 import TradingViewWidget from "../../components/TradingViewWidget";
@@ -16,6 +16,27 @@ interface PickDetailUIProps {
 
 export default function PickDetailUI({ pick, isProUser, roi, livePrice }: PickDetailUIProps) {
     const [activeTab, setActiveTab] = useState<"technical" | "fundamental">("fundamental");
+    const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+
+    const handleDownloadPdf = () => {
+        const element = document.getElementById("report-content");
+        if (!element) {
+            alert("다운로드하려면 'Institutional Deep Research' 탭을 켜주세요!");
+            return;
+        }
+        
+        setIsGeneratingPdf(true);
+        try {
+            // html2canvas fails to parse modern Tailwind v4 oklch/lab colors.
+            // Using the robust native browser print engine for "Save as PDF".
+            window.print();
+        } catch (e) {
+            console.error("PDF generation failed:", e);
+            alert("PDF 생성 중 오류가 발생했습니다.");
+        } finally {
+            setTimeout(() => setIsGeneratingPdf(false), 500);
+        }
+    };
 
     // Attempt to parse AI Report String into JSON + Markdown
     let reportData = { json_data: null as any, markdown: "" };
@@ -58,8 +79,24 @@ export default function PickDetailUI({ pick, isProUser, roi, livePrice }: PickDe
 
     return (
         <div className="w-full">
+            {/* Header / Actions */}
+            <div className="flex justify-end mb-2 mt-4">
+                <button 
+                    onClick={handleDownloadPdf}
+                    disabled={isGeneratingPdf}
+                    className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest bg-zinc-900 border border-zinc-700 text-zinc-300 px-4 py-2 rounded hover:bg-zinc-800 hover:text-white transition-all disabled:opacity-50"
+                >
+                    {isGeneratingPdf ? (
+                        <div className="w-4 h-4 border-2 border-zinc-500 border-t-white rounded-full animate-spin"></div>
+                    ) : (
+                        <Download className="w-4 h-4 text-[#00FF41]" />
+                    )}
+                    {isGeneratingPdf ? "Generating..." : "Download as PDF"}
+                </button>
+            </div>
+
             {/* Tab Navigation */}
-            <div className="flex border-b border-[#333] mt-12 mb-8 bg-[#09090b] rounded-t-xl overflow-hidden">
+            <div className="flex border-b border-[#333] mb-8 bg-[#09090b] rounded-t-xl overflow-hidden">
                 <button
                     onClick={() => setActiveTab("fundamental")}
                     className={`flex-1 p-5 text-sm md:text-base font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-colors ${activeTab === "fundamental" ? "bg-zinc-900 border-b-2 border-[#00FF41] text-[#00FF41]" : "text-zinc-500 hover:text-white hover:bg-zinc-900/50 border-b-2 border-transparent"}`}
@@ -78,7 +115,7 @@ export default function PickDetailUI({ pick, isProUser, roi, livePrice }: PickDe
 
             {/* TAB CONTENT: FUNDAMENTAL */}
             {activeTab === "fundamental" && (
-                <div className="space-y-8 animate-in fade-in duration-500 bg-[#0a0a0c] p-6 rounded-b-xl border border-t-0 border-[#333]">
+                <div id="report-content" className="space-y-8 animate-in fade-in duration-500 bg-[#0a0a0c] p-6 rounded-b-xl border border-t-0 border-[#333]">
                     {/* Top Stats Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                         <div className="bg-zinc-900/50 p-6 rounded-xl border border-zinc-800 md:col-span-2">

@@ -28,11 +28,62 @@
   /* slate-400 */
 }
 
-/* ANTI-COPY & ANTI-PRINT PROTECTION */
+/* OPTIMIZED FOR INSTITUTIONAL PDF EXPORT (Native window.print) */
 @media print {
-  body {
+  html, body, .min-h-screen {
+    background-color: white !important;
+    color: black !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+  
+  /* Force dark text, clean borders, and bypass fade-in opacity bugs */
+  * {
+    color: #111 !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border-color: #ddd !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+  }
+
+  /* Hide navigation, buttons, and decorative blurry background elements */
+  nav, footer, button, [href^="/picks"], .pointer-events-none, .lucide {
     display: none !important;
   }
+
+  /* Specific reset for markdown and report layout */
+  .prose-invert h1, .prose-invert h2, .prose-invert h3, .prose-invert h4, .prose-invert p, .prose-invert li, .prose-invert strong {
+    color: black !important;
+  }
+  
+  /* Ensure page breaks don't chop content */
+  #report-content {
+    display: block !important;
+  }
+
+  /* Fix SVG Gauge Text from react-gauge-component */
+  svg text {
+    fill: #111 !important;
+    text-shadow: none !important;
+  }
+  
+  /* Enforce desktop layout for print mode (bypass mobile stacking) */
+  .md\:flex-row { flex-direction: row !important; }
+  .md\:items-end { align-items: flex-end !important; }
+  .md\:text-right { text-align: right !important; }
+  .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .md\:col-span-2 { grid-column: span 2 / span 2 !important; }
+  .md\:block { display: block !important; }
+  .md\:w-1\/4 { width: 25% !important; }
+  .md\:flex-1 { flex: 1 1 0% !important; }
+  .md\:border-none { border: none !important; }
+  .md\:w-auto { width: auto !important; }
+  .md\:justify-end { justify-content: flex-end !important; }
 }
 
 .no-select {

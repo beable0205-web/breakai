@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowUpRight, Cpu, Activity, TrendingUp, Presentation } from "lucide-react";
 import { fetchLiveQuote } from "../../utils/yahooFinance";
 import DailyBriefing from "../../components/DailyBriefing";
+import ScoreFilter from "./components/ScoreFilter";
 
 export const metadata = {
     title: "Breakout AI | Institutional Grade Stock Screener",
@@ -11,7 +12,10 @@ export const metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function PicksPage() {
+export default async function PicksPage({ searchParams }: { searchParams: Promise<{ score?: string }> }) {
+    const params = await searchParams;
+    const minScore = params?.score ? parseInt(params.score) : 0;
+    
     const supabaseServer = await createClient();
 
     // Fetch recent picks from Supabase
@@ -40,6 +44,9 @@ export default async function PicksPage() {
         }
         return { ...pick, livePrice, roi };
     }));
+
+    // Apply client-side filter
+    const filteredPicks = picksWithPrices.filter(p => (p.oneil_score || 0) >= minScore);
 
     return (
         <div className="min-h-screen bg-black text-slate-200 selection:bg-[#00FF41]/30 font-sans">
@@ -81,8 +88,9 @@ export default async function PicksPage() {
                         <Presentation className="w-6 h-6 text-zinc-400" />
                         <h2 className="text-2xl font-black tracking-tighter text-white uppercase">Historical Signals</h2>
                     </div>
-                    <div className="text-zinc-500 text-sm font-bold uppercase tracking-widest flex gap-6">
-                        <span className="flex items-center gap-1">Universe: Top 1000 US</span>
+                    <div className="text-zinc-500 text-sm font-bold uppercase tracking-widest flex items-center gap-6">
+                        <span className="flex items-center gap-1 hidden sm:flex">Universe: Top 1000 US</span>
+                        <ScoreFilter />
                     </div>
                 </div>
 
@@ -107,7 +115,7 @@ export default async function PicksPage() {
                 )}
 
                 <div className="flex flex-col gap-4">
-                    {picksWithPrices.map((pick, i) => {
+                    {filteredPicks.map((pick, i) => {
                         let details = `Score: ${pick.oneil_score}`;
                         if (pick.technical_details && typeof pick.technical_details === 'object') {
                             const msg = (pick.technical_details as any).message;

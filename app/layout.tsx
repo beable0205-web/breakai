@@ -6,6 +6,7 @@ import DisableCopy from "@/components/DisableCopy";
 import PromoBanner from "./components/PromoBanner";
 import CookieConsent from "./components/CookieConsent";
 import Link from "next/link";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,12 +30,13 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="alternate" type="application/rss+xml" title="Breakout AI RSS Feed" href="https://getbreakai.com/rss.xml" />
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4633321310054654" crossOrigin="anonymous"></script>
+        <Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4633321310054654" crossOrigin="anonymous" strategy="afterInteractive"></Script>
         <meta name="google-adsense-account" content="ca-pub-4633321310054654" />
-        <script
-          type="text/javascript"
+        <Script
+          id="ms-clarity"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
-            __html: `
+             __html: `
               (function(c,l,a,r,i,t,y){
                   c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
                   t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
@@ -43,7 +45,9 @@ export default function RootLayout({
             `,
           }}
         />
-        <script
+        <Script
+          id="gtm-script"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -56,7 +60,7 @@ export default function RootLayout({
         />
       </head>
       <GoogleTagManager gtmId="GTM-W9538SHJ" />
-      <body className={`${inter.className} bg-black text-slate-200 antialiased min-h-screen flex flex-col selection:bg-[#00FF41]/30 font-sans`}>
+      <body suppressHydrationWarning className={`${inter.className} bg-black text-slate-200 antialiased min-h-screen flex flex-col selection:bg-[#00FF41]/30 font-sans`}>
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-PSP7MPZ9"
