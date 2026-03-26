@@ -4,6 +4,7 @@ import { ArrowUpRight, Cpu, Activity, TrendingUp, Presentation } from "lucide-re
 import { fetchLiveQuote } from "../../utils/yahooFinance";
 import DailyBriefing from "../../components/DailyBriefing";
 import ScoreFilter from "./components/ScoreFilter";
+import BookmarkButton from "../components/BookmarkButton";
 
 export const metadata = {
     title: "Breakout AI | Institutional Grade Stock Screener",
@@ -17,6 +18,20 @@ export default async function PicksPage({ searchParams }: { searchParams: Promis
     const minScore = params?.score ? parseInt(params.score) : 0;
     
     const supabaseServer = await createClient();
+    const { data: { session } } = await supabaseServer.auth.getSession();
+    const isLoggedIn = !!session?.user?.id;
+
+    // Fetch user bookmarks for initial state
+    let bookmarkedPickIds = new Set<string>();
+    if (isLoggedIn) {
+        const { data: bookmarks } = await supabaseServer
+            .from('user_bookmarks')
+            .select('pick_id')
+            .eq('user_id', session.user.id);
+        if (bookmarks) {
+            bookmarkedPickIds = new Set(bookmarks.map(b => b.pick_id));
+        }
+    }
 
     // Fetch recent picks from Supabase
     const { data: picks, error } = await supabaseServer
@@ -124,6 +139,7 @@ export default async function PicksPage({ searchParams }: { searchParams: Promis
 
                         // Top card styling
                         const isLatest = i === 0;
+                        const isBookmarked = bookmarkedPickIds.has(pick.id);
 
                         return (
                             <Link
@@ -135,6 +151,10 @@ export default async function PicksPage({ searchParams }: { searchParams: Promis
                                     }`}
                             >
                                 {isLatest && <div className="absolute left-0 top-0 w-1 h-full bg-[#00FF41]"></div>}
+
+                                <div className="absolute top-4 right-4 z-20">
+                                    <BookmarkButton pickId={pick.id} initialBookmarked={isBookmarked} isLoggedIn={isLoggedIn} />
+                                </div>
 
                                 {/* Ticker and Date */}
                                 <div className="flex items-center gap-6 md:w-1/4 mb-6 md:mb-0 relative z-10 w-full ml-2">

@@ -7,6 +7,7 @@ import remarkBreaks from 'remark-breaks';
 import { fetchLiveQuote } from "../../../utils/yahooFinance";
 import TradingViewWidget from "../../../components/TradingViewWidget";
 import PickDetailUI from "../../components/PickDetailUI";
+import BookmarkButton from "../../components/BookmarkButton";
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +49,21 @@ export default async function PickDetail({ params }: { params: Promise<{ id: str
     // Check if the current user is the admin to bypass the paywall
     const { data: { session } } = await supabaseServer.auth.getSession();
     const isAdmin = session?.user?.email === "beable9489@gmail.com";
+    const isLoggedIn = !!session?.user?.id;
+
+    // Check if bookmarked
+    let isBookmarked = false;
+    if (isLoggedIn) {
+        const { data: existingBookmark } = await supabaseServer
+            .from('user_bookmarks')
+            .select('id')
+            .eq('user_id', session.user.id)
+            .eq('pick_id', pick.id)
+            .single();
+        if (existingBookmark) {
+            isBookmarked = true;
+        }
+    }
 
     // Query profiles table for matching user
     let isDbPro = false;
@@ -94,9 +110,12 @@ export default async function PickDetail({ params }: { params: Promise<{ id: str
                             <BarChart className="text-blue-500 w-10 h-10" />
                         </div>
                         <div>
-                            <h1 className="text-5xl font-black tracking-tighter text-white mb-1">
-                                {pick.ticker}
-                            </h1>
+                            <div className="flex items-center gap-4 mb-1">
+                                <h1 className="text-5xl font-black tracking-tighter text-white">
+                                    {pick.ticker}
+                                </h1>
+                                <BookmarkButton pickId={pick.id} initialBookmarked={isBookmarked} isLoggedIn={isLoggedIn} className="bg-zinc-900/50 border border-zinc-800" />
+                            </div>
                             <p className="text-blue-400 flex items-center font-mono text-xs font-bold tracking-widest uppercase mb-1">
                                 <Activity className="w-3 h-3 mr-1" /> Institutional Signal #{pick.id.split('-')[0]}
                             </p>

@@ -70,6 +70,11 @@ export default function TopNav() {
                 <nav className="flex items-center text-sm text-slate-400 font-semibold uppercase tracking-widest gap-8">
                     <Link href="/picks" className="cursor-pointer text-white hover:text-blue-400 transition-colors hidden md:inline flex items-center gap-2">TODAY'S PICK <span className="text-[10px] bg-blue-600 text-white px-2 py-0.5 rounded-sm">LIVE</span></Link>
                     <Link href="/about" className="cursor-pointer hover:text-white transition-colors hidden md:inline">ABOUT</Link>
+                    {user && (
+                        <Link href="/dashboard" className="cursor-pointer text-yellow-500 hover:text-yellow-400 font-bold transition-colors hidden md:inline flex items-center gap-1">
+                            MY DASHBOARD
+                        </Link>
+                    )}
 
                     {isPro && (
                         <div className="bg-emerald-500/10 border border-emerald-500/50 text-emerald-400 font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
