@@ -33,7 +33,7 @@ export default function ScoreGauge({ scoreObj, scoreColor }: { scoreObj: ScoreOb
                 onClick={() => setIsOpen(true)}
             >
                 <div className="text-sm font-bold text-emerald-500 mb-2 group-hover:text-amber-400 transition-colors flex items-center gap-2">
-                    FEAR & GREED INDEX
+                    ALGO CONFIDENCE SCORE
                     <span className="text-xs font-normal text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-full">View Detailed Analysis 📊</span>
                 </div>
 

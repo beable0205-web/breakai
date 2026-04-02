@@ -6,6 +6,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
 import TradingViewWidget from "../../components/TradingViewWidget";
 import ScoreGauge from "../../components/ScoreGauge";
+import FundamentalTrends from "./FundamentalTrends";
 
 interface PickDetailUIProps {
     pick: any; // The record from oneil_picks
@@ -155,6 +156,9 @@ export default function PickDetailUI({ pick, isProUser, roi, livePrice }: PickDe
                             </p>
                         </div>
                     </div>
+
+                    {/* Institutional Fundamental & Macro Trends */}
+                    <FundamentalTrends ticker={pick.ticker} />
 
                     {/* Fundamental Report Without Paywall */}
                     <div className="mt-8 transition-all">
