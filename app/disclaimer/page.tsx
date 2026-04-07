@@ -1,47 +1,42 @@
-export default function Disclaimer() {
+import { ShieldAlert } from "lucide-react";
+
+export default function DisclaimerPage() {
     return (
         <div className="max-w-4xl mx-auto px-6 py-20 text-slate-300 font-sans leading-relaxed">
-            <h1 className="text-4xl font-bold text-white mb-8 border-b border-[#333] pb-4">Financial & Legal Disclaimer</h1>
+            <div className="flex items-center gap-4 mb-8 border-b border-[#333] pb-4">
+                <ShieldAlert className="w-10 h-10 text-rose-500" />
+                <h1 className="text-4xl font-bold text-white">Financial Disclaimer</h1>
+            </div>
+            
             <p className="text-sm text-zinc-500 mb-8 font-mono">Last Updated: February 2026</p>
 
             <div className="space-y-8">
-                <section>
-                    <h2 className="text-2xl font-semibold text-emerald-400 mb-4">1. No Investment Advice</h2>
-                    <p>
-                        The information provided on this website ("Breakout AI") is for general informational and educational purposes only. All information on the site is provided in good faith. However, we make no representation or warranty of any kind, express or implied, regarding the accuracy, adequacy, validity, reliability, availability, or completeness of any information on the site.
-                    </p>
-                    <div className="mt-6 p-6 bg-rose-500/10 border-l-4 border-rose-500 rounded-r-lg">
-                        <p className="text-white font-bold mb-2">CRITICAL NOTICE:</p>
-                        <p className="text-rose-200">
-                            <strong>We are not financial advisors, nor do we intend to be.</strong> The AI-generated stock picks, analysis, and data presented on this website should not be interpreted as professional financial advice. You must consult a qualified financial professional before making any investment decisions.
-                        </p>
-                    </div>
-                </section>
-
-                <section>
-                    <h2 className="text-2xl font-semibold text-emerald-400 mb-4">2. Trading Risks</h2>
-                    <p>
-                        Trading in financial markets, including stocks, options, and cryptocurrencies, involves a high degree of risk and may not be suitable for all investors. You could lose some or all of your initial investment. Any historical performance metrics, Return on Investment (ROI) displays, or simulated algorithms provided on this site are for illustrative purposes only and do not guarantee future results.
+                <section className="bg-rose-950/20 border border-rose-900/50 p-6 rounded-xl">
+                    <h2 className="text-xl font-bold text-rose-500 mb-2 font-mono uppercase">Not Investment Advice</h2>
+                    <p className="text-zinc-300">
+                        The information provided on this website does not constitute investment advice, financial advice, trading advice, or any other sort of advice and you should not treat any of the website's content as such. Breakout AI does not recommend that any stock, cryptocurrency, or other security should be bought, sold, or held by you. Conduct your own due diligence and consult your financial advisor before making any investment decisions.
                     </p>
                 </section>
 
                 <section>
-                    <h2 className="text-2xl font-semibold text-emerald-400 mb-4">3. Algorithmic Processing & AI Limitations</h2>
+                    <h2 className="text-2xl font-semibold text-emerald-400 mb-4">Accuracy of Information</h2>
                     <p>
-                        Breakout AI utilizes technical analysis frameworks (specifically variations of the Cup and Handle pattern) combined with Large Language Models (LLMs) to automatically generate fundamental reports.
+                        Breakout AI will strive to ensure accuracy of information listed on this website although it will not hold any responsibility for any missing or wrong information. Breakout AI provides all information as is. You understand that you are using any and all information available here at your own risk. The technical charts and AI analysis are mathematically generated and are prone to errors or misinterpretations of the market state.
                     </p>
-                    <ul className="list-disc pl-6 mt-4 space-y-2 text-zinc-400">
-                        <li>AI models can hallucinate or output factually incorrect statements.</li>
-                        <li>Automated screeners may identify false positives due to poor liquidity or temporary market volatility.</li>
-                        <li>Financial data is subject to delays and may not reflect real-time market conditions.</li>
-                    </ul>
-                    <p className="mt-4">You agree not to hold Breakout AI, its creators, or its affiliates liable for any losses incurred resulting from actions taken based on the information provided on this website.</p>
                 </section>
 
                 <section>
-                    <h2 className="text-2xl font-semibold text-emerald-400 mb-4">4. External Links Disclaimer</h2>
+                    <h2 className="text-2xl font-semibold text-emerald-400 mb-4">Risk of Trading</h2>
                     <p>
-                        The site may contain (or you may be sent through the site) links to other websites or content belonging to or originating from third parties or links to websites and features in banners or other advertising. Such external links are not investigated, monitored, or checked for accuracy, adequacy, validity, reliability, availability, or completeness by us.
+                        The trading of stocks, commodities, and digital assets involves significant risk, and can result in the loss of your invested capital. You should not invest more than you can afford to lose and should ensure that you understand the risks involved. Past performance is not necessarily indicative of future performance. The algorithms may flag historical patterns that have succeeded in the past, but there is zero guarantee these patterns will succeed in current market conditions.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 className="text-2xl font-semibold text-emerald-400 mb-4">Affiliate & Advertising Disclosure</h2>
+                    <p>
+                        Breakout AI may contain links to affiliate websites, and we receive an affiliate commission for any purchases made by you on the affiliate website using such links. 
+                        We also use third-party advertising companies to serve ads when you visit our Website. These companies may use aggregated information (not including your name, address, email address or telephone number) about your visits to this and other Web sites in order to provide advertisements about goods and services of interest to you.
                     </p>
                 </section>
             </div>

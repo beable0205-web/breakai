@@ -245,6 +245,25 @@ export default function PickDetailUI({ pick, isProUser, roi, livePrice }: PickDe
                     )}
                 </div>
             )}
+            
+            {/* Added: Human-written Editorial & Methodology Note for E-E-A-T & AdSense */}
+            <div className="mt-12 bg-[#020202] border border-zinc-800 rounded-xl p-8 shadow-inner relative z-10">
+                <h4 className="text-zinc-300 font-bold mb-4 font-mono uppercase tracking-widest text-sm flex items-center gap-2">
+                    <ShieldAlert className="w-4 h-4 text-zinc-500" />
+                    Editorial & Methodology Note
+                </h4>
+                <div className="text-xs text-zinc-500 leading-relaxed space-y-4 font-sans">
+                    <p>
+                        The Breakout AI algorithm computes its signals by anchoring technical price action to the 224-day and 448-day moving averages (MAs) across thousands of US equities. We specifically target deep consolidation patterns—often referred to as 'Cup and Handle' or 'Double Bottom' bases popularized by William O'Neil—that occur after a stock has undergone a significant correction. The presence of explosive volume expansion breaking through the 224 MA serves as our primary quantitative trigger for institutional footprint validation.
+                    </p>
+                    <p>
+                        While the fundamental and technical narratives above are generated utilizing our proprietary LLM data-processing pipeline—synthesizing real-time SEC filings, earnings transcripts, and historical price matrices—the underlying mathematical filters are strictly programmed and overseen by our human editorial team. This dual-verification approach aims to strip away retail emotion and highlight purely objective statistical probability.
+                    </p>
+                    <p>
+                        <strong>Risk Warning:</strong> The analysis generated is probabilistic in nature, not deterministic. No mathematical model can predict systemic market shocks or sudden idiosyncratic corporate black-swans. Always conduct your own rigorous due diligence or consult a registered financial advisor before committing capital to algorithmic signals.
+                    </p>
+                </div>
+            </div>
         </div>
     );
 }

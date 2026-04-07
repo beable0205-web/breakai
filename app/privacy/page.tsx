@@ -32,14 +32,31 @@ export default function PrivacyPolicy() {
                 </section>
 
                 <section>
-                    <h2 className="text-2xl font-semibold text-emerald-400 mb-4">4. Cookies and Tracking Technologies</h2>
-                    <p>We and our third-party service providers (such as Google AdSense and Google Analytics) use cookies and similar tracking technologies to track the activity on our Service and store certain information. Tracking technologies used are beacons, tags, and scripts to collect and track information and to improve and analyze our Service.</p>
-                    <p className="mt-4">Third-party vendors, including Google, use cookies to serve ads based on a user's prior visits to your website or other websites. Google's use of advertising cookies enables it and its partners to serve ads to your users based on their visit to your sites and/or other sites on the Internet.</p>
+                    <h2 className="text-2xl font-semibold text-emerald-400 mb-4">4. Cookies and Web Beacons</h2>
+                    <p>We do use cookies to store information, such as your personal preferences when you visit our site. This could include only showing you a popup once in your visit, or the ability to login to some of our features, such as forums.</p>
+                    <p className="mt-4">We also use third party advertisements on Breakout AI to support our site. Some of these advertisers may use technology such as cookies and web beacons when they advertise on our site, which will also send these advertisers (such as Google through the Google AdSense program) information including your IP address, your ISP, the browser you used to visit our site, and in some cases, whether you have Flash installed. This is generally used for geotargeting purposes (showing New York real estate ads to someone in New York, for example) or showing certain ads based on specific sites visited (such as showing cooking ads to someone who frequents cooking sites).</p>
                 </section>
 
                 <section>
-                    <h2 className="text-2xl font-semibold text-emerald-400 mb-4">5. Contact Us</h2>
-                    <p>If you have any questions about this Privacy Policy, You can contact us by email: <strong>beable9489@gmail.com</strong></p>
+                    <h2 className="text-2xl font-semibold text-emerald-400 mb-4">5. DoubleClick DART Cookies</h2>
+                    <ul className="list-disc pl-6 mt-4 space-y-2 text-zinc-400">
+                        <li>Google, as a third party vendor, uses cookies to serve ads on Breakout AI.</li>
+                        <li>Google's use of the DART cookie enables it to serve ads to our site's visitors based upon their visit to Breakout AI and other sites on the Internet.</li>
+                        <li>Users may opt out of the use of the DART cookie by visiting the Google ad and content network privacy policy at the following URL: <a href="http://www.google.com/privacy_ads.html" className="text-[#00FF41] hover:underline" target="_blank" rel="noopener noreferrer">http://www.google.com/privacy_ads.html</a></li>
+                    </ul>
+                    <p className="mt-4">Some of our advertising partners may use cookies and web beacons on our site. Our advertising partners include Google AdSense. These third-party ad servers or ad networks use technology to the advertisements and links that appear on Breakout AI send directly to your browsers. They automatically receive your IP address when this occurs. Other technologies (such as cookies, JavaScript, or Web Beacons) may also be used by the third-party ad networks to measure the effectiveness of their advertisements and / or to personalize the advertising content that you see.</p>
+                    <p className="mt-4 font-mono text-sm text-zinc-500">Breakout AI has no access to or control over these cookies that are used by third-party advertisers.</p>
+                </section>
+
+                <section>
+                    <h2 className="text-2xl font-semibold text-emerald-400 mb-4">6. Third Party Privacy Policies</h2>
+                    <p>You should consult the respective privacy policies of these third-party ad servers for more detailed information on their practices as well as for instructions about how to opt-out of certain practices. Breakout AI's privacy policy does not apply to, and we cannot control the activities of, such other advertisers or web sites.</p>
+                    <p className="mt-4">If you wish to disable cookies, you may do so through your individual browser options. More detailed information about cookie management with specific web browsers can be found at the browsers' respective websites.</p>
+                </section>
+
+                <section>
+                    <h2 className="text-2xl font-semibold text-emerald-400 mb-4">7. Contact Us</h2>
+                    <p>If you have any questions about this Privacy Policy or our treatment of the information you provide us, please contact us by email: <strong>beable9489@gmail.com</strong></p>
                 </section>
             </div>
         </div>
