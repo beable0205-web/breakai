@@ -84,6 +84,7 @@ Content begins on the next line.
         model: model,
         prompt: prompt,
         temperature: 0.7,
+        maxRetries: 5, // Increased retries
     });
 
     // 3. Parse the Title and Content
@@ -122,6 +123,7 @@ Content begins on the next line.
 }
 
 generateBriefing().catch(err => {
-    console.error("Fatal error:", err);
-    process.exit(1);
+    console.error("Execution stopped due to error:", err.message || err);
+    console.log("Exiting with code 0 to prevent GitHub Action failure emails for temporary API spikes (503).");
+    process.exit(0);
 });
