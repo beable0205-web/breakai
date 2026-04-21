@@ -36,6 +36,13 @@ export default async function BriefingDetailPage({ params }: { params: Promise<{
         return notFound();
     }
 
+    const { data: recentBriefings } = await supabaseServer
+        .from('market_summaries')
+        .select('id, title, date')
+        .neq('id', resolvedParams.id)
+        .order('date', { ascending: false })
+        .limit(3);
+
     const dateObj = new Date(summary.date);
     const formattedDate = dateObj.toLocaleDateString('en-US', {
         year: 'numeric',
@@ -93,12 +100,51 @@ export default async function BriefingDetailPage({ params }: { params: Promise<{
                     </ReactMarkdown>
                 </article>
 
+                {/* Author Bio Box for E-E-A-T */}
+                <div className="mt-16 p-6 bg-[#050505] border border-zinc-800 rounded-xl flex flex-col md:flex-row gap-6 items-center md:items-start shadow-lg">
+                    <div className="w-16 h-16 bg-emerald-950/30 rounded-full flex items-center justify-center border border-emerald-900/50 shrink-0">
+                        <span className="font-bold font-mono text-[#00FF41] text-xl">AI</span>
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-bold text-white mb-2 font-serif">Breakout AI Quant Team</h3>
+                        <p className="text-zinc-400 text-sm leading-relaxed font-mono">
+                            The Breakout AI system synthesizes real-time market data, institutional order flow, and fundamental catalysts to provide emotionless, institutional-grade market briefings.
+                        </p>
+                    </div>
+                </div>
+
                 {/* Footer Navigation Back */}
-                <div className="mt-20 pt-8 border-t border-[#222] flex justify-start">
+                <div className="mt-12 pt-8 border-t border-[#222] flex justify-start">
                     <Link href="/briefing" className="inline-flex items-center justify-center bg-black border border-zinc-800 hover:border-[#00FF41]/50 hover:bg-zinc-900 text-white font-bold py-4 px-8 rounded transition-all shadow-lg text-sm font-mono tracking-widest uppercase gap-3 hover:text-[#00FF41]">
                         <CornerUpLeft className="w-5 h-5" /> View All Briefings
                     </Link>
                 </div>
+
+                {/* Related Briefings */}
+                {recentBriefings && recentBriefings.length > 0 && (
+                    <div className="mt-20 pt-12 border-t border-[#222]">
+                        <h3 className="text-2xl font-black text-white mb-8 font-serif">
+                            Recent Market Briefings
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {recentBriefings.map((b) => (
+                                <Link key={b.id} href={`/briefing/${b.id}`} className="block group">
+                                    <div className="bg-[#050505] border border-zinc-800 rounded-xl p-6 hover:border-[#00FF41]/50 transition-colors h-full flex flex-col justify-between shadow-lg">
+                                        <div>
+                                            <h4 className="text-lg font-bold text-white group-hover:text-[#00FF41] transition-colors mb-4 line-clamp-3 font-serif">
+                                                {b.title.replace(/\*\*/g, '')}
+                                            </h4>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-xs font-mono text-zinc-500 mt-4 border-t border-zinc-800 pt-4">
+                                            <Calendar className="w-3 h-3 text-[#00FF41]"/> 
+                                            {new Date(b.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                        </div>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </main>
         </div>
     );

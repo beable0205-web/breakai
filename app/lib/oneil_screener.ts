@@ -206,56 +206,13 @@ You MUST structure your response exactly as follows. Do NOT deviate.
 }
 \`\`\`
 <!-- FUNDAMENTAL_REPORT -->
-
-## PROLOGUE: WELCOME TO THE INSTITUTIONAL EDGE
 (Write a profound introduction. No table of contents.)
-
-## WHY THIS COMPANY RIGHT NOW?
-(Summarize the immediate catalyst)
-
-## CHAPTER 1. FINANCIAL HEALTH CHECKUP: THE NUMBERS DON'T LIE
-(Analyze turnaround, margins, and financial stability. Write in profound, engaging English.)
-
-## CHAPTER 2. INDUSTRY ANALYSIS: THE MACRO ENVIRONMENT
-(Analyze the massive paradigm shift in the industry and TAM)
-
-## CHAPTER 3. ALPHA SELECTION: WHY THIS SPECIFIC STOCK?
-(Analyze Economic Moat and Turnaround potential)
-
-## CHAPTER 4. 10-K AUTOPSY: READING BETWEEN THE LINES
-(Analyze revenue breakdown, outsourcing, or on-demand traits)
-
-## CHAPTER 5. BUSINESS MODEL (BM): THE PROFIT ENGINE
-(P x Q - C analysis, direct sales vs distributors)
-
-## CHAPTER 6. THE ULTIMATE CATALYST: CORE COMPETENCY
-(Analyze core technologies and patents)
-
-## CHAPTER 7. INSTITUTIONAL TRIGGERS: WHY BUY NOW?
-(Analyze catalysts, new products, mega deals)
-
-## CHAPTER 8. RISK ASSESSMENT: THE INVALIDATING FACTORS
-(Analyze legal, overhang, or subsidiary risks)
-
-## CHAPTER 9. VALUATION MATRIX: EXPLORING THE UPSIDE
-(Relative valuation vs peers and upside potential)
+(Write the fundamental analysis. DO NOT use generic chapter titles like "Chapter 1", "Chapter 2". Create highly engaging, specific, click-worthy H2/H3 subtitles tailored to the company's narrative, e.g., "The Margin Expansion Engine".)
+(MUST INCLUDE A MARKDOWN TABLE: Provide a table comparing fundamental metrics or financial health data).
 
 <!-- TECHNICAL_REPORT -->
-
-## PROLOGUE: THE ART OF TIMING
-(Introduction to the technical setup)
-
-## CHAPTER 1. MOVING AVERAGES: THE INSTITUTIONAL FOOTPRINT
-(Analyze the 224-day MA bounce and what it means for long-term trend reversal)
-
-## CHAPTER 2. VOLUME PROFILING: DECODING THE SMART MONEY
-(Analyze accumulation days vs distribution days in the recent base)
-
-## CHAPTER 3. PATTERN RECOGNITION: THE O'NEIL SETUP
-(Analyze the Cup and Handle, Double Bottom, or Flat Base pattern forming)
-
-## CHAPTER 4. RISK / REWARD: ASYMMETRICAL ENTRY POINT
-(Analyze where to set the stop-loss and the immediate upside target)
+(Write the technical analysis. DO NOT use generic chapter titles like "Chapter 1". Create dynamic H2/H3 subtitles, e.g., "Decoding the Smart Money Footprint".)
+(MUST INCLUDE A MARKDOWN TABLE: Provide a table summarizing key technical levels like MA distances, stop loss, and price targets).
 `;
 
     try {

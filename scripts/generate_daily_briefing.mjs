@@ -62,12 +62,12 @@ Here is the raw closing data for the major indices:
 ${marketDataStr}
 
 Instructions:
-1. Write exactly 3 sections. Use relevant emojis for headings and bullet points to make it visually engaging.
-2. Section 1 (Executive Summary & Indices): Summarize if the market went up or down, the overall sentiment, AND explicitly list the 1-day percentage change for the S&P 500, NASDAQ, and Dow Jones using the raw data provided above.
-3. Section 2 (Key Market Drivers): Identify and list the 3 most important news headlines, macro events, or sector shifts that drove the US market today. Use bullet points for these 3 items.
-4. Section 3 (The AI Verdict): Give a 1-sentence forward-looking thought or technical warning.
-5. Format the text nicely in Markdown. Use bolding for key terms.
-6. Write entirely in English, keeping the tone highly readable, sharp, and structured.
+1. Write a comprehensive briefing instead of a rigid 3-section template. Use relevant emojis for headings and bullet points to make it visually engaging.
+2. Ensure you have a clear "Executive Summary" at the top that summarizes the market sentiment and explicitly lists the 1-day percentage change for the S&P 500, NASDAQ, and Dow Jones using the raw data provided.
+3. Instead of "Section 2", dynamically generate engaging subtitles (H2/H3) based on the actual news (e.g., "The Fed's Rate Cut Dilemma", "Tech Sector Surges on AI Demand").
+4. **MANDATORY TABLE**: You MUST include at least one Markdown Table summarizing the major indices or top sector performances to make the data visually rich.
+5. Format the text nicely in Markdown. Use bolding for key terms, blockquotes for key takeaways, and ensure paragraphs are short (2-3 sentences max).
+6. Write entirely in English, keeping the tone highly readable, authoritative, and structured. Assume the persona of a veteran Wall Street prop trader.
 
 Title Requirement:
 The very first line of your response MUST BE the title formatted strictly like this:
