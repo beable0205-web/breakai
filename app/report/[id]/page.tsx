@@ -11,6 +11,7 @@ import { createClient } from "../../../utils/supabase/server";
 import ShareButtons from "../../components/ShareButtons";
 import LeadMagnet from "../../components/LeadMagnet";
 import CompanyLogo from "../../../components/CompanyLogo";
+import AffiliateBanner from "../../components/AffiliateBanner";
 
 // Force dynamic rendering since we are fetching data that changes
 export const dynamic = "force-dynamic";
@@ -172,19 +173,42 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
                 </div>
             </section>
 
+            {/* Affiliate Marketing Integration */}
+            <section className="mt-8">
+                <AffiliateBanner />
+            </section>
+
             {/* The Paywall Logic */}
             <section className="mt-12">
-                {/* ALWAYS Render beautiful markdown for free tier */}
-                <div className="bg-[#111] rounded-2xl border border-[#333] p-10 shadow-2xl">
-                    <div className="prose prose-invert prose-lg max-w-none prose-headings:mt-10 prose-headings:font-black prose-h1:text-5xl prose-h2:text-4xl prose-p:leading-loose prose-p:text-gray-300 prose-p:mb-8 prose-li:mb-3">
+                <div className="bg-[#111] rounded-2xl border border-[#333] p-10 shadow-2xl relative overflow-hidden">
+                    <div className={`prose prose-invert prose-lg max-w-none prose-headings:mt-10 prose-headings:font-black prose-h1:text-5xl prose-h2:text-4xl prose-p:leading-loose prose-p:text-gray-300 prose-p:mb-8 prose-li:mb-3 ${!isProUser ? 'blur-[4px] select-none opacity-40 h-[400px] overflow-hidden' : ''}`}>
                         {cleanMarkdown ? (
-                            <ReactMarkdown remarkPlugins={[remarkBreaks]}>{cleanMarkdown}</ReactMarkdown>
+                            <ReactMarkdown remarkPlugins={[remarkBreaks]}>
+                                {isProUser ? cleanMarkdown : cleanMarkdown.substring(0, 500) + "..."}
+                            </ReactMarkdown>
                         ) : (
                             <pre className="font-mono text-gray-300 whitespace-pre-wrap">
-                                {report.analysis_text}
+                                {isProUser ? report.analysis_text : report.analysis_text.substring(0, 500) + "..."}
                             </pre>
                         )}
                     </div>
+
+                    {/* Paywall Overlay */}
+                    {!isProUser && (
+                        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gradient-to-t from-[#111] via-[#111]/80 to-transparent pt-32 px-6">
+                            <div className="bg-black/80 backdrop-blur-md border border-[#333] p-8 rounded-2xl max-w-md w-full text-center shadow-2xl">
+                                <div className="w-16 h-16 bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-6 border border-emerald-500/50">
+                                    <Lock className="w-8 h-8 text-[#00FF41]" />
+                                </div>
+                                <h3 className="text-2xl font-black text-white mb-3">Premium Research Locked</h3>
+                                <p className="text-zinc-400 mb-8 font-mono text-sm leading-relaxed">
+                                    Subscribe to Breakout AI Pro to unlock the full O'Neil deep dive, precise moving average entries, and institutional risk/reward targets.
+                                </p>
+                                <CheckoutButton />
+                                <p className="text-zinc-600 text-xs mt-4">Cancel anytime. 7-day money-back guarantee.</p>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </section >
 
