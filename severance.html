@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정밀 퇴직금 계산기 & 근로기준법 평균임금 산정 가이드 - 파인툴스</title>
+    <meta name="description" content="파인툴스 2026년형 정밀 퇴직금 계산기. 입사일과 퇴사일을 대입해 재직일수를 자동 산출하고, 직전 3개월 급여액과 연간 상여금 및 연차유급휴가 수당을 기반으로 1일 평균임금 및 정밀 예상 퇴직금을 연산하며, 퇴직연금 및 퇴직소득세 절세 비법을 배포합니다.">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- 상단 네비게이션 헤더 -->
+    <header class="site-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">
+                Fine<span>Tools</span> <span class="logo-badge">Utility Hub</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">홈</a></li>
+                <li><a href="salary.html" class="nav-link">실수령액</a></li>
+                <li><a href="interest.html" class="nav-link">예적금 이자</a></li>
+                <li><a href="age.html" class="nav-link">만 나이</a></li>
+                <li><a href="property.html" class="nav-link">취득세/복비</a></li>
+                <li><a href="stock.html" class="nav-link">주식 평단가</a></li>
+                <li><a href="severance.html" class="nav-link active">퇴직금</a></li>
+                <li><a href="overseas.html" class="nav-link">해외주식 양도세</a></li>
+            </ul>
+            <div class="header-actions">
+                <a href="contact.html" class="btn-header">오류 제보 및 제안</a>
+                <button class="menu-toggle" aria-label="메뉴 열기">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 메인 레이아웃 -->
+    <main class="container">
+        <div class="article-layout">
+            
+            <!-- 왼쪽: 계산기 및 상세 가이드 본문 -->
+            <div class="column-main">
+                <div class="column-header">
+                    <div class="column-top-meta">
+                        <span class="cat">실무 세무 ∙ 근로기준법 지식 가이드 06</span>
+                        <span>갱신일자: 2026.05.27</span>
+                    </div>
+                    <h1 class="column-title">근로기준법 기준 정밀 퇴직금 계산기 및 임금 역산 가이드</h1>
+                </div>
+
+                <!-- [실시간 계산기 위젯] -->
+                <div class="embed-widget">
+                    <div class="widget-header">
+                        <span class="widget-badge">Severance Pay</span>
+                        <h2 class="widget-title">예상 퇴직금 및 평균임금 정밀 시뮬레이터</h2>
+                        <p class="widget-desc">입사일과 퇴사일, 직전 3개월 월급과 상여/연차수당을 입력해 실시간 예상 퇴직금을 구하십시오.</p>
+                    </div>
+
+                    <div class="widget-grid-2">
+                        <div class="widget-form-group">
+                            <label class="widget-label" for="sev-join-date">입사 일자</label>
+                            <input type="date" id="sev-join-date" class="widget-input" required>
+                        </div>
+                        <div class="widget-form-group">
+                            <label class="widget-label" for="sev-leave-date">퇴사 예정 일자 (근무 마지막 다음날)</label>
+                            <input type="date" id="sev-leave-date" class="widget-input" required>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px dashed var(--glass-border); padding-top: 15px; margin-top: 15px; margin-bottom: 15px;">
+                        <h3 style="font-size: 0.95rem; color: var(--accent-mint); margin-bottom: 15px;">직전 3개월 세전 월별 급여액 (기본급 + 고정수당)</h3>
+                        <div class="widget-grid-3">
+                            <div class="widget-form-group">
+                                <label class="widget-label" for="sev-pay-1">퇴사 전 1개월째</label>
+                                <input type="text" id="sev-pay-1" class="widget-input" placeholder="예: 3,500,000" required>
+                            </div>
+                            <div class="widget-form-group">
+                                <label class="widget-label" for="sev-pay-2">퇴사 전 2개월째</label>
+                                <input type="text" id="sev-pay-2" class="widget-input" placeholder="예: 3,500,000" required>
+                            </div>
+                            <div class="widget-form-group">
+                                <label class="widget-label" for="sev-pay-3">퇴사 전 3개월째</label>
+                                <input type="text" id="sev-pay-3" class="widget-input" placeholder="예: 3,500,000" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="widget-grid-2">
+                        <div class="widget-form-group">
+                            <label class="widget-label" for="sev-bonus">직전 1년간 상여금 총액 (세전)</label>
+                            <input type="text" id="sev-bonus" class="widget-input" value="0" placeholder="예: 4,000,000">
+                        </div>
+                        <div class="widget-form-group">
+                            <label class="widget-label" for="sev-annual">직전 1년간 연차유급휴가 수당 총액</label>
+                            <input type="text" id="sev-annual" class="widget-input" value="0" placeholder="예: 800,000">
+                        </div>
+                    </div>
+
+                    <button id="sev-btn" class="widget-btn">나의 정밀 퇴직금 계산하기 📊</button>
+
+                    <!-- 계산 결과 디스플레이 박스 -->
+                    <div id="sev-result-box" class="widget-result-box">
+                        <div class="result-total-box">
+                            <span class="result-total-label">예상 세전 퇴직금 총액</span>
+                            <div id="sev-res-total" class="result-total-val">0 원</div>
+                        </div>
+                        <table class="widget-table">
+                            <thead>
+                                <tr>
+                                    <th>퇴직금 산정 핵심 변수 분류</th>
+                                    <th>상세 데이터</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>총 재직일수 (Calendar Days)</td>
+                                    <td id="sev-res-days" style="color: var(--accent-mint); font-weight: 600;">0 일</td>
+                                </tr>
+                                <tr>
+                                    <td>1일 기준 평균임금 (Average Daily Wage)</td>
+                                    <td id="sev-res-avg-daily" style="color: var(--accent-gold);">0 원</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- [초장문 고품질 SEO 가이드] - 1,600자 이상 -->
+                <div class="column-content">
+                    <h2>1. 대한민국 근로기준법상 퇴직금의 의의와 지급 자격 요건</h2>
+                    <p>대한민국 근로기준법 및 근로자퇴직급여 보장법(퇴직급여법)에 규정된 **'퇴직금(Severance Pay)'**은 근로자가 일정 기간 동안 기업에 헌신한 노고에 대해 노동력 제공의 대가로서 퇴직 시점에 지급하는 후불성 임금의 성격을 띱니다. 평생직장의 개념이 소멸하고 이직과 퇴직이 빈번한 현대 직장인들에게 퇴직금은 생계 방어와 제2의 커리어를 설계하기 위한 가장 핵심적인 기초 자금입니다.</p>
+                    <p>퇴직금을 법적으로 수령하기 위해서는 반드시 두 가지 핵심 자격 요건을 동시에 무오류로 충족해야 합니다:</p>
+                    <blockquote>
+                        <strong>근로기준법상 퇴직금 법적 지급 의무 조건 2가지:</strong><br>
+                        • <strong>근속 기간</strong>: 계속근로기간이 만 <strong>1년(365일) 이상</strong>이어야 합니다.<br>
+                        • <strong>소정 근로시간</strong>: 4주간을 평균하여 <strong>1주간의 소정 근로시간이 15시간 이상</strong>이어야 합니다.
+                    </blockquote>
+                    <p>이 기준은 정규직 직장인뿐만 아니라 아르바이트(알바), 계약직, 파트타임, 프리랜서라 할지라도 형식적 근로 계약서의 문구와 무관하게 **'실질적으로 종속적인 관계에서 상시 근로를 제공한 근로기준법상 근로자'**에 해당한다면 100% 동일하게 강제 적용됩니다. 1년 미만 단기 계약을 쪼개어 반복 갱신하는 꼼수 계약의 경우에도 실질 근로가 끊김 없이 1년 이상 계속되었다면 법적으로 퇴직금을 청구할 수 있는 정당한 권리가 주어집니다.</p>
+
+                    <h2>2. 퇴직금 연산의 열쇠: 1일 평균임금(Average Daily Wage)의 수학적 계산법</h2>
+                    <p>퇴직금을 산출하는 가장 정밀하고 중요한 핵심 수학 공식은 바로 **'1일 평균임금'**을 구하는 과정에서 결정됩니다. 평균임금이란 퇴직 사유가 발생한 날(즉, 퇴사일) 이전 **직전 3개월 동안 해당 근로자에게 지급된 임금의 총액**을 그 3개월간의 **총 일수(Calendar Days)**로 나누어 산정하는 임금입니다.</p>
+                    <p>3개월간의 총 일수는 달력상의 날짜 수(28일, 29일, 30일, 31일)를 그대로 따르므로 퇴사하는 월에 따라 총 일수가 최소 89일에서 최대 92일까지 유동적으로 움직이게 됩니다. **따라서 분모가 되는 '총 일수'가 적을수록 1일 평균임금이 수학적으로 더 커지기 때문에, 31일이 포함되어 분모가 92일이 되는 달보다 2월이 껴있어 분모가 90일 이하가 되는 시점에 퇴사하는 것이 실무적으로 퇴직금 산출액을 조금이라도 높이는 영리한 팁입니다.**</p>
+                    <p>또한 평균임금 분자에는 매달 받는 기본급과 고정 수당뿐만 아니라, **직전 1년 동안 지급받은 상여금 총액의 12분의 3(3/12)** 및 **퇴직 전 이미 발생하여 지급받았던 연차유급휴가 미사용 수당의 12분의 3(3/12)**이 정밀하게 소급 합산되어 반영됩니다. 이 금액들이 누락될 경우 퇴직금이 대폭 삭감되어 지급되는 결과가 초래되므로, 본 계산기 폼은 상여금과 연차수당 산입란을 독립 설계하여 근로자의 세제적/법적 이익을 수호합니다.</p>
+
+                    <h2>3. 평균임금 vs 통상임금의 법적 안전 장치 (평균임금 저하 방지 룰)</h2>
+                    <p>만약 근로자가 퇴직 전 직전 3개월 동안 질병 치료를 위한 개인 휴직을 가졌거나, 회사의 귀책사유로 인한 휴업 기간이 존재하여 급여가 평소보다 대폭 삭감되었다면 어떻게 될까요? 이러한 특수 상황에서 평균임금을 고대로 대입하면 퇴직금이 비정상적으로 쪼그라드는 치명적인 불이익이 발생합니다.</p>
+                    <p>이를 방지하기 위해 근로기준법 제2조 제2항은 강력한 법적 안전장치를 가동하고 있습니다: **"위 공식에 따라 산출된 평균임금의 액수가 근로자의 '통상임금(기본급 및 고정적으로 지급받는 소정근로 대가)'보다 낮을 경우에는, 그 통상임금의 액수를 평균임금으로 하여 퇴직금을 산정해야 한다."** 이를 평균임금 저하 방지 원칙이라고 부르며, 회사에서 퇴직금을 정산하여 지급할 때 자신의 계약서상 기본급 및 고정수당 일할 계산액보다 퇴직금 기준액이 낮다면 반드시 통상임금 대입 정정을 요청해야 합니다.</p>
+
+                    <h2>4. 퇴직소득세 절세와 퇴직연금(DB, DC, IRP)의 세무 전략</h2>
+                    <ul>
+                        <li><strong>퇴직소득세 계산의 특수성</strong>:
+                        퇴직금은 평생에 걸쳐 한 번 또는 수년에 한 번 모아서 수령하는 소득이므로, 매년 내는 종합소득세율(최대 45%)을 그대로 대입하면 엄청난 세금 폭탄을 맞게 됩니다. 따라서 세법은 '분류과세' 방식을 채택하여 종합소득과 합산하지 않고 따로 과세하며, **근속연수로 금액을 쪼개어 세 부담을 대폭 낮춰 주는 '연분연승법' 누진 공제 공식을 대입**합니다. 근속연수가 길면 길수록 공제 범위가 기하급수적으로 확대되므로 한 직장에서 오래 근속하는 것이 실질 세후 수령액 관리에 압도적으로 유리합니다.</li>
+                        
+                        <li><strong>개인형 퇴직연금(IRP) 계좌를 통한 30%~40% 세금 이월 절세</strong>:
+                        퇴직금을 일시에 현금으로 일반 입출금 통장에 받으면 그 즉시 퇴직소득세가 원천징수된 후 세후 잔액만 입금됩니다. 그러나 **퇴직금을 전용 IRP(Individual Retirement Pension) 계좌로 이체하여 수령할 경우, 퇴직소득세 원천징수가 전액 뒤로 연기(과세이연)**됩니다. 이후 만 55세가 넘어서 이 IRP 자금을 일시금이 아닌 연금 형태로 연간 한도 내에서 나누어 수령하면, 기존 퇴직소득세율의 30%~40%를 감면해 주는 엄청난 절세 마법을 선사합니다.</li>
+                        
+                        <li><strong>DB형(확정급여형) vs DC형(확정기여형) 임금 인상률 연동 전략</strong>:
+                        회사가 가입한 퇴직연금 유형이 DB형인 경우 퇴직 시점 직전 3개월 평균임금을 기준으로 퇴직금이 정산되므로 **임금 인상률이 가파른 대기업/중견기업 근로자**에게 유리합니다. 반면 DC형은 매년 연봉의 12분의 1을 본인 퇴직연금 계좌에 꽂아주어 본인이 스스로 굴려야 하므로 **임금 인상률이 정체되어 있지만 본인의 투자(주식, 채권, ETF) 운용 능력이 뛰어나거나 연봉 피크제를 적용받는 근로자**에게 최적화된 설계입니다.</li>
+                    </ul>
+                    <p>내가 흘린 피와 땀의 마지막 결실이자 삶의 든든한 방패막이인 퇴직금을 한 푼이라도 낭비하지 않는 비결은 세법과 노동법의 기초 수학을 내 눈으로 직접 정판(판독)하는 것에서 출발합니다. 파인툴스가 야심 차게 보장하는 2026 정밀 퇴직금 시뮬레이터로 나의 은퇴 자금 전선을 명쾌하게 설계하고 방어하시어 합법적이고 당당한 근로 권리를 끝까지 수호해 보시길 진심으로 응원합니다.</p>
+                </div>
+            </div>
+
+            <!-- 오른쪽: 사이드바 위젯 영역 -->
+            <div class="column-sidebar">
+                <!-- 정확도 자문 프로필 위젯 -->
+                <div class="sidebar-widget">
+                    <h3 class="sidebar-title">수식 자문 및 검증 정보</h3>
+                    <div style="font-size: 0.88rem; color: var(--glass-muted); margin-top: 15px; line-height: 1.6;">
+                        <p>파인툴스의 모든 퇴직금 연산 수식은 **고용노동부 가이드라인 및 근로기준법 제2조(평균임금 정의) 고시**를 정밀 매핑하여 빌드되었습니다.</p>
+                        <p style="margin-top: 10px;">윤달 및 월별 일수 차이(89일~92일)를 브라우저 자바스크립트 엔진이 데이트 오차 없이 정밀 반영하여 계산의 신뢰도를 보장합니다.</p>
+                    </div>
+                </div>
+
+                <!-- 실무 계산기 퀵 링크 위젯 -->
+                <div class="sidebar-widget">
+                    <h3 class="sidebar-title">다른 실무 계산기</h3>
+                    <div class="toolkit-list" style="margin-top: 15px;">
+                        <div class="toolkit-item">
+                            <span>연봉 및 실수령액 계산기</span>
+                            <a href="salary.html" class="toolkit-btn-copy">이동</a>
+                        </div>
+                        <div class="toolkit-item">
+                            <span>예금/적금 이자 계산기</span>
+                            <a href="interest.html" class="toolkit-btn-copy">이동</a>
+                        </div>
+                        <div class="toolkit-item">
+                            <span>부동산 취득세/복비 계산기</span>
+                            <a href="property.html" class="toolkit-btn-copy">이동</a>
+                        </div>
+                        <div class="toolkit-item">
+                            <span>해외주식 양도세 계산기</span>
+                            <a href="overseas.html" class="toolkit-btn-copy">이동</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- 하단 푸터 영역 -->
+    <footer class="site-footer">
+        <div class="container footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h2>Fine<span>Tools</span></h2>
+                    <p>파인툴스는 직장인과 프리랜서들이 매일 활용할 수 있는 실용 계산 도구와 공인 세무 회계 가이드라인을 무료로 배포하여 지적 정보 격차를 해소하는 비영리 공익 플랫폼입니다.</p>
+                </div>
+                <div class="footer-links-col">
+                    <h3>실무 계산기</h3>
+                    <ul class="footer-links">
+                        <li><a href="salary.html" class="footer-link">실수령액 계산기</a></li>
+                        <li><a href="interest.html" class="footer-link">예적금 이자 계산기</a></li>
+                        <li><a href="age.html" class="footer-link">만 나이 계산기</a></li>
+                        <li><a href="property.html" class="footer-link">부동산 취득세 계산기</a></li>
+                        <li><a href="stock.html" class="footer-link">주식 평단가 계산기</a></li>
+                        <li><a href="severance.html" class="footer-link">퇴직금 계산기</a></li>
+                        <li><a href="overseas.html" class="footer-link">해외주식 양도세 계산기</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-col">
+                    <h3>정보 가이드</h3>
+                    <ul class="footer-links">
+                        <li><a href="salary.html" class="footer-link">연말정산 꿀팁</a></li>
+                        <li><a href="interest.html" class="footer-link">세금우대 한도 관리</a></li>
+                        <li><a href="stock.html" class="footer-link">물타기 계산 법칙</a></li>
+                        <li><a href="overseas.html" class="footer-link">해외주식 절세 비법</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-col">
+                    <h3>신뢰 센터</h3>
+                    <ul class="footer-links">
+                        <li><a href="about.html" class="footer-link">서비스 철학 및 신뢰 정보</a></li>
+                        <li><a href="contact.html" class="footer-link">오류 제보 및 제안</a></li>
+                        <li><a href="faq.html" class="footer-link">자주 묻는 질문 FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 FineTools. 모든 권리 보유. 본 사이트의 모든 수식과 콘텐츠는 공인 전문가 가이드를 기반으로 자체 제작되어 저작권 안전을 보증합니다.</p>
+                <div class="footer-bottom-links">
+                    <a href="privacy.html" class="footer-bottom-link">개인정보처리방침</a>
+                    <a href="terms.html" class="footer-bottom-link">서비스이용약관</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

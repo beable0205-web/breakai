@@ -1,6 +1,6 @@
 /**
  * "파인툴스 (FineTools)" 마스터 자바스크립트
- * 4대 핵심 계산기(실수령액, 예적금, 만나이, 취득세)의 실시간 연산 및 
+ * 7대 핵심 계산기(실수령액, 예적금, 만나이, 취득세, 평단가, 퇴직금, 해외주식 양도세)의 실시간 연산 및 
  * 반응형 UI, 모바일 메뉴 드로어, 아코디언 컴포넌트 통합 통제
  */
 
@@ -25,6 +25,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 7. [계산기 4] 부동산 취득세 & 중개수수료 계산기
     initPropertyCalculator();
+
+    // 8. [계산기 5] 주식/코인 평단가 물타기 계산기
+    initStockCalculator();
+
+    // 9. [계산기 6] 정밀 퇴직금 계산기
+    initSeveranceCalculator();
+
+    // 10. [계산기 7] 해외주식 양도소득세 계산기
+    initOverseasTaxCalculator();
 });
 
 /* ==========================================================================
@@ -43,6 +52,9 @@ function initMobileNav() {
         <a href="interest.html" class="mobile-nav-link">예적금 이자 계산기</a>
         <a href="age.html" class="mobile-nav-link">만 나이 계산기</a>
         <a href="property.html" class="mobile-nav-link">취득세/복비 계산기</a>
+        <a href="stock.html" class="mobile-nav-link">주식 평단가 계산기</a>
+        <a href="severance.html" class="mobile-nav-link">퇴직금 계산기</a>
+        <a href="overseas.html" class="mobile-nav-link">해외주식 양도세 계산기</a>
         <a href="faq.html" class="mobile-nav-link">금융 FAQ</a>
         <a href="contact.html" class="mobile-nav-link">건의 및 문의</a>
     `;
@@ -462,6 +474,240 @@ function initPropertyCalculator() {
         
         const finalVal = document.getElementById('prop-res-total');
         finalVal.textContent = totalAcquisitionTax.toLocaleString() + " 원";
+
+        resultBox.style.display = 'block';
+        resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+}
+
+/* ==========================================================================
+   8. [계산기 5] 주식/코인 평단가 물타기 계산기
+   ========================================================================== */
+function initStockCalculator() {
+    const btnSubmit = document.getElementById('stock-btn');
+    if (!btnSubmit) return;
+
+    const price1Input = document.getElementById('stock-price-1');
+    const qty1Input = document.getElementById('stock-qty-1');
+    const price2Input = document.getElementById('stock-price-2');
+    const qty2Input = document.getElementById('stock-qty-2');
+    const targetPriceInput = document.getElementById('stock-target-price');
+    const resultBox = document.getElementById('stock-result-box');
+
+    // 콤마 포맷팅
+    [price1Input, qty1Input, price2Input, qty2Input, targetPriceInput].forEach(input => {
+        if (input) {
+            input.addEventListener('input', (e) => {
+                let value = e.target.value.replace(/[^0-9.]/g, ''); // 코인도 포함되므로 소수점 허용
+                let parts = value.split('.');
+                parts[0] = parts[0] ? parseInt(parts[0]).toLocaleString() : '';
+                e.target.value = parts.join('.');
+            });
+        }
+    });
+
+    btnSubmit.addEventListener('click', () => {
+        const price1 = parseFloat(price1Input.value.replace(/,/g, '')) || 0;
+        const qty1 = parseFloat(qty1Input.value.replace(/,/g, '')) || 0;
+        const price2 = parseFloat(price2Input.value.replace(/,/g, '')) || 0;
+        const qty2 = parseFloat(qty2Input.value.replace(/,/g, '')) || 0;
+        const targetPrice = parseFloat(targetPriceInput.value.replace(/,/g, '')) || 0;
+
+        if (price1 <= 0 || qty1 <= 0) {
+            alert("⚠️ 1차 매수 평단가와 수량을 올바르게 입력해 주십시오.");
+            return;
+        }
+
+        const totalQty = qty1 + qty2;
+        const totalAmount = (price1 * qty1) + (price2 * qty2);
+        const avgPrice = totalQty > 0 ? (totalAmount / totalQty) : 0;
+
+        document.getElementById('stock-res-total-qty').textContent = totalQty.toLocaleString(undefined, {maximumFractionDigits: 4}) + " 주/개";
+        document.getElementById('stock-res-total-price').textContent = Math.floor(totalAmount).toLocaleString() + " 원";
+        document.getElementById('stock-res-avg-price').textContent = avgPrice.toLocaleString(undefined, {maximumFractionDigits: 2}) + " 원";
+
+        // 목표 평단가 도달 연산 (역산)
+        const targetBox = document.getElementById('stock-res-target-wrapper');
+        const targetNeededElement = document.getElementById('stock-res-target-needed');
+        
+        if (targetPrice > 0 && targetBox && targetNeededElement) {
+            if (targetPrice >= price1) {
+                targetNeededElement.textContent = "목표 평단가가 이미 현재 평단가보다 높거나 같습니다.";
+            } else if (targetPrice <= price2) {
+                targetNeededElement.textContent = "목표 평단가가 추가 매수 가격보다 낮거나 같아 도달할 수 없습니다.";
+            } else {
+                // targetPrice = (price1 * qty1 + price2 * qty_needed) / (qty1 + qty_needed)
+                // targetPrice * qty1 + targetPrice * qty_needed = price1 * qty1 + price2 * qty_needed
+                // (targetPrice - price2) * qty_needed = (price1 - targetPrice) * qty1
+                // qty_needed = ((price1 - targetPrice) * qty1) / (targetPrice - price2)
+                const qtyNeeded = ((price1 - targetPrice) * qty1) / (targetPrice - price2);
+                if (qtyNeeded > 0) {
+                    const amountNeeded = qtyNeeded * price2;
+                    targetNeededElement.innerHTML = `추가 매수 필요한 수량: <strong style="color: var(--accent-mint);">${qtyNeeded.toLocaleString(undefined, {maximumFractionDigits: 4})}</strong> 주/개<br>필요 추가 자금: <strong style="color: var(--accent-mint);">${Math.floor(amountNeeded).toLocaleString()}</strong> 원`;
+                } else {
+                    targetNeededElement.textContent = "계산 불가 (입력값을 다시 확인해 주십시오)";
+                }
+            }
+            targetBox.style.display = 'block';
+        } else if (targetBox) {
+            targetBox.style.display = 'none';
+        }
+
+        resultBox.style.display = 'block';
+        resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+}
+
+/* ==========================================================================
+   9. [계산기 6] 정밀 퇴직금 계산기
+   ========================================================================== */
+function initSeveranceCalculator() {
+    const btnSubmit = document.getElementById('sev-btn');
+    if (!btnSubmit) return;
+
+    const joinDateInput = document.getElementById('sev-join-date');
+    const leaveDateInput = document.getElementById('sev-leave-date');
+    const pay1Input = document.getElementById('sev-pay-1');
+    const pay2Input = document.getElementById('sev-pay-2');
+    const pay3Input = document.getElementById('sev-pay-3');
+    const bonusInput = document.getElementById('sev-bonus');
+    const annualInput = document.getElementById('sev-annual');
+    const resultBox = document.getElementById('sev-result-box');
+
+    // 콤마 포맷팅
+    [pay1Input, pay2Input, pay3Input, bonusInput, annualInput].forEach(input => {
+        if (input) {
+            input.addEventListener('input', (e) => {
+                let value = e.target.value.replace(/[^0-9]/g, '');
+                e.target.value = value ? parseInt(value).toLocaleString() : '';
+            });
+        }
+    });
+
+    btnSubmit.addEventListener('click', () => {
+        const joinStr = joinDateInput.value;
+        const leaveStr = leaveDateInput.value;
+
+        if (!joinStr || !leaveStr) {
+            alert("⚠️ 입사일과 퇴사일을 모두 입력해 주십시오.");
+            return;
+        }
+
+        const joinDate = new Date(joinStr);
+        const leaveDate = new Date(leaveStr);
+
+        if (joinDate >= leaveDate) {
+            alert("⚠️ 퇴사일은 입사일보다 이후여야 합니다.");
+            return;
+        }
+
+        // 재직일수 계산
+        const diffTime = Math.abs(leaveDate - joinDate);
+        const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (totalDays < 365) {
+            alert(`⚠️ 재직일수가 ${totalDays}일입니다. 근로기준법상 퇴직금은 1년(365일) 이상 근속 시에만 지급 의무가 발생합니다. (참고용으로 연산은 진행됩니다.)`);
+        }
+
+        const pay1 = parseInt(pay1Input.value.replace(/,/g, '')) || 0;
+        const pay2 = parseInt(pay2Input.value.replace(/,/g, '')) || 0;
+        const pay3 = parseInt(pay3Input.value.replace(/,/g, '')) || 0;
+        const bonus = parseInt(bonusInput.value.replace(/,/g, '')) || 0;
+        const annual = parseInt(annualInput.value.replace(/,/g, '')) || 0;
+
+        // 직전 3개월 총 일수 계산 (퇴사일 기준 이전 3개월의 일수)
+        let last3MonthsDays = 0;
+        const tempDate = new Date(leaveDate);
+        for (let i = 0; i < 3; i++) {
+            const currentMonth = tempDate.getMonth();
+            // 각 월의 일수를 구함
+            tempDate.setMonth(tempDate.getMonth() - 1);
+            const year = tempDate.getFullYear();
+            const month = tempDate.getMonth();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            last3MonthsDays += daysInMonth;
+        }
+        if (last3MonthsDays < 80 || last3MonthsDays > 95) {
+            last3MonthsDays = 92; // 안전 보정값
+        }
+
+        const basePaySum = pay1 + pay2 + pay3;
+        const bonusFraction = bonus * (3 / 12);
+        const annualFraction = annual * (3 / 12);
+
+        const total3MonthsSalary = basePaySum + bonusFraction + annualFraction;
+        const avgDailyWage = total3MonthsSalary / last3MonthsDays;
+
+        // 예상 퇴직금 계산 공식: 1일 평균임금 * 30 * (재직일수 / 365)
+        const severancePay = avgDailyWage * 30 * (totalDays / 365);
+
+        // UI 세팅
+        document.getElementById('sev-res-days').textContent = totalDays.toLocaleString() + " 일";
+        document.getElementById('sev-res-avg-daily').textContent = Math.floor(avgDailyWage).toLocaleString() + " 원";
+        
+        const finalVal = document.getElementById('sev-res-total');
+        finalVal.textContent = Math.floor(severancePay).toLocaleString() + " 원";
+
+        resultBox.style.display = 'block';
+        resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+}
+
+/* ==========================================================================
+   10. [계산기 7] 해외주식 양도소득세 계산기
+   ========================================================================== */
+function initOverseasTaxCalculator() {
+    const btnSubmit = document.getElementById('tax-btn');
+    if (!btnSubmit) return;
+
+    const sellInput = document.getElementById('tax-sell');
+    const buyInput = document.getElementById('tax-buy');
+    const feeInput = document.getElementById('tax-fee');
+    const resultBox = document.getElementById('tax-result-box');
+
+    // 콤마 포맷팅
+    [sellInput, buyInput, feeInput].forEach(input => {
+        if (input) {
+            input.addEventListener('input', (e) => {
+                let value = e.target.value.replace(/[^0-9]/g, '');
+                e.target.value = value ? parseInt(value).toLocaleString() : '';
+            });
+        }
+    });
+
+    btnSubmit.addEventListener('click', () => {
+        const sellAmount = parseInt(sellInput.value.replace(/,/g, '')) || 0;
+        const buyAmount = parseInt(buyInput.value.replace(/,/g, '')) || 0;
+        const feeAmount = parseInt(feeInput.value.replace(/,/g, '')) || 0;
+
+        if (sellAmount <= 0) {
+            alert("⚠️ 올바른 총 매도금액을 입력해 주십시오.");
+            return;
+        }
+
+        // 양도차익 = 매도금액 - 매입금액 - 제비용
+        const profit = sellAmount - buyAmount - feeAmount;
+        const deduction = 2500000; // 연간 기본 공제액 250만 원
+
+        // 과세표준 = 양도차익 - 기본공제
+        const taxBase = Math.max(0, profit - deduction);
+        
+        // 양도소득세 20%
+        const nationalTax = Math.floor(taxBase * 0.20);
+        // 지방소득세 2%
+        const localTax = Math.floor(nationalTax * 0.10);
+        // 총 납부 세액
+        const totalTax = nationalTax + localTax;
+
+        // UI 세팅
+        document.getElementById('tax-res-profit').textContent = profit.toLocaleString() + " 원";
+        document.getElementById('tax-res-deduction').textContent = (profit > 0 ? Math.min(profit, deduction) : 0).toLocaleString() + " 원";
+        document.getElementById('tax-res-base').textContent = taxBase.toLocaleString() + " 원";
+        document.getElementById('tax-res-tax20').textContent = nationalTax.toLocaleString() + " 원";
+        document.getElementById('tax-res-tax2').textContent = localTax.toLocaleString() + " 원";
+        
+        const finalVal = document.getElementById('tax-res-total');
+        finalVal.textContent = totalTax.toLocaleString() + " 원";
 
         resultBox.style.display = 'block';
         resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

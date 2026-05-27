@@ -4,5 +4,5 @@
 User-agent: *
 Allow: /
 
-# 호스팅 도메인 세팅 시 실제 도메인 경로로 수정 적용 가능
-Sitemap: https://yourdomain.com/sitemap.xml
+# 호스팅 도메인 세팅 시 실제 도메인 경로로 수정 적용
+Sitemap: https://www.getbreakai.com/sitemap.xml

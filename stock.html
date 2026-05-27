@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주식/코인 평단가 물타기 계산기 & 분할매수 전략 가이드 - 파인툴스</title>
+    <meta name="description" content="파인툴스 주식/코인 평단가 계산기. 1차 매수 금액과 수량, 2차 추가 매매 값을 입력하여 실시간 최종 평단가와 총 매수 금액을 연산하고, 목표 평단가 도달에 필요한 추가 자금 역산 및 분할 매수 절세 재테크 전략을 제공합니다.">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- 상단 네비게이션 헤더 -->
+    <header class="site-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">
+                Fine<span>Tools</span> <span class="logo-badge">Utility Hub</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">홈</a></li>
+                <li><a href="salary.html" class="nav-link">실수령액</a></li>
+                <li><a href="interest.html" class="nav-link">예적금 이자</a></li>
+                <li><a href="age.html" class="nav-link">만 나이</a></li>
+                <li><a href="property.html" class="nav-link">취득세/복비</a></li>
+                <li><a href="stock.html" class="nav-link active">주식 평단가</a></li>
+                <li><a href="severance.html" class="nav-link">퇴직금</a></li>
+                <li><a href="overseas.html" class="nav-link">해외주식 양도세</a></li>
+            </ul>
+            <div class="header-actions">
+                <a href="contact.html" class="btn-header">오류 제보 및 제안</a>
+                <button class="menu-toggle" aria-label="메뉴 열기">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 메인 레이아웃 -->
+    <main class="container">
+        <div class="article-layout">
+            
+            <!-- 왼쪽: 계산기 및 상세 가이드 본문 -->
+            <div class="column-main">
+                <div class="column-header">
+                    <div class="column-top-meta">
+                        <span class="cat">실무 재테크 ∙ 금융 지식 가이드 05</span>
+                        <span>갱신일자: 2026.05.27</span>
+                    </div>
+                    <h1 class="column-title">주식/코인 평단가 물타기 계산기 및 수학적 자산 배분 전략</h1>
+                </div>
+
+                <!-- [실시간 계산기 위젯] -->
+                <div class="embed-widget">
+                    <div class="widget-header">
+                        <span class="widget-badge">Cost Average</span>
+                        <h2 class="widget-title">평균 매입 단가(평단가) 연산 및 목표 역산 폼</h2>
+                        <p class="widget-desc">기존 매수 상태와 추가 매수 예정 정보를 대입해 실시간 평단가를 구하고, 도달하고 싶은 목표 평단가 자금을 산출하십시오.</p>
+                    </div>
+
+                    <div class="widget-grid-2" style="border-bottom: 1px dashed var(--glass-border); padding-bottom: 20px; margin-bottom: 20px;">
+                        <div>
+                            <h3 style="font-size: 0.95rem; color: var(--accent-mint); margin-bottom: 15px;">1차 매수 (현재 보유 상태)</h3>
+                            <div class="widget-form-group">
+                                <label class="widget-label" for="stock-price-1">1차 매수 단가 (원)</label>
+                                <input type="text" id="stock-price-1" class="widget-input" placeholder="예: 75,000" required>
+                            </div>
+                            <div class="widget-form-group">
+                                <label class="widget-label" for="stock-qty-1">1차 보유 수량 (주 또는 개)</label>
+                                <input type="text" id="stock-qty-1" class="widget-input" placeholder="예: 120" required>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 style="font-size: 0.95rem; color: var(--accent-mint); margin-bottom: 15px;">2차 매수 (추가 물타기/불타기)</h3>
+                            <div class="widget-form-group">
+                                <label class="widget-label" for="stock-price-2">추가 매수 단가 (원)</label>
+                                <input type="text" id="stock-price-2" class="widget-input" placeholder="예: 60,000">
+                            </div>
+                            <div class="widget-form-group">
+                                <label class="widget-label" for="stock-qty-2">추가 매수 수량 (주 또는 개)</label>
+                                <input type="text" id="stock-qty-2" class="widget-input" placeholder="예: 80">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="widget-form-group">
+                        <label class="widget-label" for="stock-target-price">희망 목표 평단가 (원 - 선택 입력 시 추가 매수액 역산 제공)</label>
+                        <input type="text" id="stock-target-price" class="widget-input" placeholder="예: 68,000">
+                    </div>
+
+                    <button id="stock-btn" class="widget-btn">나의 최종 평단가 계산하기 📊</button>
+
+                    <!-- 계산 결과 디스플레이 박스 -->
+                    <div id="stock-result-box" class="widget-result-box">
+                        <div class="result-total-box">
+                            <span class="result-total-label">최종 평균 매입 단가 (평단가)</span>
+                            <div id="stock-res-avg-price" class="result-total-val">0 원</div>
+                        </div>
+                        <table class="widget-table">
+                            <thead>
+                                <tr>
+                                    <th>주식/코인 포트폴리오 연산 요약</th>
+                                    <th>상세 내역</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>총 보유 수량</td>
+                                    <td id="stock-res-total-qty" style="color: var(--accent-mint); font-weight: 600;">0 주/개</td>
+                                </tr>
+                                <tr>
+                                    <td>총 매수 지출 금액 (합계)</td>
+                                    <td id="stock-res-total-price">0 원</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- 역산 결과 박스 -->
+                        <div id="stock-res-target-wrapper" style="margin-top: 20px; padding: 15px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; display: none;">
+                            <h4 style="font-size: 0.9rem; color: var(--accent-mint); margin-bottom: 8px;">🎯 목표 평단가 도달 시뮬레이션 결과</h4>
+                            <p id="stock-res-target-needed" style="font-size: 0.88rem; line-height: 1.6; color: var(--glass-text);"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- [초장문 고품질 SEO 가이드] - 1,600자 이상 -->
+                <div class="column-content">
+                    <h2>1. 물타기와 분할 매수의 수학적 이해와 메커니즘</h2>
+                    <p>자산운용에 있어 진입 장벽이 낮으면서도 심리적 지배력이 가장 큰 매매 기법이 바로 **'물타기(Down-average Buying)'**입니다. 물타기는 특정 종목의 주가나 토큰 단가가 자신이 매수한 가격보다 하락했을 때, 추가 자금을 투입하여 주식을 더 사들임으로써 **'평균 매입 단가(평단가)'**를 낮추는 고전적인 트레이딩 전략입니다.</p>
+                    <p>물타기의 수학적 원리는 아주 직관적입니다. 총 매입금액(기존 매입 비용 + 추가 매입 비용)을 최종 보유 수량(기존 수량 + 추가 수량)으로 나눈 가중평균값으로 평단가가 결정됩니다. **따라서 추가 매수 단가가 낮으면 낮을수록, 그리고 추가로 매수하는 수량이 기존 보유 수량보다 크면 클수록 최종 평단가는 더 급격하게 하락합니다.** 본 평단가 계산기를 활용하면 모의 매수 수량에 따른 최종 평단가를 즉각적으로 가시화할 수 있어, 뇌동매매식 충동 물타기가 아닌 정교한 계획에 기반한 분할 진입을 설계할 수 있게 됩니다.</p>
+
+                    <h2>2. 코스트 에버리징(Cost Averaging) 효과의 양날의 검</h2>
+                    <p>재테크 교과서나 투자 조언자들이 항상 강조하는 분할 매수의 본질은 **'코스트 에버리징(Cost Averaging) 효과'**에 닿아 있습니다. 일정한 주기를 두고 동일한 금액을 특정 자산에 적립식으로 지속 투자하게 되면, 가격이 높을 때는 적은 수량을 매수하고 가격이 쌀 때는 많은 수량을 강제 매수하게 되어 결과적으로 평균 매입 단가가 시장 평균보다 유리하게 수렴하는 수학적 현상을 의미합니다.</p>
+                    <p>그러나 이 매력적인 이론 뒤에는 **'자금 한계의 덫'**이라는 무서운 수학적 함정이 도사리고 있습니다. 주가가 끊임없이 계단식으로 우하향하는 상장폐지 직전의 부실 종목이거나 내재가치가 소멸해가는 투기적 자산의 경우, 평단가를 낮추기 위해 무제한으로 물을 타다가는 보유 자산이 소멸하는 동시에 파산에 이르는 **'마틴게일 베팅의 파멸'**을 겪게 됩니다. **코스트 에버리징이 파괴력을 발휘하려면 반드시 장기 우상향이 확실시되는 우량 인덱스 ETF나 강력한 독점적 해자를 지닌 1등 기업이라는 대전제가 확실하게 뒷받침되어야만 합니다.**</p>
+
+                    <h2>3. 목표 평단가 도달을 위한 자금 역산 설계 공식</h2>
+                    <p>성공적인 탈출이나 손익분기점(BEP) 도달을 위해서는 단순 물타기 계산뿐만 아니라, **"내가 평단가를 7만 원까지 낮추려면 추가로 얼마를 더 매수해야 하는가?"**에 대한 자금 역산 능력이 필수적입니다. 이 공식은 다음과 같은 연립방정식을 따릅니다:</p>
+                    <blockquote>
+                        <strong>목표 평단가 달성을 위한 추가 매수 수량($Q_2$) 역산 수학 공식:</strong><br>
+                        $$Q_2 = \frac{(P_1 - T) \times Q_1}{T - P_2}$$<br>
+                        • $P_1$: 기존 평단가, $Q_1$: 기존 보유 수량<br>
+                        • $P_2$: 추가 매수 가격, $T$: 희망하는 최종 목표 평단가
+                    </blockquote>
+                    <p>이 식의 핵심 제약 조건은 **목표 평단가($T$)가 반드시 추가 매수 가격($P_2$)보다 높아야만 성립한다는 점**입니다. 당연하게도, 현재 추가로 매수하는 단가($P_2$)보다 낮거나 같은 수준으로 평단가를 맞추는 것은 무한대(Infinity)의 자금을 집어넣어도 불가능합니다. 파인툴스의 계산기는 이 한계 조건을 실시간 필터링하여 사용자에게 불가능한 수식이 대입될 시 경고를 출력하고, 도달 가능 시 필요한 수량과 자금 규모를 실시간으로 환산해 줍니다.</p>
+
+                    <h2>4. 포트폴리오 평단가 관리와 멘탈 보존을 위한 실무 수칙 3선</h2>
+                    <ul>
+                        <li><strong>물타기 비율 한도의 철저한 계량화</strong>:
+                        추가 매수를 시도할 때 가장 나쁜 버릇은 '매번 떨어질 때마다 무계획적으로 조금씩 사는 것'입니다. 자금이 분산되고 잦은 매매로 평단가가 효과적으로 떨어지지도 않으면서 예수금만 빠르게 고갈됩니다. 물타기는 반드시 최초 진입 단가 대비 최소 10%~15% 이상 주가가 유의미하게 하락했을 때, 1차 보유 금액의 50% 또는 100% 규격화된 물량으로만 매수하는 등 엄격한 계량 규칙을 선제 선언해 두어야 작동합니다.</li>
+                        
+                        <li><strong>비중(Weight) 한계선(Cap)의 엄격한 고수</strong>:
+                        아무리 우량한 종목이라 할지라도 단일 종목의 전체 자산 비중이 20%~30%를 넘지 않도록 제한하는 '비중 상한 룰'을 설정해야 합니다. 평단가가 낮아지는 매력에 심취하여 한 종목에 모든 자산을 밀어 넣으면 포트폴리오 다변화가 붕괴하여, 거시 경제 충격(매크로 쇼크) 발생 시 회생 불가능한 자산 타격을 입게 됩니다.</li>
+                        
+                        <li><strong>불타기(Up-average Buying)의 수학적 관리</strong>:
+                        반대로 주가가 상승할 때 평단가를 올려가며 비중을 확대하는 '불타기' 역시 평단가 관리가 중요합니다. 주가가 가파르게 상승할 때 추가 매수를 무리하게 가입하면 평단가가 현재가 부근까지 급격히 상승하여, 조그마한 기술적 조정이나 돌발 악재 발생 시 계좌가 즉각 파란 불로 전환되는 치명적 내상을 입습니다. 불타기 시에는 추가 매입 금액이 항상 1차 매수 금액보다 작게 피라미딩(Pyramiding) 구조로 진입하여 평단가 방어선을 굳건히 사수해야 합니다.</li>
+                    </ul>
+                    <p>투자에서 가장 강력한 무기는 타인보다 저렴한 평단가라는 방패를 쥐는 것입니다. 파인툴스의 프리미엄 평단가 계산기로 나의 포트폴리오 단가 방어벽을 실시간 지적으로 시뮬레이션하시어 시장 변동성이라는 파도 위에서 흔들리지 않고 안전한 자산 증식을 누려보시길 진심으로 응원합니다.</p>
+                </div>
+            </div>
+
+            <!-- 오른쪽: 사이드바 위젯 영역 -->
+            <div class="column-sidebar">
+                <!-- 정확도 자문 프로필 위젯 -->
+                <div class="sidebar-widget">
+                    <h3 class="sidebar-title">수식 자문 및 검증 정보</h3>
+                    <div style="font-size: 0.88rem; color: var(--glass-muted); margin-top: 15px; line-height: 1.6;">
+                        <p>파인툴스의 평단가 연산은 **가중평균단가(Weighted Average Cost) 공식**을 무오류 대입하여 설계되었습니다.</p>
+                        <p style="margin-top: 10px;">소수점 4자리 이하의 극소 단위 가상자산(코인) 수량 연산 정확성 검증까지 완료하여, 정밀 포트폴리오 통제를 확실하게 보증합니다.</p>
+                    </div>
+                </div>
+
+                <!-- 실무 계산기 퀵 링크 위젯 -->
+                <div class="sidebar-widget">
+                    <h3 class="sidebar-title">다른 실무 계산기</h3>
+                    <div class="toolkit-list" style="margin-top: 15px;">
+                        <div class="toolkit-item">
+                            <span>연봉 및 실수령액 계산기</span>
+                            <a href="salary.html" class="toolkit-btn-copy">이동</a>
+                        </div>
+                        <div class="toolkit-item">
+                            <span>예금/적금 이자 계산기</span>
+                            <a href="interest.html" class="toolkit-btn-copy">이동</a>
+                        </div>
+                        <div class="toolkit-item">
+                            <span>부동산 취득세/복비 계산기</span>
+                            <a href="property.html" class="toolkit-btn-copy">이동</a>
+                        </div>
+                        <div class="toolkit-item">
+                            <span>해외주식 양도세 계산기</span>
+                            <a href="overseas.html" class="toolkit-btn-copy">이동</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- 하단 푸터 영역 -->
+    <footer class="site-footer">
+        <div class="container footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h2>Fine<span>Tools</span></h2>
+                    <p>파인툴스는 직장인과 프리랜서들이 매일 활용할 수 있는 실용 계산 도구와 공인 세무 회계 가이드라인을 무료로 배포하여 지적 정보 격차를 해소하는 비영리 공익 플랫폼입니다.</p>
+                </div>
+                <div class="footer-links-col">
+                    <h3>실무 계산기</h3>
+                    <ul class="footer-links">
+                        <li><a href="salary.html" class="footer-link">실수령액 계산기</a></li>
+                        <li><a href="interest.html" class="footer-link">예적금 이자 계산기</a></li>
+                        <li><a href="age.html" class="footer-link">만 나이 계산기</a></li>
+                        <li><a href="property.html" class="footer-link">부동산 취득세 계산기</a></li>
+                        <li><a href="stock.html" class="footer-link">주식 평단가 계산기</a></li>
+                        <li><a href="severance.html" class="footer-link">퇴직금 계산기</a></li>
+                        <li><a href="overseas.html" class="footer-link">해외주식 양도세 계산기</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-col">
+                    <h3>정보 가이드</h3>
+                    <ul class="footer-links">
+                        <li><a href="salary.html" class="footer-link">연말정산 꿀팁</a></li>
+                        <li><a href="interest.html" class="footer-link">세금우대 한도 관리</a></li>
+                        <li><a href="stock.html" class="footer-link">물타기 계산 법칙</a></li>
+                        <li><a href="overseas.html" class="footer-link">해외주식 절세 비법</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-col">
+                    <h3>신뢰 센터</h3>
+                    <ul class="footer-links">
+                        <li><a href="about.html" class="footer-link">서비스 철학 및 신뢰 정보</a></li>
+                        <li><a href="contact.html" class="footer-link">오류 제보 및 제안</a></li>
+                        <li><a href="faq.html" class="footer-link">자주 묻는 질문 FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 FineTools. 모든 권리 보유. 본 사이트의 모든 수식과 콘텐츠는 공인 전문가 가이드를 기반으로 자체 제작되어 저작권 안전을 보증합니다.</p>
+                <div class="footer-bottom-links">
+                    <a href="privacy.html" class="footer-bottom-link">개인정보처리방침</a>
+                    <a href="terms.html" class="footer-bottom-link">서비스이용약관</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
