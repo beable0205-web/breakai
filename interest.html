@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예금 및 적금 이자 계산기 & 단리 복리 세금우대 한도 가이드 - 파인툴스</title>
+    <meta name="description" content="파인툴스 예적금 이자 계산기. 예금 적금 구분, 단리 복리 시뮬레이션, 15.4% 일반과세와 9.5% 세금우대, 비과세 적용 실 수령 이자액을 정확히 계산하고 풍차돌리기 재테크 가이드를 제공합니다.">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- 상단 네비게이션 헤더 -->
+    <header class="site-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">
+                Fine<span>Tools</span> <span class="logo-badge">Utility Hub</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">홈</a></li>
+                <li><a href="salary.html" class="nav-link">실수령액</a></li>
+                <li><a href="interest.html" class="nav-link active">예적금 이자</a></li>
+                <li><a href="age.html" class="nav-link">만 나이</a></li>
+                <li><a href="property.html" class="nav-link">취득세/복비</a></li>
+                <li><a href="faq.html" class="nav-link">금융 FAQ</a></li>
+            </ul>
+            <div class="header-actions">
+                <a href="contact.html" class="btn-header">오류 제보 및 제안</a>
+                <button class="menu-toggle" aria-label="메뉴 열기">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 메인 레이아웃 -->
+    <main class="container">
+        <div class="article-layout">
+            
+            <!-- 왼쪽: 계산기 및 상세 가이드 본문 -->
+            <div class="column-main">
+                <div class="column-header">
+                    <div class="column-top-meta">
+                        <span class="cat">실무 세무 ∙ 금융 지식 가이드 02</span>
+                        <span>갱신일자: 2026.05.27</span>
+                    </div>
+                    <h1 class="column-title">정밀 예금/적금 단리·복리 이자 계산기</h1>
+                </div>
+
+                <!-- [실시간 계산기 위젯] -->
+                <div class="embed-widget">
+                    <div class="widget-header">
+                        <span class="widget-badge">Interest Calculator</span>
+                        <h2 class="widget-title">예적금 만기 이자 자동 연산 폼</h2>
+                        <p class="widget-desc">금액, 기간, 연이율을 넣고 과세 방식별 실 수령액을 즉시 모의 시뮬레이션하십시오.</p>
+                    </div>
+
+                    <div class="widget-form-group">
+                        <label class="widget-label">금융 상품 유형 선택</label>
+                        <div class="widget-radio-group">
+                            <label class="widget-radio-label">
+                                <input type="radio" name="interest-type" value="deposit" checked>
+                                <span>정기 예금 (목돈을 한 번에 거치)</span>
+                            </label>
+                            <label class="widget-radio-label">
+                                <input type="radio" name="interest-type" value="savings">
+                                <span>정기 적금 (매월 일정액 불입)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="widget-grid-2">
+                        <div class="widget-form-group">
+                            <label class="widget-label" for="interest-money">월 납입액 또는 예치 원금 (원 단위)</label>
+                            <input type="text" id="interest-money" class="widget-input" placeholder="예: 1,000,000" required>
+                        </div>
+                        <div class="widget-form-group">
+                            <label class="widget-label" for="interest-rate">연 이자율 (%, 소수점 가능)</label>
+                            <input type="number" id="interest-rate" class="widget-input" step="0.1" placeholder="예: 4.5" required>
+                        </div>
+                    </div>
+
+                    <div class="widget-grid-2">
+                        <div class="widget-form-group">
+                            <label class="widget-label" for="interest-period">적립/거치 기간 (개월 수 입력)</label>
+                            <input type="number" id="interest-period" class="widget-input" value="12" placeholder="예: 12" required>
+                        </div>
+                        <div class="widget-form-group">
+                            <label class="widget-label" for="interest-taxtype">이자 소득세 과세 유형</label>
+                            <select id="interest-taxtype" class="widget-select">
+                                <option value="general" selected>일반과세 (15.4% 공제)</option>
+                                <option value="preferential">세금우대 / 저율과세 (9.5% 공제)</option>
+                                <option value="taxfree">비과세 (0% 공제)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="widget-form-group">
+                        <label class="widget-label">이자 연산 방식</label>
+                        <div class="widget-radio-group">
+                            <label class="widget-radio-label">
+                                <input type="radio" name="interest-comp" value="single" checked>
+                                <span>단리 (Simple Interest)</span>
+                            </label>
+                            <label class="widget-radio-label">
+                                <input type="radio" name="interest-comp" value="compound">
+                                <span>월복리 (Compound Interest)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button id="interest-btn" class="widget-btn">나의 만기 수령액 계산하기 📈</button>
+
+                    <!-- 계산 결과 디스플레이 박스 -->
+                    <div id="interest-result-box" class="widget-result-box">
+                        <div class="result-total-box">
+                            <span class="result-total-label">만기 최종 실 수령액 (원금+세후이자)</span>
+                            <div id="interest-res-total" class="result-total-val">0 원</div>
+                        </div>
+                        <table class="widget-table">
+                            <thead>
+                                <tr>
+                                    <th>금액 및 이자 내역 분류</th>
+                                    <th>원천세 공제 상세 금액</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>만기 총 납입 원금 (Principal)</td>
+                                    <td id="interest-res-principal">0 원</td>
+                                </tr>
+                                <tr>
+                                    <td>만기 세전 약정 이자 (Pre-tax Interest)</td>
+                                    <td id="interest-res-raw" style="color: var(--primary-mint);">0 원</td>
+                                </tr>
+                                <tr>
+                                    <td>이자 소득세 및 주민세 공제액</td>
+                                    <td id="interest-res-tax" style="color: var(--accent-gold);">0 원</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- [초장문 고품질 SEO 가이드] - 1,500자 이상 -->
+                <div class="column-content">
+                    <h2>1. 예금(거치식)과 적금(적립식)의 결정적 이자 수학 차이</h2>
+                    <p>재테크 초보 사장님들이나 사회초년생들이 예적금 상품에 가입할 때 가장 많이 충격을 받는 지점이 바로 <strong>"연 5% 적금에 가입했는데, 만기에 나온 이자가 왜 내가 생각한 5% 원금 곱하기 이율보다 훨씬 적을까?"</strong> 하는 의구심입니다. 이는 은행이 고지하는 금리가 '연이율'이기 때문이며, 예금과 적금의 자금 예치 기간에 따른 수학적 차이에서 비롯됩니다.</p>
+                    <p><strong>정기 예금</strong>은 목돈(예: 1,000만 원)을 가입 첫날 한 번에 은행에 거치해 두고 12개월 동안 온전히 놔두는 상품입니다. 따라서 1,000만 원 전체가 일 년 내내 은행에 머물러 있으므로 약정한 연이율 5%가 100% 온전하게 적용됩니다. 반면, <strong>정기 적금</strong>은 매달 나누어 돈을 불입하는 적립식 구조입니다. 첫째 달에 낸 100만 원은 12개월 동안 은행에 있지만, 둘째 달에 낸 100만 원은 11개월 동안만 보관되며, 마지막 12번째 달에 불입한 100만 원은 만기 직전 단 1개월 동안만 은행에 머물게 됩니다. </p>
+                    <p>즉, 적금은 불입금별로 이자가 일할 계산되므로, 12개월 적금 상품의 실질적인 평균 예치 기간은 전체 기간의 약 절반에 불과합니다. <strong>결과적으로 적금의 세전 이자는 연이율의 약 절반을 곱한 값과 유사하게 수렴합니다.</strong> 따라서 내야 할 적금 이자가 겉보기 금리보다 적다고 해서 은행이 장난을 친 것이 아니며, 이자가 작동하는 자금의 시간 예치 공식을 정확히 이해하는 것이 재테크 포트폴리오 기획의 기초입니다.</p>
+
+                    <h2>2. 단리와 월복리의 과학과 이자 과세 제도(15.4% vs 9.5%)</h2>
+                    <p>이자가 이자를 낳는 **'복리의 마법'**은 금융 시장에서 가장 거대한 복제 병기입니다. 단리는 오로지 사장님이 처음에 낸 원금에 대해서만 약정 이자를 매깁니다. 반면, 월복리는 매월 발생하는 이자를 원금에 얹어 다음 달에 이 얹어진 합산액을 기초 원금으로 하여 새 이자를 굴려 나갑니다. 물론 단기 1년 가입 시에는 단리와 복리의 실질 세후 이자 차이가 몇만 원 수준에 그치지만, 기간이 3년, 5년, 10년으로 늘어날수록 복리 그래프의 상승 곡선은 수직으로 치솟아 넘을 수 없는 격차를 선사합니다.</p>
+                    <p>여기에 이자를 더 갉아먹는 결정적인 도둑은 바로 **'15.4% 이자소득세(소득세 14% + 지방소득세 1.4%)'**입니다. 은행에서 100만 원의 약정 이자가 나왔더라도 일반과세자라면 15만 4천 원을 세금으로 떼인 뒤 84만 6천 원만 수령하게 됩니다. 이를 합법적으로 방어하는 방패가 **'새마을금고, 신협, 수협, 농협 등 상호금융의 저율과세/세금우대 혜택'**입니다. 이들 상호금융 조합원으로 등록하면 농어촌특별세 <strong>단 1.4%(한도 축소 시 2026년 기준 9.5% 내외 저율)</strong>만 떼고 이자를 100%에 가깝게 환급받을 수 있어 실질 이자율을 약 1%p 이상 즉각 올리는 엄청난 부가 세무 혜택이 주어집니다. (1인당 3,000만 원 한도)</p>
+
+                    <h2>3. 목돈 만들기 기적의 룰: 적금 풍차돌리기 200% 활용 전략</h2>
+                    <p>소자본으로 시작해 강제적인 저축 습관을 기르고 목돈을 복리로 굴리는 최고의 로드맵으로 <strong>'풍차돌리기 적금'</strong> 기법이 강력히 인용됩니다. 원리는 간단하지만 수학적인 흐름은 매우 견고합니다:</p>
+                    
+                    <ul>
+                        <li><strong>1년 동안 매달 새로운 1년제 적금 통장 1개씩 추가 개설</strong>: 
+                        1월에 10만 원짜리 적금을 1개 만듭니다. 2월에는 기존 적금 10만 원에 더해, 새로운 10만 원짜리 적금 1개를 더 만들어 매달 20만 원을 저축합니다. 이렇게 12월이 되면 총 12개의 적금 통장이 굴러가며 매달 120만 원의 저축이 강제 가동됩니다.</li>
+                        
+                        <li><strong>13개월 차부터 매달 터지는 만기 원금+이자의 연쇄 예금 전환</strong>: 
+                        다음 해 1월이 되는 순간, 1년 전 1월에 가입했던 1호 적금이 만기 도래하여 원금 120만 원과 세후 이자가 쏟아집니다. 이 목돈을 즉시 거치식 예금 통장에 넣고 다시 풍차를 돌립니다. 매달 월급날처럼 만기 목돈이 콸콸 쏟아져 나오는 저축의 쾌감(Dopamine feedback)을 안겨주어, 중도 해지율을 0%에 가깝게 차단하고 자산을 눈사태처럼 복리로 불리는 강력한 강제 시스템이 완성됩니다.</li>
+                    </ul>
+
+                    <p>예적금 투자는 단순한 수동적 보관이 아닌, 금리와 과세 제도의 빈틈을 파고들어 나의 유동성 자산을 정밀하게 늘려나가는 **'수학적 머니 게임'**입니다. 파인툴스 예적금 이자 계산기를 통해 단리/복리와 과세 요율별 실제 만기 환급금을 명확히 검증해 보십시오. 그리고 세금우대 혜택과 풍차돌리기 저축 설계를 지적으로 연동하여 대행사나 사설 자산관리사의 영업 사기에 휘둘리지 않고, 나의 소중한 금융 우물을 스스로 안전하게 파고 불려 나가시길 적극 지지합니다.</p>
+                </div>
+            </div>
+
+            <!-- 오른쪽: 사이드바 위젯 영역 -->
+            <div class="column-sidebar">
+                <!-- 정확도 자문 프로필 위젯 -->
+                <div class="sidebar-widget">
+                    <h3 class="sidebar-title">수식 자문 및 검증 정보</h3>
+                    <div style="font-size: 0.88rem; color: var(--glass-muted); margin-top: 15px; line-height: 1.6;">
+                        <p>파인툴스 이자 계산 수식은 <strong>은행연합회 표준 단리 및 월복리 공식과 지방세법상 이자소득세(14%) 및 농어촌특별세법 규정</strong>을 정확히 매핑하여 설계되었습니다.</p>
+                        <p style="margin-top: 10px;">저작권 분쟁 우려가 전혀 없는 순수 공공 수학 연산 알고리즘으로 안심하고 사용해 주십시오.</p>
+                    </div>
+                </div>
+
+                <!-- 실무 계산기 퀵 링크 위젯 -->
+                <div class="sidebar-widget">
+                    <h3 class="sidebar-title">다른 실무 계산기</h3>
+                    <div class="toolkit-list" style="margin-top: 15px;">
+                        <div class="toolkit-item">
+                            <span>실수령액 계산기</span>
+                            <a href="salary.html" class="toolkit-btn-copy">이동</a>
+                        </div>
+                        <div class="toolkit-item">
+                            <span>만 나이 / 기념일 계산기</span>
+                            <a href="age.html" class="toolkit-btn-copy">이동</a>
+                        </div>
+                        <div class="toolkit-item">
+                            <span>부동산 취득세/복비 계산기</span>
+                            <a href="property.html" class="toolkit-btn-copy">이동</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- 하단 푸터 영역 -->
+    <footer class="site-footer">
+        <div class="container footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h2>Fine<span>Tools</span></h2>
+                    <p>파인툴스는 직장인과 프리랜서들이 매일 활용할 수 있는 실용 계산 도구와 공인 세무 회계 가이드라인을 무료로 배포하여 지적 정보 격차를 해소하는 비영리 공익 플랫폼입니다.</p>
+                </div>
+                <div class="footer-links-col">
+                    <h3>실무 계산기</h3>
+                    <ul class="footer-links">
+                        <li><a href="salary.html" class="footer-link">실수령액 계산기</a></li>
+                        <li><a href="interest.html" class="footer-link">예적금 이자 계산기</a></li>
+                        <li><a href="age.html" class="footer-link">만 나이 계산기</a></li>
+                        <li><a href="property.html" class="footer-link">부동산 취득세 계산기</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-col">
+                    <h3>정보 가이드</h3>
+                    <ul class="footer-links">
+                        <li><a href="salary.html" class="footer-link">연말정산 꿀팁</a></li>
+                        <li><a href="interest.html" class="footer-link">세금우대 한도 관리</a></li>
+                        <li><a href="age.html" class="footer-link">만나이 복지 혜택</a></li>
+                        <li><a href="property.html" class="footer-link">취득세 감면 조건</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-col">
+                    <h3>신뢰 센터</h3>
+                    <ul class="footer-links">
+                        <li><a href="about.html" class="footer-link">서비스 철학 및 신뢰 정보</a></li>
+                        <li><a href="contact.html" class="footer-link">오류 제보 및 제안</a></li>
+                        <li><a href="faq.html" class="footer-link">자주 묻는 질문 FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 FineTools. 모든 권리 보유. 본 사이트의 모든 수식과 콘텐츠는 공인 전문가 가이드를 기반으로 자체 제작되어 저작권 안전을 보증합니다.</p>
+                <div class="footer-bottom-links">
+                    <a href="privacy.html" class="footer-bottom-link">개인정보처리방침</a>
+                    <a href="terms.html" class="footer-bottom-link">서비스이용약관</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
