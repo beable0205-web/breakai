@@ -1083,3 +1083,152 @@ a {
         grid-template-columns: 1fr;
     }
 }
+
+/* --- 신규 추가: 벤치마킹 반영 UI (요약 박스 & CTA 버튼) --- */
+.summary-box {
+    background: var(--glass-bg);
+    border: 1px solid var(--primary-mint);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-glow);
+}
+
+.summary-box h3 {
+    color: var(--primary-mint);
+    margin-bottom: 12px;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.summary-box ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.summary-box ul li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 8px;
+    color: var(--glass-text);
+}
+
+.summary-box ul li::before {
+    content: '✅';
+    position: absolute;
+    left: 0;
+    top: 2px;
+    font-size: 0.9rem;
+}
+
+.btn-cta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, var(--primary-mint) 0%, #059669 100%);
+    color: var(--white);
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    margin: 24px 0;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    transition: var(--transition-base);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+    background: linear-gradient(135deg, #059669 0%, var(--primary-mint) 100%);
+}
+
+.trend-board {
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid var(--glass-border);
+}
+
+.trend-board-header {
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.trend-board-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--white);
+}
+
+.trend-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.trend-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    transition: var(--transition-base);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.trend-card:hover {
+    border-color: var(--primary-mint);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-glow);
+}
+
+.trend-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--accent-gold);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.trend-card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--white);
+}
+
+.trend-card-desc {
+    font-size: 0.95rem;
+    color: var(--glass-muted);
+    margin-bottom: 16px;
+}
+
+.trend-card-link {
+    color: var(--primary-mint);
+    font-weight: 500;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.trend-card-link::after {
+    content: '→';
+    transition: transform 0.2s;
+}
+
+.trend-card:hover .trend-card-link::after {
+    transform: translateX(4px);
+}
