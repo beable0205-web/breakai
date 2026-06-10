@@ -1082,6 +1082,34 @@ a {
     .widget-grid-2 {
         grid-template-columns: 1fr;
     }
+    
+    /* 벤치마킹 신규 UI 모바일 최적화 */
+    .summary-box {
+        padding: 16px;
+        margin-bottom: 20px;
+    }
+    
+    .summary-box h3 {
+        font-size: 1.1rem;
+    }
+    
+    .summary-box ul li {
+        font-size: 0.95rem;
+    }
+    
+    .btn-cta {
+        padding: 14px 16px;
+        font-size: 1rem;
+        margin: 16px 0;
+    }
+    
+    .trend-board-title {
+        font-size: 1.4rem;
+    }
+    
+    .trend-cards {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* --- 신규 추가: 벤치마킹 반영 UI (요약 박스 & CTA 버튼) --- */
