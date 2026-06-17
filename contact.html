@@ -96,21 +96,23 @@
                         <p class="widget-desc">전달해주신 내용은 수식 오류 수정 및 플랫폼 고도화 연구 목적으로만 활용됩니다.</p>
                     </div>
 
-                    <form id="contact-form" class="contact-grid">
+                    <form id="contact-form" class="contact-grid" action="https://formspree.io/f/xpwrdopv" method="POST">
+                        <input type="hidden" name="_subject" value="[파인툴스] 오류 피드백 및 제안">
+                        <input type="hidden" name="_next" value="https://www.getbreakai.com/contact.html?sent=true">
                         <div class="widget-grid-2">
                             <div class="widget-form-group">
                                 <label class="widget-label" for="contact-name">사용자 성명 / 닉네임</label>
-                                <input type="text" id="contact-name" class="widget-input" placeholder="예: 홍길동" required>
+                                <input type="text" id="contact-name" name="name" class="widget-input" placeholder="예: 홍길동" required>
                             </div>
                             <div class="widget-form-group">
                                 <label class="widget-label" for="contact-email">회신받으실 이메일 주소</label>
-                                <input type="email" id="contact-email" class="widget-input" placeholder="예: user@domain.com" required>
+                                <input type="email" id="contact-email" name="email" class="widget-input" placeholder="예: user@domain.com" required>
                             </div>
                         </div>
 
                         <div class="widget-form-group">
                             <label class="widget-label" for="contact-message">오류 피드백 또는 신규 계산기 아이디 제안 세부 내용</label>
-                            <textarea id="contact-message" class="widget-input" rows="6" style="resize: vertical; font-family: var(--font-primary);" placeholder="수식 오차가 발생한 부분의 계산 조건이나, 추가되길 원하는 계산기의 기획안을 편하게 기입해 주십시오." required></textarea>
+                            <textarea id="contact-message" name="message" class="widget-input" rows="6" style="resize: vertical; font-family: var(--font-primary);" placeholder="수식 오차가 발생한 부분의 계산 조건이나, 추가되길 원하는 계산기의 기획안을 편하게 기입해 주십시오." required></textarea>
                         </div>
 
                         <button type="submit" class="widget-btn">피드백 안전하게 전송하기 ✉️</button>
