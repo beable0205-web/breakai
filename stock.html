@@ -41,6 +41,31 @@
 }
     </script>
     <!-- SEO META TAGS END -->
+
+    <style>
+        .related-guides-section ul li a {
+            display: block;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+        .related-guides-section ul li a:hover {
+            background: rgba(252,211,77,0.08);
+            color: #FCD34D;
+            border-color: rgba(252,211,77,0.3);
+        }
+        @media (max-width: 640px) {
+            .related-guides-section ul {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -231,6 +256,22 @@
         </div>
     </main>
 
+
+    <!-- 관련 가이드 칼럼 섹션 (내부 링크 강화 & 콘텐츠 풍부화) -->
+    <section class="related-guides-section" style="background: rgba(255,255,255,0.03); border-top: 1px solid rgba(255,255,255,0.08); padding: 40px 0;">
+        <div class="container">
+            <h2 style="font-size:1.25rem; font-weight:700; color:#FCD34D; margin-bottom:20px; letter-spacing:-0.5px;">📈 주식 & 투자 절세 가이드</h2>
+            <ul style="list-style:none; padding:0; margin:0; display:grid; gap:10px; grid-template-columns: 1fr 1fr;">
+                    <li><a href="guide_34.html">2026년 ISA 전면 개편: 비과세 한도 상향과 서민형 활용 완벽 가이드</a></li>
+                    <li><a href="guide_35.html">IRP와 연금저축펀드로 세액공제 한도 900만 원 100% 채우는 ETF 투자 전략</a></li>
+                    <li><a href="guide_04.html">금융소득종합과세 완벽 가이드: 이자·배당 2천만 원 초과 시 절세 전략</a></li>
+                    <li><a href="guide_11.html">국내주식 양도소득세 가이드: 대주주 기준과 절세 타이밍 총정리</a></li>
+            </ul>
+            <div style="margin-top:20px; text-align:right;">
+                <a href="index.html" style="color:#94a3b8; font-size:0.85rem; text-decoration:none;">← 전체 가이드 목록 보기</a>
+            </div>
+        </div>
+    </section>
     <!-- 하단 푸터 영역 -->
     <footer class="site-footer">
         <div class="container footer-container">
