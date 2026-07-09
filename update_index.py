@@ -1,35 +1,28 @@
 """
 update_index.py v4 - 구조 분석 기반 정밀 삽입 (최종 확정 버전)
-
-index.html 트렌드 카드 영역 구조:
-    ... [마지막 trend-card] ...
-                </div>          ← 카드의 </div>  (들여쓰기 16칸)
-            </div>              ← 카드 리스트의 </div> (들여쓰기 12칸)
-        </div>                  ← 섹션 컨테이너의 </div> (들여쓰기 8칸)
-    </section>
-
-새 카드는 '마지막 카드의 </div>' 바로 다음,
-'카드 리스트의 </div>' 바로 이전에 삽입해야 합니다.
+guide_40, guide_41 추가
 """
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 
 file_path = r'd:\adsense\index.html'
 
-# ─── 여기에 추가할 가이드 카드를 입력하세요 ───────────────────────────────
 guides_to_add = [
-    # ('guide_40.html', '제목', '설명'),
+    (
+        'guide_40.html',
+        '2026년 ISA 계좌 완전 가이드: 비과세·분리과세 혜택과 중개형 vs 신탁형 비교',
+        'ISA 계좌 하나로 세금 최대 200만 원 절약? 2026년 중개형·신탁형·일임형 완벽 비교, 비과세 한도·분리과세 9.9% 혜택, ISA→연금계좌 연계 전략까지 총정리합니다.'
+    ),
+    (
+        'guide_41.html',
+        '2026년 건강보험료 절감 완전 가이드: 직장·지역가입자 보험료 줄이는 법',
+        '매달 나가는 건강보험료 합법적으로 줄일 수 있다! 피부양자 등재 요건, 지역가입자 재산점수 줄이기, 퇴직자 임의계속가입 전략까지 핵심만 정리합니다.'
+    ),
 ]
-# ───────────────────────────────────────────────────────────────────────────
-
-if not guides_to_add:
-    print("INFO: guides_to_add 가 비어 있습니다.")
-    sys.exit(0)
 
 with open(file_path, 'r', encoding='utf-8') as f:
     lines = f.readlines()
 
-# 1) 마지막 trend-card 태그가 있는 라인 번호(0-indexed) 찾기
 last_trend_line = max(
     (i for i, l in enumerate(lines) if 'trend-card' in l),
     default=None
@@ -38,7 +31,6 @@ if last_trend_line is None:
     print("ERROR: trend-card 를 찾을 수 없습니다.")
     sys.exit(1)
 
-# 2) last_trend_line 이후 처음 나오는 '</section>' 라인 찾기
 section_line = next(
     (i for i in range(last_trend_line, len(lines)) if '</section>' in lines[i]),
     None
@@ -47,24 +39,18 @@ if section_line is None:
     print("ERROR: </section> 을 찾을 수 없습니다.")
     sys.exit(1)
 
-# 3) section_line 이전에 있는 마지막 카드의 </div> 다음 줄 = section_line - 2
-#    구조: [last trend card</div>] → [리스트</div>] → [컨테이너</div>] → [</section>]
-#    삽입 위치 = section_line - 2  (리스트 닫는 </div> 바로 앞)
 insert_at = section_line - 2
 
-# 4) 검증
 print(f"마지막 trend-card 라인: {last_trend_line + 1}")
 print(f"</section> 라인: {section_line + 1}")
 print(f"삽입 위치: {insert_at + 1}번 줄 앞")
 print(f"해당 줄 내용: {repr(lines[insert_at])}")
 
-# '            </div>' (12칸 들여쓰기) 인지 확인
 if lines[insert_at].strip() != '</div>':
-    print(f"WARNING: 예상과 다른 내용입니다. 내용: {repr(lines[insert_at])}")
-    print("삽입을 중단합니다. index.html 구조를 수동으로 확인하세요.")
+    print(f"WARNING: 예상과 다른 내용. 내용: {repr(lines[insert_at])}")
+    print("삽입 중단. index.html 구조를 확인하세요.")
     sys.exit(1)
 
-# 5) 새 카드 HTML 생성 (LF 라인엔딩)
 new_card_lines = []
 for href, title, desc in guides_to_add:
     new_card_lines += [
@@ -74,11 +60,9 @@ for href, title, desc in guides_to_add:
         f'                </div>\n',
     ]
 
-# 6) 삽입
 for i, line in enumerate(new_card_lines):
     lines.insert(insert_at + i, line)
 
-# 7) 저장
 with open(file_path, 'w', encoding='utf-8') as f:
     f.writelines(lines)
 
