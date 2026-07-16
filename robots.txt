@@ -1,0 +1,10 @@
+# FineTools robots.txt
+# 모든 로봇의 접근을 환영합니다. 인덱싱 가속을 허용합니다.
+
+User-agent: *
+Allow: /
+Disallow: /*.py
+Disallow: /*.py$
+
+# 호스팅 도메인 세팅 시 실제 도메인 경로로 수정 적용
+Sitemap: https://www.getbreakai.com/sitemap.xml
