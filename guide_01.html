@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -103,27 +103,120 @@
 <p>종합소득세는 1년 동안 개인이 경제활동을 통해 얻은 모든 종합적인 소득(이자, 배당, 사업, 근로, 연금, 기타소득)을 합산하여 다음 해 5월에 신고하고 납부하는 세금입니다. 대한민국의 누진세율 구조를 정확히 이해하는 것이야말로 절세의 첫걸음입니다.</p>
 <p>직장인처럼 근로소득만 있다면 연말정산으로 끝나지만, 프리랜서(3.3%), 부업을 하는 N잡러, 개인사업자 등은 반드시 종합소득세 신고 대상이 됩니다. 소득이 다변화된 현대 사회에서 종합소득세율을 모르면 세금 폭탄을 맞을 수 있습니다. 👉 <a href="salary.html" style="color:var(--accent-blue); font-weight:bold;">[내 연봉 실수령액 계산해보기]</a></p>
 
-<h2>2. 2026년 기준 종합소득세율 과세표준 구간</h2>
-<p>과세표준(소득에서 각종 소득공제를 뺀 금액)에 따라 세율은 6%에서 최고 45%까지 8단계로 차등 적용됩니다. 아래는 뼈대가 되는 기본 누진세율 구조입니다.</p>
-<ul>
-    <li>1,400만 원 이하: <strong>6%</strong></li>
-    <li>1,400만 원 초과 ~ 5,000만 원 이하: <strong>15%</strong> (누진공제 126만 원)</li>
-    <li>5,000만 원 초과 ~ 8,800만 원 이하: <strong>24%</strong> (누진공제 576만 원)</li>
-    <li>8,800만 원 초과 ~ 1억 5,000만 원 이하: <strong>35%</strong> (누진공제 1,544만 원)</li>
-    <li>1억 5,000만 원 초과 ~ 3억 원 이하: <strong>38%</strong> (누진공제 1,994만 원)</li>
-    <li>3억 원 초과 ~ 5억 원 이하: <strong>40%</strong> (누진공제 2,594만 원)</li>
-    <li>5억 원 초과 ~ 10억 원 이하: <strong>42%</strong> (누진공제 3,594만 원)</li>
-    <li>10억 원 초과: <strong>45%</strong> (누진공제 6,594만 원)</li>
-</ul>
-<p>세금 계산은 '과세표준 × 세율 - 누진공제액' 공식으로 아주 간단하게 산출할 수 있습니다. 핵심은 각종 경비처리와 소득공제를 통해 내 소득을 최대한 낮은 '과세표준' 구간으로 끌어내리는 데 있습니다.</p>
+<h2>2. 2026년 기준 종합소득세율 과세표준 구간 (세율표)</h2>
+<p>과세표준(소득에서 각종 소득공제를 뺀 금액)에 따라 세율은 6%에서 최고 45%까지 8단계로 차등 적용됩니다. 세금 계산은 <strong>'과세표준 × 세율 - 누진공제액'</strong> 공식으로 간단히 산출됩니다.</p>
+<div style="overflow-x:auto; margin:16px 0;">
+<table style="width:100%; border-collapse:collapse; font-size:0.9rem;">
+    <thead>
+        <tr style="background:rgba(252,211,77,0.1); border-bottom:1px solid rgba(255,255,255,0.15);">
+            <th style="text-align:left; padding:10px 14px; color:#FCD34D;">과세표준 구간</th>
+            <th style="text-align:center; padding:10px 14px; color:#FCD34D;">세율</th>
+            <th style="text-align:right; padding:10px 14px; color:#FCD34D;">누진공제액</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);"><td style="padding:9px 14px;">1,400만원 이하</td><td style="text-align:center; padding:9px 14px; font-weight:700; color:#4ade80;">6%</td><td style="text-align:right; padding:9px 14px;">—</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);"><td style="padding:9px 14px;">1,400만원 초과 ~ 5,000만원 이하</td><td style="text-align:center; padding:9px 14px; font-weight:700; color:#4ade80;">15%</td><td style="text-align:right; padding:9px 14px;">126만원</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);"><td style="padding:9px 14px;">5,000만원 초과 ~ 8,800만원 이하</td><td style="text-align:center; padding:9px 14px; font-weight:700; color:#fbbf24;">24%</td><td style="text-align:right; padding:9px 14px;">576만원</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);"><td style="padding:9px 14px;">8,800만원 초과 ~ 1억 5,000만원 이하</td><td style="text-align:center; padding:9px 14px; font-weight:700; color:#fbbf24;">35%</td><td style="text-align:right; padding:9px 14px;">1,544만원</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);"><td style="padding:9px 14px;">1억 5,000만원 초과 ~ 3억원 이하</td><td style="text-align:center; padding:9px 14px; font-weight:700; color:#f87171;">38%</td><td style="text-align:right; padding:9px 14px;">1,994만원</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);"><td style="padding:9px 14px;">3억원 초과 ~ 5억원 이하</td><td style="text-align:center; padding:9px 14px; font-weight:700; color:#f87171;">40%</td><td style="text-align:right; padding:9px 14px;">2,594만원</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);"><td style="padding:9px 14px;">5억원 초과 ~ 10억원 이하</td><td style="text-align:center; padding:9px 14px; font-weight:700; color:#f87171;">42%</td><td style="text-align:right; padding:9px 14px;">3,594만원</td></tr>
+        <tr><td style="padding:9px 14px;">10억원 초과</td><td style="text-align:center; padding:9px 14px; font-weight:700; color:#f87171;">45%</td><td style="text-align:right; padding:9px 14px;">6,594만원</td></tr>
+    </tbody>
+</table>
+</div>
 
-<h2>3. 절세의 핵심: 종합소득세 경정청구와 비용 처리</h2>
+<h2>3. 실제 세금 계산 예시 — 연봉별 케이스 스터디</h2>
+<p>아래는 각종 공제를 반영한 후 '과세표준'을 기준으로 산출한 예상 세금입니다. (인적공제, 근로소득공제, 4대보험 공제 등 기본 공제만 적용한 참고 값)</p>
+<div style="overflow-x:auto; margin:16px 0;">
+<table style="width:100%; border-collapse:collapse; font-size:0.9rem;">
+    <thead>
+        <tr style="background:rgba(252,211,77,0.1); border-bottom:1px solid rgba(255,255,255,0.15);">
+            <th style="text-align:left; padding:10px 14px; color:#FCD34D;">총급여(연봉)</th>
+            <th style="text-align:right; padding:10px 14px; color:#FCD34D;">근로소득공제 후</th>
+            <th style="text-align:right; padding:10px 14px; color:#FCD34D;">과세표준(추정)</th>
+            <th style="text-align:right; padding:10px 14px; color:#FCD34D;">연간 산출세액(추정)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
+            <td style="padding:9px 14px; font-weight:600;">4,000만원</td>
+            <td style="text-align:right; padding:9px 14px;">약 2,800만원</td>
+            <td style="text-align:right; padding:9px 14px;">약 1,200만원</td>
+            <td style="text-align:right; padding:9px 14px; color:#4ade80; font-weight:700;">약 72만원 (6%)</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
+            <td style="padding:9px 14px; font-weight:600;">6,000만원</td>
+            <td style="text-align:right; padding:9px 14px;">약 4,200만원</td>
+            <td style="text-align:right; padding:9px 14px;">약 2,800만원</td>
+            <td style="text-align:right; padding:9px 14px; color:#fbbf24; font-weight:700;">약 294만원 (15%)</td>
+        </tr>
+        <tr>
+            <td style="padding:9px 14px; font-weight:600;">1억원</td>
+            <td style="text-align:right; padding:9px 14px;">약 6,800만원</td>
+            <td style="text-align:right; padding:9px 14px;">약 5,400만원</td>
+            <td style="text-align:right; padding:9px 14px; color:#f87171; font-weight:700;">약 720만원 (24%)</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<p style="color:#94a3b8; font-size:0.85rem;">※ 부양가족 1인, 기본 공제 외 특별공제 미적용 추정 수치. 실제 세액은 개인 공제 항목에 따라 크게 다릅니다.</p>
+
+<h2>4. 소득공제 vs 세액공제 — 핵심 차이 이해하기</h2>
+<p><strong>소득공제</strong>는 과세표준 자체를 낮추는 방식입니다. 즉, 세금을 계산하는 기준 금액이 줄어들어 높은 세율 구간에서 내려올 수 있습니다. 따라서 <strong>소득이 높은 고세율 납세자일수록 소득공제의 혜택이 더 큽니다.</strong></p>
+<p><strong>세액공제</strong>는 이미 계산된 세금에서 직접 일정액을 빼주는 방식입니다. 소득 구간에 관계없이 동일한 금액만큼 세금이 줄어들므로, 저소득자에게도 확실한 절세 효과를 줍니다. 대표 항목으로는 자녀세액공제(1인당 15만원~30만원), 연금저축·IRP 세액공제(최대 16.5%), 의료비·교육비·기부금 세액공제 등이 있습니다.</p>
+
+<h2>5. 절세의 핵심: 경정청구와 비용 처리</h2>
 <p>개인사업자나 프리랜서는 세금 폭탄을 피하기 위해 지출 증빙(적격 증빙)을 철저히 모아야 합니다. 신용카드 영수증, 현금영수증, 세금계산서, 계산서 등 4대 적격 증빙을 꼼꼼히 챙겨 사업상 비용으로 인정받는 것이 과세표준을 낮추는 유일하고 합법적인 길입니다.</p>
 <p>만약 과거 5년 동안 깜빡하고 공제받지 못한 항목이 있다면, <strong>'경정청구'</strong>라는 제도를 통해 국가에 돌려달라고 청구할 수 있습니다. 특히 청년창업중소기업 세액감면 등은 많은 사업자들이 놓치는 파격적인 절세 혜택이므로 세무사와 상담하여 반드시 챙겨야 합니다. 👉 <a href="refund.html" style="color:var(--accent-blue); font-weight:bold;">[세금 미환급금 조회 가이드 참고]</a></p>
 
-<h2>4. 결론 및 주의사항</h2>
-<p>세금 신고 기한(매년 5월)을 넘기면 '무신고 가산세(납부세액의 20%)'와 '납부지연 가산세'라는 어마어마한 패널티가 부과됩니다. 설령 납부할 세금이 0원 이거나 손실(적자)이 났더라도 신고는 무조건 해야 합니다. 손실을 신고(결손금)해두면 향후 15년간 발생하는 이익에서 그 손실만큼 세금을 빼주는 엄청난 혜택(이월결손금 공제)이 있기 때문입니다. 금융 지식은 곧 돈입니다. 파인툴스가 여러분의 절세를 응원합니다.</p>
+<h2>6. 개인사업자가 놓치기 쉬운 경비 처리 항목 7가지</h2>
+<ul style="padding-left:20px;">
+    <li style="margin-bottom:10px;"><strong>업무용 차량 비용</strong>: 사업 목적 사용분에 대해 유류비, 보험료, 감가상각비 일부를 경비로 인정. 단, 성실신고 확인 대상은 운행일지 필수.</li>
+    <li style="margin-bottom:10px;"><strong>사무실 임차료·관리비</strong>: 사무공간 임차료 및 공과금 전액 경비 처리 가능.</li>
+    <li style="margin-bottom:10px;"><strong>접대비(기업업무추진비)</strong>: 사업 관련 접대 비용, 연간 한도 내에서 경비 인정 (적격 증빙 필수).</li>
+    <li style="margin-bottom:10px;"><strong>교육·훈련비</strong>: 사업 관련 역량 개발을 위한 온·오프라인 교육비.</li>
+    <li style="margin-bottom:10px;"><strong>광고·홍보비</strong>: 인스타그램 광고, 구글 광고, 유튜브 광고, 명함·브로셔 제작비 등.</li>
+    <li style="margin-bottom:10px;"><strong>소프트웨어·구독 서비스</strong>: 업무용 SaaS, 클라우드 스토리지, 협업 도구 구독료.</li>
+    <li style="margin-bottom:0;"><strong>노란우산공제(소기업·소상공인 공제부금)</strong>: 월 최대 100만원까지 납입 가능하며, 납입액 전액 소득공제(한도 500만원). 사업 중단·폐업 시 공제금 수령 가능.</li>
+</ul>
 
+<h2>7. 종합소득세 신고 기한과 가산세</h2>
+<p>종합소득세 신고·납부 기한은 <strong>매년 5월 1일부터 5월 31일</strong>까지입니다. 해외 체류자는 6월 30일까지 연장됩니다. 이 기한 내에 신고하지 않으면 무서운 가산세가 기다립니다.</p>
+<ul style="padding-left:20px;">
+    <li style="margin-bottom:8px;"><strong>무신고 가산세</strong>: 납부세액의 20% (부정행위 무신고 시 40%)</li>
+    <li style="margin-bottom:8px;"><strong>과소신고 가산세</strong>: 과소신고 세액의 10% (부정행위 시 40%)</li>
+    <li style="margin-bottom:8px;"><strong>납부지연 가산세</strong>: 미납세액 × 0.022% × 경과일수 (연 약 8.03%)</li>
+</ul>
+<p>설령 납부할 세금이 0원이거나 손실(적자)이 났더라도 신고는 반드시 해야 합니다. 손실을 신고(결손금)해두면 향후 15년간 발생하는 이익에서 그 손실만큼 세금을 빼주는 이월결손금 공제 혜택을 받을 수 있습니다.</p>
+
+<h2>8. 자주 묻는 질문 (FAQ)</h2>
+
+<div style="border: 1px solid rgba(255,255,255,0.1); border-radius:12px; padding:18px 22px; margin-bottom:14px; background:rgba(255,255,255,0.03);">
+    <h4 style="color:#FCD34D; font-size:0.97rem; font-weight:700; margin-bottom:8px;">Q. 프리랜서 수입 3.3% 원천징수를 했는데, 5월에 또 신고해야 하나요?</h4>
+    <p style="color:#cbd5e1; line-height:1.8; font-size:0.91rem; margin:0;">A. 네, 반드시 신고해야 합니다. 3.3% 원천징수는 세금의 '선납'일 뿐이며, 5월 종합소득세 신고 시 실제 경비를 공제한 소득 기준으로 정확한 세금을 계산해 납부 또는 환급받습니다. 실제 비용이 많다면 선납세액보다 결정세액이 적어 환급이 발생할 수 있습니다.</p>
+</div>
+
+<div style="border: 1px solid rgba(255,255,255,0.1); border-radius:12px; padding:18px 22px; margin-bottom:14px; background:rgba(255,255,255,0.03);">
+    <h4 style="color:#FCD34D; font-size:0.97rem; font-weight:700; margin-bottom:8px;">Q. 직장인인데 부업으로 연 100만원 수익이 발생했습니다. 종합소득세 신고가 필요한가요?</h4>
+    <p style="color:#cbd5e1; line-height:1.8; font-size:0.91rem; margin:0;">A. 근로소득 외 다른 종합소득(사업소득, 기타소득 등)이 연 100만원을 초과하면 원칙적으로 종합소득세 신고 대상입니다. 단, 기타소득 필요경비 60%를 공제한 기타소득금액이 300만원 이하이면 분리과세를 선택할 수 있어 합산 신고 의무가 없습니다. 정확한 판단은 소득 유형에 따라 달라지므로 세무사 상담을 권합니다.</p>
+</div>
+
+<div style="border: 1px solid rgba(255,255,255,0.1); border-radius:12px; padding:18px 22px; margin-bottom:14px; background:rgba(255,255,255,0.03);">
+    <h4 style="color:#FCD34D; font-size:0.97rem; font-weight:700; margin-bottom:8px;">Q. 경정청구는 무엇이며, 어떻게 신청하나요?</h4>
+    <p style="color:#cbd5e1; line-height:1.8; font-size:0.91rem; margin:0;">A. 경정청구(更正請求)는 이미 신고·납부한 세금이 과다하게 납부되었을 경우, 납세자가 국세청에 세금을 돌려달라고 요청하는 제도입니다. 법정신고기한 경과 후 5년 이내에 국세청 홈택스에서 온라인으로 신청할 수 있습니다. 공제 항목 누락, 세법 해석 오류 등으로 초과 납부한 세금을 최대 5년치까지 소급하여 환급받을 수 있으므로, 납세자라면 반드시 한 번은 검토해 볼 필요가 있습니다.</p>
+</div>
+
+<div style="border: 1px solid rgba(255,255,255,0.1); border-radius:12px; padding:18px 22px; margin-bottom:14px; background:rgba(255,255,255,0.03);">
+    <h4 style="color:#FCD34D; font-size:0.97rem; font-weight:700; margin-bottom:8px;">Q. 종합소득세 신고 시 성실신고 확인 대상자는 어떤 기준인가요?</h4>
+    <p style="color:#cbd5e1; line-height:1.8; font-size:0.91rem; margin:0;">A. 업종별로 연간 수입금액이 일정 기준(도매업 30억원, 제조업 15억원, 서비스업 7.5억원 등)을 초과하는 개인사업자는 성실신고 확인 대상자가 됩니다. 이 경우 종합소득세 신고 기한이 6월 30일로 한 달 연장되지만, 공인회계사 또는 세무사에게 사전 검토를 받아야 하며 추가 세무 비용이 발생합니다. 성실신고 확인 비용의 60%(최대 120만원)는 세액공제를 받을 수 있습니다.</p>
+</div>
+
+<div style="border: 1px solid rgba(255,255,255,0.1); border-radius:12px; padding:18px 22px; margin-bottom:14px; background:rgba(255,255,255,0.03);">
+    <h4 style="color:#FCD34D; font-size:0.97rem; font-weight:700; margin-bottom:8px;">Q. 사업 첫 해에 적자가 났습니다. 종합소득세 신고를 해야 하나요?</h4>
+    <p style="color:#cbd5e1; line-height:1.8; font-size:0.91rem; margin:0;">A. 반드시 신고해야 합니다. 적자(결손금)라도 신고를 통해 결손금을 공식 확정하면, 이후 최대 15년간 이익이 발생할 때 그 결손금만큼 과세표준에서 공제(이월결손금 공제)받을 수 있습니다. 신고를 하지 않으면 결손금 공제 혜택이 사라지며, 무신고 가산세까지 부과될 수 있습니다. 납부할 세금이 0원이어도 신고 자체는 반드시 5월 31일 내에 완료하십시오.</p>
+</div>
 
 <div class="author-box">
     <div class="author-avatar" style="background: rgba(252, 211, 77, 0.1);">🏛️</div>
